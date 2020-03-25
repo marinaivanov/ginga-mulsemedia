@@ -42,6 +42,7 @@ public:
   Object *getObjectByIdOrAlias (const string &);
   bool addObject (Object *);
 
+  
   Context *getRoot ();
   MediaSettings *getSettings ();
   const set<Media *> *getMedias ();
