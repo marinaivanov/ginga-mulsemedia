@@ -1,0 +1,26 @@
+PROJECT_NAME       = "@PACKAGE_NAME@"
+PROJECT_NUMBER     = "@PACKAGE_VERSION@"
+PROJECT_BRIEF      = "The iTV middleware."
+
+GENERATE_LATEX     = NO
+GENERATE_MAN       = NO
+GENERATE_RTF       = NO
+GENERATE_TREEVIEW  = YES
+
+OUTPUT_DIRECTORY   = @top_builddir@/doc
+INPUT              = @top_srcdir@/doc/index.doxygen \
+                     @top_srcdir@/lib
+RECURSIVE          = YES
+FILE_PATTERNS      = *.cpp *.h
+EXCLUDE_PATTERNS   = */aux-gl.h */aux-glib.h */aux-lua.h */config.h
+IMAGE_PATH         = @top_srcdir@/doc
+HAVE_DOT           = YES
+MACRO_EXPANSION    = YES
+EXPAND_ONLY_PREDEF = YES
+INCLUDE_PATH       = @top_srcdir@/lib
+PREDEFINED         = unused(x)=x
+EXTRACT_PRIVATE    = YES
+
+QUIET              = NO
+WARNINGS           = YES
+WARN_NO_PARAMDOC   = YES

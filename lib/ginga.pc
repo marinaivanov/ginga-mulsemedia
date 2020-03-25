@@ -1,0 +1,13 @@
+# lib/ginga.pc.  Generated from ginga.pc.in by configure.
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: ginga
+Description: The iTV middleware.
+Version: UNKNOWN
+
+Cflags:
+Libs: -L${libdir} -lginga
+Libs.private:  -lcairo  -lglib-2.0 -lgstvideo-1.0 -lgstaudio-1.0 -lgstapp-1.0 -lgstbase-1.0 -lgstreamer-1.0 -lgobject-2.0 -lglib-2.0 -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lrsvg-2 -lm -lgio-2.0 -lgdk_pixbuf-2.0 -lgobject-2.0 -lglib-2.0 -lcairo -lxml2 -llua5.3 -export-dynamic   -lpangocairo-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lcairo -lsoup-2.4 -lgio-2.0 -lgobject-2.0 -lglib-2.0
