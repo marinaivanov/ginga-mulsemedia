@@ -78,6 +78,8 @@ Event::getFullId ()
         return obj_id + "$" + _id.substr(1,_id.length()-1);
       else
         return obj_id + "$" + _id;
+    case Event::VOICE_RECOGNITION:
+      return obj_id + "<" + _id + ">";
     default:
       g_assert_not_reached ();
     }
@@ -254,6 +256,8 @@ Event::getEventTypeAsString (Event::Type type)
       return "selection";
     case Event::PREPARATION:
       return "preparation";
+    case Event::VOICE_RECOGNITION:
+      return "voice_recognition";
     default:
       g_assert_not_reached ();
     }

@@ -64,6 +64,14 @@ public:
      * Stands for the preparation of a specific time interval of the object.
      */
     PREPARATION,
+
+	/**
+	 * @brief Voice Recognition event.
+	 *
+	 *Stands for the recognition of a  specific key (this case word), which is
+	 * directed to the object.
+	 */
+	 VOICE_RECOGNITION,
   };
 
   /// @brief Event state.
