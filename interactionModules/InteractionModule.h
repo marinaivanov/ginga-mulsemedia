@@ -1,21 +1,9 @@
 
-
+#include "json.h"
 class InteractionModule
 {
-
-public:
+  public:
 	virtual void startModule();
-	virtual void setUserKeyList(list <user, key>);
-	virtual void stop Module(); 
-};
-
-
-
-class Communication
-{
-
-public:
-	virtual void startModule();
-	virtual void setUserKeyList(list <user, key>);
+	virtual void setUserKeyList(json userKeyList);
 	virtual void stop Module(); 
 };
