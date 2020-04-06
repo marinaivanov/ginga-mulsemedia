@@ -856,7 +856,12 @@ static map<string, pair<Event::Type, Event::Transition> >
       {"onSelection", {Event::SELECTION, Event::START} },
       {"onBeginSelection", {Event::SELECTION, Event::START} },
       {"onEndSelection", {Event::SELECTION, Event::STOP} },
-      {"onBeginPreparation", {Event::PREPARATION, Event::START} }, // conditions
+
+	  {"onVoiceRecognition", {Event::VOICE_RECOGNITION, Event::START} },
+      {"onBeginVoiceRecognition", {Event::VOICE_RECOGNITION, Event::START} },
+      {"onEndVoiceRecognition", {Event::VOICE_RECOGNITION, Event::STOP} },
+
+	  {"onBeginPreparation", {Event::PREPARATION, Event::START} }, // conditions
       {"onEndPreparation", {Event::PREPARATION, Event::STOP} },
       {"onAbortPreparation", {Event::PREPARATION, Event::ABORT} },
       {"onPausePreparation", {Event::PREPARATION, Event::PAUSE} },
@@ -895,6 +900,7 @@ static map<string, Event::Type> parser_syntax_event_type_table = {
   {"attribution", Event::ATTRIBUTION},
   {"selection", Event::SELECTION},
   {"preparation", Event::PREPARATION},
+  {"voice_recognition", Event::VOICE_RECOGNITION},
 };
 
 /// Known transitions.

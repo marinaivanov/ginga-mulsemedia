@@ -117,6 +117,7 @@ Object::toString ()
   list<string> pres;
   list<string> attr;
   list<string> sel;
+  list<string> vo_rec;
   for (auto evt : _events)
     switch (evt->getType ())
       {
@@ -129,6 +130,9 @@ Object::toString ()
       case Event::SELECTION:
         sel.push_back (evt->getId ());
         break;
+      case Event::VOICE_RECOGNITION:
+        vo_rec.push_back (evt->getId ());
+        break;
       default:
         g_assert_not_reached ();
       }
@@ -137,6 +141,7 @@ Object::toString ()
     { "evts pres.", &pres },
     { "evts attr.", &attr },
     { "evts sel.", &sel },
+    { "evts vo_rec.", &vo_rec },
   };
 
   for (auto it_evts : evts)
@@ -298,6 +303,25 @@ Object::addPreparationEvent (const string &id, Time begin, Time end)
 
   evt = new Event (Event::PREPARATION, this, id);
   evt->setInterval (begin, end);
+  _events.insert (evt);
+}
+
+
+Event *
+Object::getVoiceRecognitionEvent (const string &key)
+{
+  return this->getEvent (Event::SELECTION, key);
+}
+
+void
+Object::addVoiceRecognitionEvent (const string &key)
+{
+  Event *evt;
+
+  if (this->getVoiceRecognitionEvent (key))
+    return;
+
+  evt = new Event (Event::VOICE_RECOGNITION, this, key);
   _events.insert (evt);
 }
 

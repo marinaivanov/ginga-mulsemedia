@@ -61,6 +61,8 @@ public:
   Event *getPreparationEventByLabel (const string &);
   void addPreparationEvent (const string &);
   void addPreparationEvent (const string &, Time, Time);
+  Event *getVoiceRecognitionEvent (const string &);
+  void addVoiceRecognitionEvent (const string &);
   
   Event *getLambda ();
   bool isOccurring ();
