@@ -2751,6 +2751,18 @@ borderColor='%s'}",
                     g_assert_nonnull (act.event);
                     break;
                   }
+                  case Event::VOICE_RECOGNITION:
+                    {
+                      act.value = st->resolveParameter (
+                          role->key, &bind->params, params, &ghosts_map);
+
+                      obj->addVoiceRecognitionEvent (act.value);
+                      act.event = obj->getVoiceRecognitionEvent (act.value);
+                      g_assert_nonnull (act.event);
+                      act.event->setParameter ("key", act.value);
+                      break;
+                    }
+
                 default:
                   g_assert_not_reached ();
                 }
@@ -3101,7 +3113,7 @@ ParserState::pushSimpleCondition (ParserState *st, ParserElt *elt)
   if (!role.condition)
     elt->getAttribute ("delay", &role.delay);
 
-  if (role.eventType == Event::SELECTION)
+  if ((role.eventType == Event::SELECTION) || (role.eventType == Event::VOICE_RECOGNITION))
     elt->getAttribute ("key", &role.key);
 
   if (unlikely (!role.condition && role.eventType == Event::ATTRIBUTION

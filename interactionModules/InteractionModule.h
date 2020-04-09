@@ -4,6 +4,7 @@
 #define INTERACTION_MODULE_H
 
 #include "json.h"
+#include "InteractionManager.h"
 
 class InteractionModule
 {
@@ -20,14 +21,14 @@ class InteractionModule
 	 EYE_MOTION,
   };
 
-	virtual void startModule();
+	virtual void startModule(InteractionModule *intMan);
 	virtual void setUserKeyList(json userKeyList);
-	virtual void stop Module(); 
+	virtual void stopModule();
     void setEvent(EventType valor) { event = valor;}
     void EventType getEvent() { return valor;}
 
   private:
-
+    InteractionModule *intManager;
 	EventType event;
 
 };

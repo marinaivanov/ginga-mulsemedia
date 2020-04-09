@@ -310,7 +310,7 @@ Object::addPreparationEvent (const string &id, Time begin, Time end)
 Event *
 Object::getVoiceRecognitionEvent (const string &key)
 {
-  return this->getEvent (Event::SELECTION, key);
+  return this->getEvent (Event::VOICE_RECOGNITION, key);
 }
 
 void

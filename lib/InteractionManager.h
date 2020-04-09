@@ -15,16 +15,18 @@ class InteractionManager
 {
 	public:
 
-	   static void notifyInteraction(InteractionModule::EventType, user, key);
-
+	    void notifyInteraction(InteractionModule::EventType, user, key);
 	
 	    // Os parâmetros poderam ser as opções do documento tendo a especificações dos modulos
-	    void InteractionManager();
+	    void InteractionManager(Ginga *ginga);
+	    void ~InteractionManager();
 	    void addInteractionModule(InteractionModule * elem);
-
+	    void stopInteractionModule(sting * idModulo);
+	    void startInteractionModule(sting * idModulo);
+		void setUserKeyList(sting * idModulo, json userKeyList);
 		
 	private:
-		
+		Ginga *ginga;
 		map<sting, InteractionModule *> ExtModules;
   
 };
