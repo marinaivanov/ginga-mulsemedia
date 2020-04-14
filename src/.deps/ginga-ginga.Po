@@ -6,17 +6,15 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
  /usr/include/x86_64-linux-gnu/bits/long-double.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-linux-gnu/8/include/stddef.h \
- /usr/lib/gcc/x86_64-linux-gnu/8/include/stdarg.h \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h \
  /usr/include/x86_64-linux-gnu/bits/types.h \
  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
- /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
+ /usr/include/x86_64-linux-gnu/bits/libio.h \
+ /usr/include/x86_64-linux-gnu/bits/_G_config.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
@@ -30,15 +28,15 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
  /usr/include/glib-2.0/glib/gtypes.h \
  /usr/lib/x86_64-linux-gnu/glib-2.0/include/glibconfig.h \
  /usr/include/glib-2.0/glib/gmacros.h \
- /usr/lib/gcc/x86_64-linux-gnu/8/include-fixed/limits.h \
- /usr/lib/gcc/x86_64-linux-gnu/8/include-fixed/syslimits.h \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/limits.h \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/syslimits.h \
  /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
  /usr/include/x86_64-linux-gnu/bits/local_lim.h \
  /usr/include/linux/limits.h \
  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
  /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
  /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
- /usr/lib/gcc/x86_64-linux-gnu/8/include/float.h \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include/float.h \
  /usr/include/glib-2.0/glib/gversionmacros.h /usr/include/time.h \
  /usr/include/x86_64-linux-gnu/bits/time.h \
  /usr/include/x86_64-linux-gnu/bits/timex.h \
@@ -55,10 +53,10 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
  /usr/include/glib-2.0/glib/gthread.h \
  /usr/include/glib-2.0/glib/gatomic.h /usr/include/glib-2.0/glib/gerror.h \
  /usr/include/glib-2.0/glib/gquark.h /usr/include/glib-2.0/glib/gutils.h \
- /usr/include/c++/8/stdlib.h /usr/include/c++/8/cstdlib \
- /usr/include/x86_64-linux-gnu/c++/8/bits/c++config.h \
- /usr/include/x86_64-linux-gnu/c++/8/bits/os_defines.h \
- /usr/include/x86_64-linux-gnu/c++/8/bits/cpu_defines.h \
+ /usr/include/c++/7/stdlib.h /usr/include/c++/7/cstdlib \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/c++config.h \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/os_defines.h \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/cpu_defines.h \
  /usr/include/stdlib.h /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/floatn.h \
@@ -67,12 +65,15 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h /usr/include/endian.h \
  /usr/include/x86_64-linux-gnu/bits/endian.h \
  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
+ /usr/include/x86_64-linux-gnu/bits/byteswap-16.h \
  /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
  /usr/include/x86_64-linux-gnu/sys/select.h \
  /usr/include/x86_64-linux-gnu/bits/select.h \
  /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h \
  /usr/include/x86_64-linux-gnu/bits/select2.h \
+ /usr/include/x86_64-linux-gnu/sys/sysmacros.h \
+ /usr/include/x86_64-linux-gnu/bits/sysmacros.h \
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
  /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
@@ -80,7 +81,7 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
- /usr/include/c++/8/bits/std_abs.h \
+ /usr/include/c++/7/bits/std_abs.h \
  /usr/include/glib-2.0/glib/gbacktrace.h /usr/include/signal.h \
  /usr/include/x86_64-linux-gnu/bits/signum.h \
  /usr/include/x86_64-linux-gnu/bits/signum-generic.h \
@@ -134,10 +135,6 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
  /usr/include/glib-2.0/glib/gpattern.h \
  /usr/include/glib-2.0/glib/gprimes.h /usr/include/glib-2.0/glib/gqsort.h \
  /usr/include/glib-2.0/glib/gqueue.h /usr/include/glib-2.0/glib/grand.h \
- /usr/include/glib-2.0/glib/grcbox.h \
- /usr/include/glib-2.0/glib/grefcount.h \
- /usr/include/glib-2.0/glib/grefstring.h \
- /usr/include/glib-2.0/glib/gmem.h /usr/include/glib-2.0/glib/gmacros.h \
  /usr/include/glib-2.0/glib/gregex.h \
  /usr/include/glib-2.0/glib/gscanner.h \
  /usr/include/glib-2.0/glib/gsequence.h \
@@ -159,14 +156,12 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
  /usr/include/glib-2.0/glib/deprecated/grel.h \
  /usr/include/glib-2.0/glib/deprecated/gthread.h /usr/include/pthread.h \
  /usr/include/sched.h /usr/include/x86_64-linux-gnu/bits/sched.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
  /usr/include/x86_64-linux-gnu/bits/cpu-set.h \
  /usr/include/x86_64-linux-gnu/bits/setjmp.h \
  /usr/include/glib-2.0/glib/glib-autocleanups.h \
  /usr/include/glib-2.0/glib/gstdio.h /usr/include/glib-2.0/glib/gprintf.h \
  /usr/include/x86_64-linux-gnu/sys/stat.h \
- /usr/include/x86_64-linux-gnu/bits/stat.h \
- /usr/include/x86_64-linux-gnu/bits/statx.h /usr/include/cairo/cairo.h \
+ /usr/include/x86_64-linux-gnu/bits/stat.h /usr/include/cairo/cairo.h \
  /usr/include/cairo/cairo-version.h /usr/include/cairo/cairo-features.h \
  /usr/include/cairo/cairo-deprecated.h /usr/include/gtk-3.0/gtk/gtk.h \
  /usr/include/gtk-3.0/gdk/gdk.h /usr/include/gtk-3.0/gdk/gdkconfig.h \
@@ -524,9 +519,6 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
  /usr/include/gtk-3.0/gtk/gtkdrawingarea.h \
  /usr/include/gtk-3.0/gtk/gtkeventbox.h \
  /usr/include/gtk-3.0/gtk/gtkeventcontroller.h \
- /usr/include/gtk-3.0/gtk/gtkeventcontrollerkey.h \
- /usr/include/gtk-3.0/gtk/gtkeventcontrollermotion.h \
- /usr/include/gtk-3.0/gtk/gtkeventcontrollerscroll.h \
  /usr/include/gtk-3.0/gtk/gtkexpander.h \
  /usr/include/gtk-3.0/gtk/gtkfixed.h \
  /usr/include/gtk-3.0/gtk/gtkfilechooser.h \
@@ -548,7 +540,6 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
  /usr/include/gtk-3.0/gtk/gtkgesturemultipress.h \
  /usr/include/gtk-3.0/gtk/gtkgesturepan.h \
  /usr/include/gtk-3.0/gtk/gtkgesturerotate.h \
- /usr/include/gtk-3.0/gtk/gtkgesturestylus.h \
  /usr/include/gtk-3.0/gtk/gtkgestureswipe.h \
  /usr/include/gtk-3.0/gtk/gtkgesturezoom.h \
  /usr/include/gtk-3.0/gtk/gtkglarea.h /usr/include/gtk-3.0/gtk/gtkgrid.h \
@@ -692,65 +683,64 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
  /usr/include/gtk-3.0/gtk/deprecated/gtkvscrollbar.h \
  /usr/include/gtk-3.0/gtk/deprecated/gtkvseparator.h \
  /usr/include/gtk-3.0/gtk/gtk-autocleanups.h ../lib/ginga.h \
- /usr/include/c++/8/cstdint \
- /usr/lib/gcc/x86_64-linux-gnu/8/include/stdint.h /usr/include/stdint.h \
+ /usr/include/c++/7/cstdint \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
- /usr/include/c++/8/string /usr/include/c++/8/bits/stringfwd.h \
- /usr/include/c++/8/bits/memoryfwd.h \
- /usr/include/c++/8/bits/char_traits.h \
- /usr/include/c++/8/bits/stl_algobase.h \
- /usr/include/c++/8/bits/functexcept.h \
- /usr/include/c++/8/bits/exception_defines.h \
- /usr/include/c++/8/bits/cpp_type_traits.h \
- /usr/include/c++/8/ext/type_traits.h \
- /usr/include/c++/8/ext/numeric_traits.h \
- /usr/include/c++/8/bits/stl_pair.h /usr/include/c++/8/bits/move.h \
- /usr/include/c++/8/bits/concept_check.h /usr/include/c++/8/type_traits \
- /usr/include/c++/8/bits/stl_iterator_base_types.h \
- /usr/include/c++/8/bits/stl_iterator_base_funcs.h \
- /usr/include/c++/8/debug/assertions.h \
- /usr/include/c++/8/bits/stl_iterator.h \
- /usr/include/c++/8/bits/ptr_traits.h /usr/include/c++/8/debug/debug.h \
- /usr/include/c++/8/bits/predefined_ops.h \
- /usr/include/c++/8/bits/postypes.h /usr/include/c++/8/cwchar \
+ /usr/include/c++/7/string /usr/include/c++/7/bits/stringfwd.h \
+ /usr/include/c++/7/bits/memoryfwd.h \
+ /usr/include/c++/7/bits/char_traits.h \
+ /usr/include/c++/7/bits/stl_algobase.h \
+ /usr/include/c++/7/bits/functexcept.h \
+ /usr/include/c++/7/bits/exception_defines.h \
+ /usr/include/c++/7/bits/cpp_type_traits.h \
+ /usr/include/c++/7/ext/type_traits.h \
+ /usr/include/c++/7/ext/numeric_traits.h \
+ /usr/include/c++/7/bits/stl_pair.h /usr/include/c++/7/bits/move.h \
+ /usr/include/c++/7/bits/concept_check.h /usr/include/c++/7/type_traits \
+ /usr/include/c++/7/bits/stl_iterator_base_types.h \
+ /usr/include/c++/7/bits/stl_iterator_base_funcs.h \
+ /usr/include/c++/7/debug/assertions.h \
+ /usr/include/c++/7/bits/stl_iterator.h \
+ /usr/include/c++/7/bits/ptr_traits.h /usr/include/c++/7/debug/debug.h \
+ /usr/include/c++/7/bits/predefined_ops.h \
+ /usr/include/c++/7/bits/postypes.h /usr/include/c++/7/cwchar \
  /usr/include/wchar.h /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
- /usr/include/c++/8/bits/allocator.h \
- /usr/include/x86_64-linux-gnu/c++/8/bits/c++allocator.h \
- /usr/include/c++/8/ext/new_allocator.h /usr/include/c++/8/new \
- /usr/include/c++/8/exception /usr/include/c++/8/bits/exception.h \
- /usr/include/c++/8/bits/exception_ptr.h \
- /usr/include/c++/8/bits/cxxabi_init_exception.h \
- /usr/include/c++/8/typeinfo /usr/include/c++/8/bits/hash_bytes.h \
- /usr/include/c++/8/bits/nested_exception.h \
- /usr/include/c++/8/bits/localefwd.h \
- /usr/include/x86_64-linux-gnu/c++/8/bits/c++locale.h \
- /usr/include/c++/8/clocale /usr/include/locale.h \
- /usr/include/x86_64-linux-gnu/bits/locale.h /usr/include/c++/8/iosfwd \
- /usr/include/c++/8/cctype /usr/include/ctype.h \
- /usr/include/c++/8/bits/ostream_insert.h \
- /usr/include/c++/8/bits/cxxabi_forced.h \
- /usr/include/c++/8/bits/stl_function.h \
- /usr/include/c++/8/backward/binders.h \
- /usr/include/c++/8/bits/range_access.h \
- /usr/include/c++/8/initializer_list \
- /usr/include/c++/8/bits/basic_string.h \
- /usr/include/c++/8/ext/atomicity.h \
- /usr/include/x86_64-linux-gnu/c++/8/bits/gthr.h \
- /usr/include/x86_64-linux-gnu/c++/8/bits/gthr-default.h \
- /usr/include/x86_64-linux-gnu/c++/8/bits/atomic_word.h \
- /usr/include/c++/8/ext/alloc_traits.h \
- /usr/include/c++/8/bits/alloc_traits.h \
- /usr/include/c++/8/ext/string_conversions.h /usr/include/c++/8/cstdio \
- /usr/include/c++/8/cerrno /usr/include/errno.h \
+ /usr/include/c++/7/bits/allocator.h \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/c++allocator.h \
+ /usr/include/c++/7/ext/new_allocator.h /usr/include/c++/7/new \
+ /usr/include/c++/7/exception /usr/include/c++/7/bits/exception.h \
+ /usr/include/c++/7/bits/exception_ptr.h \
+ /usr/include/c++/7/bits/cxxabi_init_exception.h \
+ /usr/include/c++/7/typeinfo /usr/include/c++/7/bits/hash_bytes.h \
+ /usr/include/c++/7/bits/nested_exception.h \
+ /usr/include/c++/7/bits/localefwd.h \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/c++locale.h \
+ /usr/include/c++/7/clocale /usr/include/locale.h \
+ /usr/include/x86_64-linux-gnu/bits/locale.h /usr/include/c++/7/iosfwd \
+ /usr/include/c++/7/cctype /usr/include/ctype.h \
+ /usr/include/c++/7/bits/ostream_insert.h \
+ /usr/include/c++/7/bits/cxxabi_forced.h \
+ /usr/include/c++/7/bits/stl_function.h \
+ /usr/include/c++/7/backward/binders.h \
+ /usr/include/c++/7/bits/range_access.h \
+ /usr/include/c++/7/initializer_list \
+ /usr/include/c++/7/bits/basic_string.h \
+ /usr/include/c++/7/ext/atomicity.h \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/gthr.h \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/gthr-default.h \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/atomic_word.h \
+ /usr/include/c++/7/ext/alloc_traits.h \
+ /usr/include/c++/7/bits/alloc_traits.h \
+ /usr/include/c++/7/ext/string_conversions.h /usr/include/c++/7/cstdio \
+ /usr/include/c++/7/cerrno /usr/include/errno.h \
  /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
  /usr/include/x86_64-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
- /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
- /usr/include/c++/8/bits/functional_hash.h \
- /usr/include/c++/8/bits/basic_string.tcc
+ /usr/include/c++/7/bits/functional_hash.h \
+ /usr/include/c++/7/bits/basic_string.tcc
 
 /usr/include/stdc-predef.h:
 
@@ -772,27 +762,23 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/8/include/stddef.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/8/include/stdarg.h:
+/usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h:
 
 /usr/include/x86_64-linux-gnu/bits/types.h:
 
 /usr/include/x86_64-linux-gnu/bits/typesizes.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h:
-
 /usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/FILE.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
+/usr/include/x86_64-linux-gnu/bits/libio.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h:
+/usr/include/x86_64-linux-gnu/bits/_G_config.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/7/include/stdarg.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
 
@@ -826,9 +812,9 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 
 /usr/include/glib-2.0/glib/gmacros.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed/limits.h:
+/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/limits.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed/syslimits.h:
+/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/syslimits.h:
 
 /usr/include/limits.h:
 
@@ -844,7 +830,7 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 
 /usr/include/x86_64-linux-gnu/bits/uio_lim.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/8/include/float.h:
+/usr/lib/gcc/x86_64-linux-gnu/7/include/float.h:
 
 /usr/include/glib-2.0/glib/gversionmacros.h:
 
@@ -884,15 +870,15 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 
 /usr/include/glib-2.0/glib/gutils.h:
 
-/usr/include/c++/8/stdlib.h:
+/usr/include/c++/7/stdlib.h:
 
-/usr/include/c++/8/cstdlib:
+/usr/include/c++/7/cstdlib:
 
-/usr/include/x86_64-linux-gnu/c++/8/bits/c++config.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/c++config.h:
 
-/usr/include/x86_64-linux-gnu/c++/8/bits/os_defines.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/os_defines.h:
 
-/usr/include/x86_64-linux-gnu/c++/8/bits/cpu_defines.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/cpu_defines.h:
 
 /usr/include/stdlib.h:
 
@@ -914,6 +900,8 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 
 /usr/include/x86_64-linux-gnu/bits/byteswap.h:
 
+/usr/include/x86_64-linux-gnu/bits/byteswap-16.h:
+
 /usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
 
 /usr/include/x86_64-linux-gnu/sys/select.h:
@@ -925,6 +913,10 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/select2.h:
+
+/usr/include/x86_64-linux-gnu/sys/sysmacros.h:
+
+/usr/include/x86_64-linux-gnu/bits/sysmacros.h:
 
 /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
 
@@ -940,7 +932,7 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 
 /usr/include/x86_64-linux-gnu/bits/stdlib.h:
 
-/usr/include/c++/8/bits/std_abs.h:
+/usr/include/c++/7/bits/std_abs.h:
 
 /usr/include/glib-2.0/glib/gbacktrace.h:
 
@@ -1070,16 +1062,6 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 
 /usr/include/glib-2.0/glib/grand.h:
 
-/usr/include/glib-2.0/glib/grcbox.h:
-
-/usr/include/glib-2.0/glib/grefcount.h:
-
-/usr/include/glib-2.0/glib/grefstring.h:
-
-/usr/include/glib-2.0/glib/gmem.h:
-
-/usr/include/glib-2.0/glib/gmacros.h:
-
 /usr/include/glib-2.0/glib/gregex.h:
 
 /usr/include/glib-2.0/glib/gscanner.h:
@@ -1130,8 +1112,6 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 
 /usr/include/x86_64-linux-gnu/bits/sched.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h:
-
 /usr/include/x86_64-linux-gnu/bits/cpu-set.h:
 
 /usr/include/x86_64-linux-gnu/bits/setjmp.h:
@@ -1145,8 +1125,6 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 /usr/include/x86_64-linux-gnu/sys/stat.h:
 
 /usr/include/x86_64-linux-gnu/bits/stat.h:
-
-/usr/include/x86_64-linux-gnu/bits/statx.h:
 
 /usr/include/cairo/cairo.h:
 
@@ -1910,12 +1888,6 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 
 /usr/include/gtk-3.0/gtk/gtkeventcontroller.h:
 
-/usr/include/gtk-3.0/gtk/gtkeventcontrollerkey.h:
-
-/usr/include/gtk-3.0/gtk/gtkeventcontrollermotion.h:
-
-/usr/include/gtk-3.0/gtk/gtkeventcontrollerscroll.h:
-
 /usr/include/gtk-3.0/gtk/gtkexpander.h:
 
 /usr/include/gtk-3.0/gtk/gtkfixed.h:
@@ -1957,8 +1929,6 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 /usr/include/gtk-3.0/gtk/gtkgesturepan.h:
 
 /usr/include/gtk-3.0/gtk/gtkgesturerotate.h:
-
-/usr/include/gtk-3.0/gtk/gtkgesturestylus.h:
 
 /usr/include/gtk-3.0/gtk/gtkgestureswipe.h:
 
@@ -2252,9 +2222,9 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 
 ../lib/ginga.h:
 
-/usr/include/c++/8/cstdint:
+/usr/include/c++/7/cstdint:
 
-/usr/lib/gcc/x86_64-linux-gnu/8/include/stdint.h:
+/usr/lib/gcc/x86_64-linux-gnu/7/include/stdint.h:
 
 /usr/include/stdint.h:
 
@@ -2262,51 +2232,51 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
 
-/usr/include/c++/8/string:
+/usr/include/c++/7/string:
 
-/usr/include/c++/8/bits/stringfwd.h:
+/usr/include/c++/7/bits/stringfwd.h:
 
-/usr/include/c++/8/bits/memoryfwd.h:
+/usr/include/c++/7/bits/memoryfwd.h:
 
-/usr/include/c++/8/bits/char_traits.h:
+/usr/include/c++/7/bits/char_traits.h:
 
-/usr/include/c++/8/bits/stl_algobase.h:
+/usr/include/c++/7/bits/stl_algobase.h:
 
-/usr/include/c++/8/bits/functexcept.h:
+/usr/include/c++/7/bits/functexcept.h:
 
-/usr/include/c++/8/bits/exception_defines.h:
+/usr/include/c++/7/bits/exception_defines.h:
 
-/usr/include/c++/8/bits/cpp_type_traits.h:
+/usr/include/c++/7/bits/cpp_type_traits.h:
 
-/usr/include/c++/8/ext/type_traits.h:
+/usr/include/c++/7/ext/type_traits.h:
 
-/usr/include/c++/8/ext/numeric_traits.h:
+/usr/include/c++/7/ext/numeric_traits.h:
 
-/usr/include/c++/8/bits/stl_pair.h:
+/usr/include/c++/7/bits/stl_pair.h:
 
-/usr/include/c++/8/bits/move.h:
+/usr/include/c++/7/bits/move.h:
 
-/usr/include/c++/8/bits/concept_check.h:
+/usr/include/c++/7/bits/concept_check.h:
 
-/usr/include/c++/8/type_traits:
+/usr/include/c++/7/type_traits:
 
-/usr/include/c++/8/bits/stl_iterator_base_types.h:
+/usr/include/c++/7/bits/stl_iterator_base_types.h:
 
-/usr/include/c++/8/bits/stl_iterator_base_funcs.h:
+/usr/include/c++/7/bits/stl_iterator_base_funcs.h:
 
-/usr/include/c++/8/debug/assertions.h:
+/usr/include/c++/7/debug/assertions.h:
 
-/usr/include/c++/8/bits/stl_iterator.h:
+/usr/include/c++/7/bits/stl_iterator.h:
 
-/usr/include/c++/8/bits/ptr_traits.h:
+/usr/include/c++/7/bits/ptr_traits.h:
 
-/usr/include/c++/8/debug/debug.h:
+/usr/include/c++/7/debug/debug.h:
 
-/usr/include/c++/8/bits/predefined_ops.h:
+/usr/include/c++/7/bits/predefined_ops.h:
 
-/usr/include/c++/8/bits/postypes.h:
+/usr/include/c++/7/bits/postypes.h:
 
-/usr/include/c++/8/cwchar:
+/usr/include/c++/7/cwchar:
 
 /usr/include/wchar.h:
 
@@ -2316,75 +2286,75 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 
 /usr/include/x86_64-linux-gnu/bits/wchar2.h:
 
-/usr/include/c++/8/bits/allocator.h:
+/usr/include/c++/7/bits/allocator.h:
 
-/usr/include/x86_64-linux-gnu/c++/8/bits/c++allocator.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/c++allocator.h:
 
-/usr/include/c++/8/ext/new_allocator.h:
+/usr/include/c++/7/ext/new_allocator.h:
 
-/usr/include/c++/8/new:
+/usr/include/c++/7/new:
 
-/usr/include/c++/8/exception:
+/usr/include/c++/7/exception:
 
-/usr/include/c++/8/bits/exception.h:
+/usr/include/c++/7/bits/exception.h:
 
-/usr/include/c++/8/bits/exception_ptr.h:
+/usr/include/c++/7/bits/exception_ptr.h:
 
-/usr/include/c++/8/bits/cxxabi_init_exception.h:
+/usr/include/c++/7/bits/cxxabi_init_exception.h:
 
-/usr/include/c++/8/typeinfo:
+/usr/include/c++/7/typeinfo:
 
-/usr/include/c++/8/bits/hash_bytes.h:
+/usr/include/c++/7/bits/hash_bytes.h:
 
-/usr/include/c++/8/bits/nested_exception.h:
+/usr/include/c++/7/bits/nested_exception.h:
 
-/usr/include/c++/8/bits/localefwd.h:
+/usr/include/c++/7/bits/localefwd.h:
 
-/usr/include/x86_64-linux-gnu/c++/8/bits/c++locale.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/c++locale.h:
 
-/usr/include/c++/8/clocale:
+/usr/include/c++/7/clocale:
 
 /usr/include/locale.h:
 
 /usr/include/x86_64-linux-gnu/bits/locale.h:
 
-/usr/include/c++/8/iosfwd:
+/usr/include/c++/7/iosfwd:
 
-/usr/include/c++/8/cctype:
+/usr/include/c++/7/cctype:
 
 /usr/include/ctype.h:
 
-/usr/include/c++/8/bits/ostream_insert.h:
+/usr/include/c++/7/bits/ostream_insert.h:
 
-/usr/include/c++/8/bits/cxxabi_forced.h:
+/usr/include/c++/7/bits/cxxabi_forced.h:
 
-/usr/include/c++/8/bits/stl_function.h:
+/usr/include/c++/7/bits/stl_function.h:
 
-/usr/include/c++/8/backward/binders.h:
+/usr/include/c++/7/backward/binders.h:
 
-/usr/include/c++/8/bits/range_access.h:
+/usr/include/c++/7/bits/range_access.h:
 
-/usr/include/c++/8/initializer_list:
+/usr/include/c++/7/initializer_list:
 
-/usr/include/c++/8/bits/basic_string.h:
+/usr/include/c++/7/bits/basic_string.h:
 
-/usr/include/c++/8/ext/atomicity.h:
+/usr/include/c++/7/ext/atomicity.h:
 
-/usr/include/x86_64-linux-gnu/c++/8/bits/gthr.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/gthr.h:
 
-/usr/include/x86_64-linux-gnu/c++/8/bits/gthr-default.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/gthr-default.h:
 
-/usr/include/x86_64-linux-gnu/c++/8/bits/atomic_word.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/atomic_word.h:
 
-/usr/include/c++/8/ext/alloc_traits.h:
+/usr/include/c++/7/ext/alloc_traits.h:
 
-/usr/include/c++/8/bits/alloc_traits.h:
+/usr/include/c++/7/bits/alloc_traits.h:
 
-/usr/include/c++/8/ext/string_conversions.h:
+/usr/include/c++/7/ext/string_conversions.h:
 
-/usr/include/c++/8/cstdio:
+/usr/include/c++/7/cstdio:
 
-/usr/include/c++/8/cerrno:
+/usr/include/c++/7/cerrno:
 
 /usr/include/errno.h:
 
@@ -2398,8 +2368,6 @@ ginga-ginga.o: ginga.cpp /usr/include/stdc-predef.h ../lib/config.h \
 
 /usr/include/asm-generic/errno-base.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/error_t.h:
+/usr/include/c++/7/bits/functional_hash.h:
 
-/usr/include/c++/8/bits/functional_hash.h:
-
-/usr/include/c++/8/bits/basic_string.tcc:
+/usr/include/c++/7/bits/basic_string.tcc:

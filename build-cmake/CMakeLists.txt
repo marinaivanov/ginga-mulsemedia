@@ -144,7 +144,7 @@ set (LIBGINGA_SOURCES
   ../lib/PlayerSigGen.cpp
   ../lib/PlayerText.cpp
   ../lib/PlayerVideo.cpp
-  ../lib/PlayerStream.cpp
+  ../lib/InteractionManager.cpp
 
 #if WITH_LIBRSVG
   ../lib/PlayerSvg.cpp

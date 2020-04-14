@@ -85,7 +85,7 @@
 /* #undef LT_SHARED_LIB_MEMBER */
 
 /* Define to 1 to enable Lua macros for integer manipulation */
-#define LUA_COMPAT_APIINTCASTS 1
+/* #undef LUA_COMPAT_APIINTCASTS */
 
 /* Lua required version. */
 #define LUA_REQUIRED_VERSION 502
@@ -100,7 +100,7 @@
 #define PACKAGE_NAME "Ginga"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Ginga UNKNOWN"
+#define PACKAGE_STRING "Ginga 1.0.4-8e2a-dirty"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "ginga"
@@ -109,7 +109,7 @@
 #define PACKAGE_URL "http://github.com/TeleMidia/ginga"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "UNKNOWN"
+#define PACKAGE_VERSION "1.0.4-8e2a-dirty"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
@@ -137,7 +137,7 @@
 
 
 /* Version number of package */
-#define VERSION "UNKNOWN"
+#define VERSION "1.0.4-8e2a-dirty"
 
 /* Define to 1 if you have libcef. */
 #define WITH_CEF 0
@@ -149,7 +149,7 @@
 #define WITH_LUA 1
 
 /* Define to 1 if you have nclua >= 1.0. */
-/* #undef WITH_NCLUA */
+#define WITH_NCLUA 1
 
 /* Define to 1 if you have gl >= 17.0 sdl2. */
 /* #undef WITH_OPENGL */
