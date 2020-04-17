@@ -10,23 +10,32 @@ using std::cout;
 using std::endl;
 using std::setw;
 
-typedef struct point{
+typedef struct point
+{
 	float x, y;
 } Point;
 
 typedef struct region
 {
 	int id;
-	Point topLeft, bottomRight;
+	Point topLeft;
+	Point bottomRight;
 } Region;
 
-bool VerifyPointMy(Region R, Point P){
+typedef struct userRegions
+{
+	std::string user;
+	std::vector<Region> regions;
+} UserRegions;
+
+bool VerifyPointInRegion(Region R, Point P)
+{
 	return  (P.x <= R.bottomRight.x) && (P.x >= R.topLeft.x) && 
 			(P.y >= R.bottomRight.y) && (P.y <= R.topLeft.y);
 }
 
 
-int main(int argc, char const *argv[])
+int main()
 {
 	json UserKeyList;
 
@@ -58,30 +67,62 @@ int main(int argc, char const *argv[])
 
 	//cout << setw(4) << UserKeyList << endl;
 
-	Point p1, p2, p3, p4, p5, p6;
-	p1.x = -3; p1.y =  2; 
-	p2.x =  5; p2.y =  2; 
-	p3.x =  2; p3.y = -3; 
-	p4.x = -8; p4.y =  6; 
-	p5.x = -3; p5.y = -3.5; 
-	p6.x = -2; p6.y = -6; 
+	vector<UserRegions> vecUserRegions;
 
 	for (auto& item : UserKeyList)
 	{
-		cout << item["user"] << endl;
+		UserRegions userRegions;
+		userRegions.user = item["user"];
+
 		for (auto& key : item["key"])
 		{
-			cout << key["id"] << endl;
+			Region region;
+			region.id = key["id"];
+			region.topLeft.x = key["topLeft"]["x"];
+			region.topLeft.y = key["topLeft"]["y"];
+			region.bottomRight.x = key["bottomRight"]["x"];
+			region.bottomRight.y = key["bottomRight"]["y"];
+			userRegions.regions.push_back(region);
 		}
+		vecUserRegions.push_back(userRegions);
 	}
 
+	for (auto& item : vecUserRegions)
+	{
+		cout << item.user << endl;
 
+		for (auto& reg : item.regions)
+		{
+			cout << reg.id << " " << reg.topLeft.x << " " << reg.topLeft.y << " " << reg.bottomRight.x << " " << reg.bottomRight.y <<endl;
+		}
+	}
+	
+	vector<Point> vecPoint;
 
+	vecPoint.push_back({-3,2});
+	vecPoint.push_back({5,2});
+	vecPoint.push_back({2,-3});
+	vecPoint.push_back({-8,6});
+	vecPoint.push_back({-3,3.5});
+	vecPoint.push_back({-2,-6});
 
+	cout << "Regiões ativadas:" << endl;
+
+	for (auto& point : vecPoint)
+	{
+		for (auto& item : vecUserRegions)
+		{
+			for (auto& reg : item.regions)
+			{
+				if (VerifyPointInRegion(reg, point))
+				{
+					cout << "   user = " << item.user << "  id = " << reg.id << endl;
+				}
+			}
+		}
+	}
+	
 
 	return 0;
+	
 }
-
-
-
-
