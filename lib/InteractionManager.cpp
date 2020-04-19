@@ -28,21 +28,21 @@ void InteractionManager::setUserKeyList(std::string *idModulo, std::string *user
 
 }
 
-void InteractionManager::notifyInteraction(InteractionModule::EventType, std::string *user, std::string *key)
+bool InteractionManager::notifyInteraction(InteractionModule::eventTransition ev, std::string *user, std::string *key)
 {
-	/*
-	 bool status = ginga->sendKey (
-	   string (key), g_str_equal ((const char *) type, "voice") == 0);
 
-	  if (free_key)
-	    g_free (deconst (char *, key));
+   if (ev == InteractionModule::eventTransition::onVoiceRecognition)
+   {
+//		 if (!(ginga->sendKey (std::string(user),std::string(key), true)))
+//	 if (!(ginga->sendKey (std::string(user),std::string(key),true)))
+		return false;
+//     if (!(ginga->sendKey (std::string(user),std::string(key), false)))
+//     if (!(ginga->sendKey (std::string(user),std::string(key),false)))
+//		return false;
 
-	  if (!status)
-	    {
-	      g_assert (ginga->getState () == GINGA_STATE_STOPPED);
-	      gtk_main_quit (); // all done
-	    }
+     return true;
+   }
+   else
+     return false;
 
-	  return status;
-	  */
 }

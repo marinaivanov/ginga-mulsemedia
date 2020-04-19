@@ -397,6 +397,10 @@ void Object::sendKey (unused (const string &key), unused (bool press))
 {
 }
 
+void Object::sendKey (unused (const string &user), unused (const string &key), unused (bool press))
+{
+}
+
 void
 Object::sendTick (unused (Time total), Time diff, unused (Time frame))
 {

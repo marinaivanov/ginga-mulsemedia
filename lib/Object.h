@@ -77,6 +77,7 @@ public:
                          const string &value = "", Time delay = 0);
 
   virtual void sendKey (const string &, bool);
+  virtual void sendKey (const string &, const string &, bool);
   virtual void sendTick (Time, Time, Time);
 
   Time getTime ();

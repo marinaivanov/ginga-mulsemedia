@@ -564,6 +564,7 @@ static map<string, ParserSyntaxElt> parser_syntax_table = {
         { {"role", ATTR_REQUIRED_NONEMPTY_NAME},
           {"eventType", 0},
           {"key", 0},
+          {"user", 0},
           {"transition", 0},
           {"delay", 0},         // unused
           {"min", 0},           // unused

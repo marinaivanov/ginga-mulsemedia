@@ -361,6 +361,33 @@ Formatter::sendKey (const string &key, bool press)
 }
 
 bool
+Formatter::sendKey (const string &user, const string &key, bool press)
+{
+  list<Object *> buf;
+
+  // This must be the first check.
+  if (_state != GINGA_STATE_PLAYING)
+    return false;
+  _GINGA_CHECK_EOS (this);
+  if (_state != GINGA_STATE_PLAYING)
+    return false;
+
+  // IMPORTANT: When propagating a key to the objects, we cannot traverse
+  // the object set directly, as the reception of a key may cause this set
+  // to be modified.  We thus need to create a buffer with the objects that
+  // should receive the key, i.e., those that are not sleeping, and then
+  // propagate the key only to the objects in this buffer.
+  for (auto obj : *_doc->getObjects ())
+    if (!obj->isSleeping ())
+      buf.push_back (obj);
+  for (auto obj : buf)
+    obj->sendKey (user, key, press);
+
+  return true;
+}
+
+
+bool
 Formatter::sendTick (uint64_t total, uint64_t diff, uint64_t frame)
 {
   list<Object *> buf;
