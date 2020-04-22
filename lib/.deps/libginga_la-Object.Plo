@@ -599,7 +599,9 @@ libginga_la-Object.lo: Object.cpp /usr/include/stdc-predef.h aux-ginga.h \
  /usr/include/c++/7/bits/stl_vector.h \
  /usr/include/c++/7/bits/stl_bvector.h /usr/include/c++/7/bits/vector.tcc \
  Object.h Event.h Predicate.h Composition.h Context.h Document.h Media.h \
- Player.h Formatter.h PlayerAnimator.h MediaSettings.h Switch.h
+ Player.h Formatter.h InteractionManager.h \
+ ../interactionModules/InteractionModule.h InteractionManager.h \
+ PlayerAnimator.h MediaSettings.h Switch.h
 
 /usr/include/stdc-predef.h:
 
@@ -1982,6 +1984,12 @@ Media.h:
 Player.h:
 
 Formatter.h:
+
+InteractionManager.h:
+
+../interactionModules/InteractionModule.h:
+
+InteractionManager.h:
 
 PlayerAnimator.h:
 

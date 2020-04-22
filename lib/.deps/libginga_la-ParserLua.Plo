@@ -599,11 +599,12 @@ libginga_la-ParserLua.lo: ParserLua.cpp /usr/include/stdc-predef.h \
  /usr/include/c++/7/bits/stl_vector.h \
  /usr/include/c++/7/bits/stl_bvector.h /usr/include/c++/7/bits/vector.tcc \
  ParserLua.h Document.h Object.h Event.h Predicate.h Context.h \
- Composition.h Media.h Player.h Formatter.h PlayerAnimator.h \
- MediaSettings.h Switch.h aux-lua.h /usr/include/assert.h \
- /usr/include/lua5.2/lua.h /usr/include/lua5.2/luaconf.h \
- /usr/include/lua5.2/lauxlib.h /usr/include/lua5.2/lua.h \
- /usr/include/lua5.2/lualib.h
+ Composition.h Media.h Player.h Formatter.h InteractionManager.h \
+ ../interactionModules/InteractionModule.h InteractionManager.h \
+ PlayerAnimator.h MediaSettings.h Switch.h aux-lua.h \
+ /usr/include/assert.h /usr/include/lua5.2/lua.h \
+ /usr/include/lua5.2/luaconf.h /usr/include/lua5.2/lauxlib.h \
+ /usr/include/lua5.2/lua.h /usr/include/lua5.2/lualib.h
 
 /usr/include/stdc-predef.h:
 
@@ -1988,6 +1989,12 @@ Media.h:
 Player.h:
 
 Formatter.h:
+
+InteractionManager.h:
+
+../interactionModules/InteractionModule.h:
+
+InteractionManager.h:
 
 PlayerAnimator.h:
 

@@ -599,9 +599,10 @@ libginga_la-Player.lo: Player.cpp /usr/include/stdc-predef.h aux-ginga.h \
  /usr/include/c++/7/bits/stl_vector.h \
  /usr/include/c++/7/bits/stl_bvector.h /usr/include/c++/7/bits/vector.tcc \
  aux-gl.h Player.h Formatter.h Document.h Object.h Event.h Predicate.h \
- PlayerAnimator.h Media.h PlayerImage.h PlayerText.h PlayerVideo.h \
- PlayerSigGen.h PlayerStream.h /usr/include/gtk-3.0/gtk/gtk.h \
- /usr/include/gtk-3.0/gtk/gtkaboutdialog.h \
+ InteractionManager.h ../interactionModules/InteractionModule.h \
+ InteractionManager.h PlayerAnimator.h Media.h PlayerImage.h PlayerText.h \
+ PlayerVideo.h PlayerSigGen.h PlayerStream.h \
+ /usr/include/gtk-3.0/gtk/gtk.h /usr/include/gtk-3.0/gtk/gtkaboutdialog.h \
  /usr/include/gtk-3.0/gtk/gtkdialog.h \
  /usr/include/gtk-3.0/gtk/gtkwindow.h \
  /usr/include/gtk-3.0/gtk/gtkapplication.h \
@@ -2288,6 +2289,12 @@ Object.h:
 Event.h:
 
 Predicate.h:
+
+InteractionManager.h:
+
+../interactionModules/InteractionModule.h:
+
+InteractionManager.h:
 
 PlayerAnimator.h:
 

@@ -17,7 +17,7 @@ class InteractionManager
 {
 	public:
 
-	    bool notifyInteraction(InteractionModule::eventTransition, std::string *user, std::string *key);
+	    bool notifyInteraction(InteractionModule::eventTransition, std::string &user, std::string &key);
 	
 	    // Os parâmetros poderam ser as opções do documento tendo a especificações dos modulos
 	    InteractionManager(Ginga *ginga);

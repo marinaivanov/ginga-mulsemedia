@@ -599,7 +599,9 @@ libginga_la-PlayerSvg.lo: PlayerSvg.cpp /usr/include/stdc-predef.h \
  /usr/include/c++/7/bits/stl_vector.h \
  /usr/include/c++/7/bits/stl_bvector.h /usr/include/c++/7/bits/vector.tcc \
  PlayerSvg.h Player.h Formatter.h Document.h Object.h Event.h Predicate.h \
- PlayerAnimator.h /usr/include/librsvg-2.0/librsvg/rsvg.h \
+ InteractionManager.h ../interactionModules/InteractionModule.h \
+ InteractionManager.h PlayerAnimator.h \
+ /usr/include/librsvg-2.0/librsvg/rsvg.h \
  /usr/include/librsvg-2.0/librsvg/librsvg-enum-types.h \
  /usr/include/librsvg-2.0/librsvg/librsvg-features.h \
  /usr/include/librsvg-2.0/librsvg/rsvg-cairo.h
@@ -1981,6 +1983,12 @@ Object.h:
 Event.h:
 
 Predicate.h:
+
+InteractionManager.h:
+
+../interactionModules/InteractionModule.h:
+
+InteractionManager.h:
 
 PlayerAnimator.h:
 

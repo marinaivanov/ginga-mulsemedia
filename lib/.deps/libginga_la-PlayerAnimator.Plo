@@ -599,7 +599,9 @@ libginga_la-PlayerAnimator.lo: PlayerAnimator.cpp \
  /usr/include/c++/7/bits/stl_uninitialized.h \
  /usr/include/c++/7/bits/stl_vector.h \
  /usr/include/c++/7/bits/stl_bvector.h /usr/include/c++/7/bits/vector.tcc \
- PlayerAnimator.h Formatter.h Document.h Object.h Event.h Predicate.h
+ PlayerAnimator.h Formatter.h Document.h Object.h Event.h Predicate.h \
+ InteractionManager.h ../interactionModules/InteractionModule.h \
+ InteractionManager.h
 
 /usr/include/stdc-predef.h:
 
@@ -1976,3 +1978,9 @@ Object.h:
 Event.h:
 
 Predicate.h:
+
+InteractionManager.h:
+
+../interactionModules/InteractionModule.h:
+
+InteractionManager.h:

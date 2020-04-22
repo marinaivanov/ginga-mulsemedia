@@ -598,9 +598,11 @@ libginga_la-Formatter.lo: Formatter.cpp /usr/include/stdc-predef.h \
  /usr/include/c++/7/bits/stl_uninitialized.h \
  /usr/include/c++/7/bits/stl_vector.h \
  /usr/include/c++/7/bits/stl_bvector.h /usr/include/c++/7/bits/vector.tcc \
- aux-gl.h Formatter.h Document.h Object.h Event.h Predicate.h Context.h \
- Composition.h Media.h Player.h PlayerAnimator.h MediaSettings.h Switch.h \
- Parser.h PlayerText.h ParserLua.h
+ aux-gl.h Formatter.h Document.h Object.h Event.h Predicate.h \
+ InteractionManager.h ../interactionModules/InteractionModule.h \
+ InteractionManager.h Context.h Composition.h Media.h Player.h \
+ PlayerAnimator.h MediaSettings.h Switch.h Parser.h PlayerText.h \
+ ParserLua.h
 
 /usr/include/stdc-predef.h:
 
@@ -1977,6 +1979,12 @@ Object.h:
 Event.h:
 
 Predicate.h:
+
+InteractionManager.h:
+
+../interactionModules/InteractionModule.h:
+
+InteractionManager.h:
 
 Context.h:
 

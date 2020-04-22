@@ -600,7 +600,9 @@ libginga_la-MediaSettings.lo: MediaSettings.cpp \
  /usr/include/c++/7/bits/stl_vector.h \
  /usr/include/c++/7/bits/stl_bvector.h /usr/include/c++/7/bits/vector.tcc \
  MediaSettings.h Media.h Object.h Event.h Predicate.h Player.h \
- Formatter.h Document.h PlayerAnimator.h Context.h Composition.h Switch.h
+ Formatter.h Document.h InteractionManager.h \
+ ../interactionModules/InteractionModule.h InteractionManager.h \
+ PlayerAnimator.h Context.h Composition.h Switch.h
 
 /usr/include/stdc-predef.h:
 
@@ -1981,6 +1983,12 @@ Player.h:
 Formatter.h:
 
 Document.h:
+
+InteractionManager.h:
+
+../interactionModules/InteractionModule.h:
+
+InteractionManager.h:
 
 PlayerAnimator.h:
 

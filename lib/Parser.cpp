@@ -159,6 +159,7 @@ typedef struct ParserConnRole
   string duration;              ///< Role duration (if action).
   string delay;                 ///< Role delay.
   string key;                   ///< Role key (if selection).
+  string user;                  ///< Role user (if voice_recognition).
   string value;                 ///< Role value (if attribution).
 } ParserConnRole;
 
@@ -2754,13 +2755,20 @@ borderColor='%s'}",
                   }
                   case Event::VOICE_RECOGNITION:
                     {
-                      act.value = st->resolveParameter (
-                          role->key, &bind->params, params, &ghosts_map);
+                       act.value = st->resolveParameter (
+                            role->key, &bind->params, params, &ghosts_map);
 
-                      obj->addVoiceRecognitionEvent (act.value);
-                      act.event = obj->getVoiceRecognitionEvent (act.value);
+                        act.owner = st->resolveParameter (
+                            role->user, &bind->params, params, &ghosts_map);
+
+                      obj->addVoiceRecognitionEvent (act.value, act.owner);
+
+                      act.event = obj->getVoiceRecognitionEvent (act.value, act.owner);
+
                       g_assert_nonnull (act.event);
+
                       act.event->setParameter ("key", act.value);
+                      act.event->setParameter ("user", act.owner);
                       break;
                     }
 
@@ -3116,6 +3124,9 @@ ParserState::pushSimpleCondition (ParserState *st, ParserElt *elt)
 
   if ((role.eventType == Event::SELECTION) || (role.eventType == Event::VOICE_RECOGNITION))
     elt->getAttribute ("key", &role.key);
+
+  if ((role.eventType == Event::VOICE_RECOGNITION))
+    elt->getAttribute ("user", &role.user);
 
   if (unlikely (!role.condition && role.eventType == Event::ATTRIBUTION
                 && !elt->getAttribute ("value", &role.value)))

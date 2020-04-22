@@ -34,7 +34,7 @@ public:
   string toString () override;
   void setProperty (const string &, const string &, Time dur = 0) override;
   void sendKey (const string &, bool) override;
-  void sendKey (const string &user,const string &key, bool press) override;
+  void sendKey (const string &,const string &, bool press) override;
   void sendTick (Time, Time, Time) override;
   bool beforeTransition (Event *, Event::Transition) override;
   bool afterTransition (Event *, Event::Transition) override;

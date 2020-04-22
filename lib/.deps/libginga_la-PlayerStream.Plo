@@ -610,8 +610,9 @@ libginga_la-PlayerStream.lo: PlayerStream.cpp /usr/include/stdc-predef.h \
  /usr/include/gstreamer-1.0/gst/rtp/gstrtpbasedepayload.h \
  /usr/include/gstreamer-1.0/gst/rtp/gstrtp-enumtypes.h PlayerStream.h \
  Player.h Formatter.h Document.h Object.h Event.h Predicate.h \
- PlayerAnimator.h PlayerVideo.h /usr/include/gtk-3.0/gtk/gtk.h \
- /usr/include/gtk-3.0/gtk/gtkaboutdialog.h \
+ InteractionManager.h ../interactionModules/InteractionModule.h \
+ InteractionManager.h PlayerAnimator.h PlayerVideo.h \
+ /usr/include/gtk-3.0/gtk/gtk.h /usr/include/gtk-3.0/gtk/gtkaboutdialog.h \
  /usr/include/gtk-3.0/gtk/gtkdialog.h \
  /usr/include/gtk-3.0/gtk/gtkwindow.h \
  /usr/include/gtk-3.0/gtk/gtkapplication.h \
@@ -2334,6 +2335,12 @@ Object.h:
 Event.h:
 
 Predicate.h:
+
+InteractionManager.h:
+
+../interactionModules/InteractionModule.h:
+
+InteractionManager.h:
 
 PlayerAnimator.h:
 

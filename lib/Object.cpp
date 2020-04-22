@@ -202,6 +202,15 @@ Object::getEvent (Event::Type type, const string &id)
 }
 
 Event *
+Object::getEvent (Event::Type type, const string &id, const string &owner)
+{
+  for (auto evt : _events)
+    if (evt->getType () == type && evt->getId () == id && evt->getOwner () == owner)
+      return evt;
+  return nullptr;
+}
+
+Event *
 Object::getAttributionEvent (const string &propName)
 {
   return this->getEvent (Event::ATTRIBUTION, propName);
@@ -308,20 +317,20 @@ Object::addPreparationEvent (const string &id, Time begin, Time end)
 
 
 Event *
-Object::getVoiceRecognitionEvent (const string &key)
+Object::getVoiceRecognitionEvent (const string &key, const string &user)
 {
-  return this->getEvent (Event::VOICE_RECOGNITION, key);
+  return this->getEvent (Event::VOICE_RECOGNITION, key, user);
 }
 
 void
-Object::addVoiceRecognitionEvent (const string &key)
+Object::addVoiceRecognitionEvent (const string &key,const string &user )
 {
   Event *evt;
 
-  if (this->getVoiceRecognitionEvent (key))
+  if (this->getVoiceRecognitionEvent (key, user))
     return;
 
-  evt = new Event (Event::VOICE_RECOGNITION, this, key);
+  evt = new Event (Event::VOICE_RECOGNITION, this, key, user);
   _events.insert (evt);
 }
 

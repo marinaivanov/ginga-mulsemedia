@@ -28,17 +28,16 @@ void InteractionManager::setUserKeyList(std::string *idModulo, std::string *user
 
 }
 
-bool InteractionManager::notifyInteraction(InteractionModule::eventTransition ev, std::string *user, std::string *key)
+bool InteractionManager::notifyInteraction(InteractionModule::eventTransition ev, std::string &user, std::string &key)
 {
 
    if (ev == InteractionModule::eventTransition::onVoiceRecognition)
    {
-//		 if (!(ginga->sendKey (std::string(user),std::string(key), true)))
-//	 if (!(ginga->sendKey (std::string(user),std::string(key),true)))
+     if (!(ginga->sendKey (std::string(key),std::string(user),true)))
 		return false;
-//     if (!(ginga->sendKey (std::string(user),std::string(key), false)))
-//     if (!(ginga->sendKey (std::string(user),std::string(key),false)))
-//		return false;
+
+     if (!(ginga->sendKey (std::string(key), std::string(user),false)))
+		return false;
 
      return true;
    }

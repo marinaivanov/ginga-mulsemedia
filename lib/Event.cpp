@@ -34,6 +34,18 @@ Event::Event (Event::Type type, Object *object, const string &id)
   _end = GINGA_TIME_NONE;
 }
 
+Event::Event (Event::Type type, Object *object, const string &id, const string &owner)
+{
+	  _type = type;
+	  g_assert_nonnull (object);
+	  _object = object;
+	  _id = id;
+	  _state = Event::SLEEPING;
+	  _begin = 0;
+	  _end = GINGA_TIME_NONE;
+   _owner = owner;
+}
+
 Event::~Event ()
 {
 }
@@ -54,6 +66,12 @@ string
 Event::getId ()
 {
   return _id;
+}
+
+string
+Event::getOwner ()
+{
+  return _owner;
 }
 
 string
@@ -79,7 +97,7 @@ Event::getFullId ()
       else
         return obj_id + "$" + _id;
     case Event::VOICE_RECOGNITION:
-      return obj_id + "<" + _id + ">";
+      return obj_id + "<" + _id + ">" + "<" + _owner + ">";
     default:
       g_assert_not_reached ();
     }
@@ -102,11 +120,12 @@ Event::toString ()
 Event (%p)\n\
   object: %p (%s, id: %s)\n\
   id: %s\n\
+  owner: %s\n\
   full-id: %s\n\
   type: %s\n\
   state: %s\n",
       this, _object, _object->getObjectTypeAsString ().c_str (),
-      _object->getId ().c_str (), _id.c_str (), this->getFullId ().c_str (),
+      _object->getId ().c_str (), _id.c_str (), _owner.c_str(), this->getFullId ().c_str (),
       Event::getEventTypeAsString (_type).c_str (),
       Event::getEventStateAsString (_state).c_str ());
 

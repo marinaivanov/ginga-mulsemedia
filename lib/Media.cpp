@@ -85,13 +85,12 @@ Media::setProperty (const string &name, const string &value, Time dur)
 }
 
 void
-Media::sendKey (const string &user,const string &key, bool press)
+Media::sendKey (const string &key,const string &user, bool press)
 {
   list<Event *> buf;
   string expected;
-	  string parUser;
+  string parUser;
 
-      TRACE ("send key no voice user: %s", std::string(user));
 
   if (unlikely (this->isSleeping ()))
     return; // nothing to do
@@ -106,11 +105,11 @@ Media::sendKey (const string &user,const string &key, bool press)
       if (evt->getType () != Event::VOICE_RECOGNITION)
         continue;
 
-
       expected = "";
       parUser = "";
 
       evt->getParameter ("key", &expected);
+
       evt->getParameter ("user", &parUser);
 
  //     bool noParam = (expected == "");
@@ -119,16 +118,19 @@ Media::sendKey (const string &user,const string &key, bool press)
 
 
        bool noParam = expected == "";
+
        bool paramKeyNoUser = (expected != "") && (key == expected) && (parUser == "");
+
        bool paramKeyUser = (expected != "") && (parUser != "") && (key == expected) && (parUser == user);
 
-
-       TRACE ("No voice parametro: %s user: %s", std::string(parUser), std::string(user));
-
+       TRACE ("****************************No voice parametro: %s user: %s\n\n", parUser.c_str (), user.c_str ());
 
       if (!(noParam || paramKeyNoUser || paramKeyUser))
       {
-          continue;
+          TRACE ("Valor booleano %d\n\n", paramKeyUser);
+          TRACE ("Dentro do if de descarte No voice parametro: %s user: %s\n\n", parUser.c_str (), user.c_str ());
+          TRACE ("Dentro do if de descarte No voice key param: %s key: %s\n\n", expected.c_str (), key.c_str ());
+    	  continue;
        }
 
       buf.push_back (evt);
@@ -176,7 +178,7 @@ Media::sendKey (const string &key, bool press)
 
   if (key == "RED")
   {
-	 sendKey (std::string("JOAO"),std::string(key),press);
+	 sendKey (std::string(key), std::string("FABIO"),press);
   }
 
 

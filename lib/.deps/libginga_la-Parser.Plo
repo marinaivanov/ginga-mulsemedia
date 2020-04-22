@@ -599,9 +599,10 @@ libginga_la-Parser.lo: Parser.cpp /usr/include/stdc-predef.h aux-ginga.h \
  /usr/include/c++/7/bits/stl_vector.h \
  /usr/include/c++/7/bits/stl_bvector.h /usr/include/c++/7/bits/vector.tcc \
  Parser.h Document.h Object.h Event.h Predicate.h Context.h Composition.h \
- Media.h Player.h Formatter.h PlayerAnimator.h MediaSettings.h Switch.h \
- TemporalGraph.h PresentationOrchestrator.h \
- /usr/include/libxml2/libxml/tree.h \
+ Media.h Player.h Formatter.h InteractionManager.h \
+ ../interactionModules/InteractionModule.h InteractionManager.h \
+ PlayerAnimator.h MediaSettings.h Switch.h TemporalGraph.h \
+ PresentationOrchestrator.h /usr/include/libxml2/libxml/tree.h \
  /usr/include/libxml2/libxml/xmlversion.h \
  /usr/include/libxml2/libxml/xmlexports.h \
  /usr/include/libxml2/libxml/xmlstring.h \
@@ -2012,6 +2013,12 @@ Media.h:
 Player.h:
 
 Formatter.h:
+
+InteractionManager.h:
+
+../interactionModules/InteractionModule.h:
+
+InteractionManager.h:
 
 PlayerAnimator.h:
 

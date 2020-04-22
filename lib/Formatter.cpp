@@ -179,6 +179,9 @@ Formatter::start (const string &file, string *errmsg)
   // Sets formatter state.
   _state = GINGA_STATE_PLAYING;
 
+  _intManager = new InteractionManager(this);
+
+
   return true;
 }
 

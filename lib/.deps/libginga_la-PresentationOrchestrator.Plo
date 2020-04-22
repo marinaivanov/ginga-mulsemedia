@@ -600,7 +600,9 @@ libginga_la-PresentationOrchestrator.lo: PresentationOrchestrator.cpp \
  /usr/include/c++/7/bits/stl_vector.h \
  /usr/include/c++/7/bits/stl_bvector.h /usr/include/c++/7/bits/vector.tcc \
  TemporalGraph.h Event.h Predicate.h Object.h Media.h Player.h \
- Formatter.h Document.h PlayerAnimator.h Context.h Composition.h
+ Formatter.h Document.h InteractionManager.h \
+ ../interactionModules/InteractionModule.h InteractionManager.h \
+ PlayerAnimator.h Context.h Composition.h
 
 /usr/include/stdc-predef.h:
 
@@ -1983,6 +1985,12 @@ Player.h:
 Formatter.h:
 
 Document.h:
+
+InteractionManager.h:
+
+../interactionModules/InteractionModule.h:
+
+InteractionManager.h:
 
 PlayerAnimator.h:
 

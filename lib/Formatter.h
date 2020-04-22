@@ -22,6 +22,8 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 #include "aux-ginga.h"
 
 #include "Document.h"
+#include "InteractionManager.h"
+
 
 GINGA_NAMESPACE_BEGIN
 
@@ -103,6 +105,9 @@ private:
 
   /// @brief Whether the presentation has ended naturally.
   bool _eos;
+
+  /// @brief Interaction Manager.
+  InteractionManager *_intManager;
 };
 
 GINGA_NAMESPACE_END

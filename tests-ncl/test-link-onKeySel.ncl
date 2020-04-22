@@ -1,7 +1,7 @@
 <ncl>
   <head>
   
-     <regionBase>
+    <regionBase>
       <region id="reg" width="50%" height="50%"/>
       <region id="reg2" top="50%" width="50%" height="50%"/>
     </regionBase>
@@ -21,14 +21,11 @@
      
   
        <causalConnector id="onVoiceRecognitionStart">
-        <connectorParam name="key"/>
-        <connectorParam name="user"/>
-         <simpleCondition role="onVoiceRecognition" key="$key"/>
-         <simpleAction role="start" />
-      </causalConnector>  
-  
-  
-      
+          <connectorParam name="key"/>
+          <connectorParam name="user"/>
+          <simpleCondition role="onVoiceRecognition" key="$key" user = "$user"/>
+          <simpleAction role="start" />
+       </causalConnector>  
     </connectorBase>
   </head>
   <body>
@@ -76,7 +73,6 @@
     </link>
 
 
- 
   <link xconnector="onVoiceRecognitionStart">
       <bind role="onVoiceRecognition" component="time">
         <bindParam name="key" value="RED"/>

@@ -599,7 +599,9 @@ libginga_la-PlayerText.lo: PlayerText.cpp /usr/include/stdc-predef.h \
  /usr/include/c++/7/bits/stl_vector.h \
  /usr/include/c++/7/bits/stl_bvector.h /usr/include/c++/7/bits/vector.tcc \
  aux-gl.h PlayerText.h Player.h Formatter.h Document.h Object.h Event.h \
- Predicate.h PlayerAnimator.h
+ Predicate.h InteractionManager.h \
+ ../interactionModules/InteractionModule.h InteractionManager.h \
+ PlayerAnimator.h
 
 /usr/include/stdc-predef.h:
 
@@ -1980,5 +1982,11 @@ Object.h:
 Event.h:
 
 Predicate.h:
+
+InteractionManager.h:
+
+../interactionModules/InteractionModule.h:
+
+InteractionManager.h:
 
 PlayerAnimator.h:
