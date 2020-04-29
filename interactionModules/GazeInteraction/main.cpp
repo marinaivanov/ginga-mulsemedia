@@ -22,12 +22,13 @@ typedef struct region
 	Point bottomRight;
 } Region;
 
+/*
 typedef struct userRegions
 {
 	std::string user;
 	std::vector<Region> regions;
 } UserRegions;
-
+*/
 bool VerifyPointInRegion(Region R, Point P)
 {
 	return  (P.x <= R.bottomRight.x) && (P.x >= R.topLeft.x) && 
@@ -39,62 +40,46 @@ int main()
 {
 	json UserKeyList;
 
+	UserKeyList.emplace("user", "marina");
 	UserKeyList.push_back({
-		{"user", "all"},
-		{"key", {
+		"key", {
 			{ {"id", 1},
 			  {"topLeft", {{"x", -6}, {"y", 4}}},
 			  {"bottomRight", {{"x", 2}, {"y", -4}}} },
 
 			{ {"id", 2},
 			  {"topLeft", {{"x", -2}, {"y", -1}}},
-			  {"bottomRight", {{"x", 6}, {"y", -7}}} }
-		}}
-	});
-
-	UserKeyList.push_back({
-		{"user", "marina"},
-		{"key", {
-			{ {"id", 1},
-			  {"topLeft", {{"x", -6}, {"y", 4}}},
-			  {"bottomRight", {{"x", 2}, {"y", -4}}} },
+			  {"bottomRight", {{"x", 6}, {"y", -7}}} },
 
 			{ {"id", 3},
 			  {"topLeft", {{"x", -2}, {"y", -1}}},
 			  {"bottomRight", {{"x", 6}, {"y", -7}}} }
-		}}
+		}
 	});
 
 	//cout << setw(4) << UserKeyList << endl;
 
-	vector<UserRegions> vecUserRegions;
+	vector<Region> vecRegion;
+	string user;
 
-	for (auto& item : UserKeyList)
+	user = UserKeyList["user"];
+
+	for (auto& key : UserKeyList["key"])
 	{
-		UserRegions userRegions;
-		userRegions.user = item["user"];
-
-		for (auto& key : item["key"])
-		{
 			Region region;
 			region.id = key["id"];
 			region.topLeft.x = key["topLeft"]["x"];
 			region.topLeft.y = key["topLeft"]["y"];
 			region.bottomRight.x = key["bottomRight"]["x"];
 			region.bottomRight.y = key["bottomRight"]["y"];
-			userRegions.regions.push_back(region);
-		}
-		vecUserRegions.push_back(userRegions);
+			vecRegion.push_back(region);
 	}
 
-	for (auto& item : vecUserRegions)
-	{
-		cout << item.user << endl;
+	cout << user << endl;
 
-		for (auto& reg : item.regions)
-		{
-			cout << reg.id << " " << reg.topLeft.x << " " << reg.topLeft.y << " " << reg.bottomRight.x << " " << reg.bottomRight.y <<endl;
-		}
+	for (auto& reg : vecRegion)
+	{
+		cout << reg.id << " " << reg.topLeft.x << " " << reg.topLeft.y << " " << reg.bottomRight.x << " " << reg.bottomRight.y <<endl;
 	}
 	
 	vector<Point> vecPoint;
@@ -110,18 +95,14 @@ int main()
 
 	for (auto& point : vecPoint)
 	{
-		for (auto& item : vecUserRegions)
+		for (auto& reg : vecRegion)
 		{
-			for (auto& reg : item.regions)
+			if (VerifyPointInRegion(reg, point))
 			{
-				if (VerifyPointInRegion(reg, point))
-				{
-					cout << "   user = " << item.user << "  id = " << reg.id << endl;
-				}
+				cout << "   user = " << user << "  id = " << reg.id << endl;
 			}
 		}
 	}
-	
 
 	return 0;
 	
