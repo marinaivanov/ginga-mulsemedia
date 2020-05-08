@@ -55,6 +55,7 @@ src+= Predicate.cpp
 src+= Switch.cpp
 src+= TemporalGraph.cpp
 src+= PresentationOrchestrator.cpp
+src+= voiceRecognition.cpp
 src+= InteractionManager.cpp
 src+= aux-ginga.cpp
 src+= aux-gl.cpp

@@ -254,6 +254,11 @@ keyboard_callback (GtkWidget *widget, GdkEventKey *e, gpointer type)
       break;
     }
 
+  printf("Captura da tecla antes de chamar o sendkey: tecla: %s \n\n", key);
+  if (string (key).c_str() ==  string ("g").c_str() )
+	  printf("ok!\n");
+
+
   bool status = GINGA->sendKey (
       string (key), g_str_equal ((const char *) type, "press") == 0);
 
@@ -308,6 +313,21 @@ tick_callback (GtkWidget *widget)
   gtk_widget_queue_draw (widget);
   return G_SOURCE_CONTINUE;
 }
+
+static gboolean
+voice_callback (GtkWidget *widget, GdkEventKey *e, gpointer type)
+{
+	 printf("Captura do movimento do mouse!! \n\n");
+
+	  bool status = GINGA->sendKey (string ("RED"), string ("FABIO"), g_str_equal ((const char *) type, "press") == 0);
+	  status = GINGA->sendKey (string ("RED"), string ("FABIO"), g_str_equal ((const char *) type, "release") == 0);
+	  //bool status = GINGA->sendKey (string ("RED"), string ("FABIO"), true);
+
+	  return status;
+
+}
+
+
 
 // Main.
 
@@ -395,7 +415,16 @@ main (int argc, char **argv)
   g_signal_connect (app, "key-release-event",
                     G_CALLBACK (keyboard_callback),
                     deconst (void *, "release"));
-#if GTK_CHECK_VERSION(3, 8, 0)
+
+  g_signal_connect (app, "motion-notify-event",
+                     G_CALLBACK (voice_callback),
+                     deconst (void *, "press"));
+  g_signal_connect (app, "motion-notify-event",
+                             G_CALLBACK (voice_callback),
+                             deconst (void *, "release"));
+
+
+  #if GTK_CHECK_VERSION(3, 8, 0)
   gtk_widget_add_tick_callback (app, (GtkTickCallback) tick_callback, NULL,
                                 NULL);
 #else

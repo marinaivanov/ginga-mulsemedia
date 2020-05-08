@@ -112,7 +112,7 @@ if (WITH_CEF) # Download, link, build with CEF
   ADD_LOGICAL_TARGET("libcef_lib" "${CEF_LIB_DEBUG}" "${CEF_LIB_RELEASE}")
   SET (CEF_TARGET_OUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin/")
 
-else()
+else(
   add_definitions (-DWITH_CEF=0)
 endif()
 
@@ -120,7 +120,6 @@ set (LIBGINGA_SOURCES
   ../lib/ginga.h
   ../lib/aux-ginga.cpp
   ../lib/aux-gl.cpp
-
   ../lib/Composition.cpp
   ../lib/Context.cpp
   ../lib/Document.cpp
@@ -136,7 +135,6 @@ set (LIBGINGA_SOURCES
   ../lib/Switch.cpp
   ../lib/TemporalGraph.cpp
   ../lib/PresentationOrchestrator.cpp
-
   ../lib/Player.cpp
   ../lib/PlayerAnimator.cpp
   ../lib/PlayerImage.cpp
@@ -145,6 +143,7 @@ set (LIBGINGA_SOURCES
   ../lib/PlayerText.cpp
   ../lib/PlayerVideo.cpp
   ../lib/InteractionManager.cpp
+  ../interactionModules/voiceRecognition.cpp
 
 #if WITH_LIBRSVG
   ../lib/PlayerSvg.cpp

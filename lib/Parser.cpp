@@ -331,6 +331,8 @@ private:
   ParserSyntaxElt *checkNode (xmlNode *, map<string, string> *,
                               list<xmlNode *> *);
   bool processNode (xmlNode *);
+
+  Document* getDoc();
 };
 
 /// Asserted version of UserData::getData().
@@ -859,9 +861,7 @@ static map<string, pair<Event::Type, Event::Transition> >
       {"onBeginSelection", {Event::SELECTION, Event::START} },
       {"onEndSelection", {Event::SELECTION, Event::STOP} },
 
-	  {"onVoiceRecognition", {Event::VOICE_RECOGNITION, Event::START} },
-      {"onBeginVoiceRecognition", {Event::VOICE_RECOGNITION, Event::START} },
-      {"onEndVoiceRecognition", {Event::VOICE_RECOGNITION, Event::STOP} },
+	  {"onVoiceRecognition", {Event::VOICE_RECOGNITION, Event::STOP} }, //Added to represent voice interactions
 
 	  {"onBeginPreparation", {Event::PREPARATION, Event::START} }, // conditions
       {"onEndPreparation", {Event::PREPARATION, Event::STOP} },
@@ -2151,8 +2151,9 @@ ParserState::processNode (xmlNode *node)
   // Allocate and initialize element wrapper.
   elt = new ParserElt (node);
   for (auto it : attrs)
+  {
     g_assert (elt->setAttribute (it.first, it.second));
-
+  }
   // Initialize flags.
   cached = false;
   status = true;
@@ -2639,7 +2640,8 @@ borderColor='%s'}",
                 {
                   if (label == bind->role)
                     {
-                      found = true;
+
+                	  found = true;
                       break;
                     }
                 }
@@ -2666,6 +2668,7 @@ borderColor='%s'}",
                   if (unlikely (!st->resolveInterface (ctx, elt, &evt)))
                     return false;
                   (*it.second)[bind->role] = "$" + evt->getFullId ();
+
                 }
             }
 
@@ -2755,21 +2758,27 @@ borderColor='%s'}",
                   }
                   case Event::VOICE_RECOGNITION:
                     {
-                       act.value = st->resolveParameter (
+                        act.value = st->resolveParameter (
                             role->key, &bind->params, params, &ghosts_map);
 
                         act.owner = st->resolveParameter (
                             role->user, &bind->params, params, &ghosts_map);
 
-                      obj->addVoiceRecognitionEvent (act.value, act.owner);
+                        Key oneKey;
+                		oneKey.key = act.value;
+                		oneKey.user = act.owner;
 
-                      act.event = obj->getVoiceRecognitionEvent (act.value, act.owner);
+                		(st->getDoc())->addKeyList (role->eventType, oneKey);
 
-                      g_assert_nonnull (act.event);
+                		obj->addVoiceRecognitionEvent (act.value, act.owner);
 
-                      act.event->setParameter ("key", act.value);
-                      act.event->setParameter ("user", act.owner);
-                      break;
+                		act.event = obj->getVoiceRecognitionEvent (act.value, act.owner);
+
+                		g_assert_nonnull (act.event);
+
+                		act.event->setParameter ("key", act.value);
+                		act.event->setParameter ("user", act.owner);
+                		break;
                     }
 
                 default:
@@ -3133,6 +3142,19 @@ ParserState::pushSimpleCondition (ParserState *st, ParserElt *elt)
     {
       return st->errEltMissingAttribute (node, "value");
     }
+
+  //Add the event of interaction in a list to start the Interaction manager
+  switch (role.eventType)
+  {
+	  case Event::VOICE_RECOGNITION:
+  	  {
+  		  (st->getDoc())->addInteractions (role.eventType, true);
+  	   	  break;
+  	  }
+  	  default:
+  		  break;
+
+  }
 
   UDATA_GET (st, "conn-elt", &conn_elt);
   UDATA_GET (conn_elt, "roles", &roles);
@@ -4079,6 +4101,15 @@ ParserState::pushBind (ParserState *st, ParserElt *elt)
   
   return true;
 }
+
+
+
+Document*
+ParserState::getDoc()
+{
+	return _doc;
+}
+
 
 // External API.
 

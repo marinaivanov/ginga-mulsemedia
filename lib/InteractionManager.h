@@ -4,33 +4,40 @@
 #define INTERACTION_MANAGER_H
 
 #include "ginga.h"
-#include <map>
+#include "Event.h"
+#include <list>
 #include <string>
 
-
-#include "InteractionManager.h"
+//#include "../interactionModules/InteractionModule.h"
 #include "../interactionModules/InteractionModule.h"
 
-
+//#include "../interactionModules/nlohmann/json.hpp"
+//#include "nlohmann/json.hpp"
+//using json = nlohmann::json;
 
 class InteractionManager
 {
 	public:
 
-	    bool notifyInteraction(InteractionModule::eventTransition, std::string &user, std::string &key);
-	
 	    // Os parâmetros poderam ser as opções do documento tendo a especificações dos modulos
 	    InteractionManager(Ginga *ginga);
-	    ~InteractionManager(void);
-	    void addInteractionModule(InteractionModule *elem);
-	    void stopInteractionModule(std::string *idModulo);
-	    void startInteractionModule(std::string *idModulo);
-		void setUserKeyList(std::string * idModulo, std::string *userKeyList);//json userKeyList);
+
+	    void start();
+	    bool notifyInteraction(InteractionModule::eventTransition, std::string &user, std::string &key);
+
+		void setUserKeyListModules();
+	    void startInteractionModule(Event::Type mod);
+
+
+//	    void addInteractionModule(InteractionModule *elem);
+//	    void stopInteractionModule(std::string &idModulo);
+
 		
 	private:
+
 		Ginga *ginga;
-		std::map<std::string, InteractionModule *> ExtModules;
-  
+		std::map<Event::Type,InteractionModule *> ExtModules;
+
 };
 
 

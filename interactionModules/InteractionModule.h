@@ -4,7 +4,9 @@
 #define INTERACTION_MODULE_H
 
 //#include "json.h"
-#include "InteractionManager.h"
+//#include "InteractionManager.h"
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
 
 class InteractionModule
 {
@@ -23,13 +25,19 @@ class InteractionModule
 		onEyeMotion,
 	};
 
-	virtual void startModule(InteractionModule *intMan);
-	//virtual void setUserKeyList(json userKeyList);
-	virtual void stopModule();
+	explicit InteractionModule ();
+
+	virtual void start();
+	virtual void setUserKeyList(json);
+	virtual void stop();
+
+
     void setEvent(eventTransition valor) { event = valor;}
     eventTransition getEvent(void) { return event;}
+    std::string getId(){return id;}
 
   private:
+    std::string id;
     InteractionModule *intManager;
     eventTransition event;
 

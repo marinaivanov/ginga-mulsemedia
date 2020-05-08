@@ -199,8 +199,10 @@ int
 Document::evalAction (Event *event, Event::Transition transition,
                       const string &value)
 {
+
   Action act;
   act.event = event;
+  TRACE("\n Evento: %s", event->toString().c_str ());
   g_assert_nonnull (event);
   act.transition = transition;
   act.predicate = nullptr;
@@ -453,6 +455,76 @@ bool
 Document::setData (const string &key, void *value, UserDataCleanFunc fn)
 {
   return _udata.setData (key, value, fn);
+}
+
+/**
+ * @brief Gets document's interaction.
+ * @return The interactions that the Interaction Manager (modulo with managing of
+ * interactions like voice, gesture, etc .. ) runs.
+ */
+map<Event::Type,bool>
+Document::getInteractions()
+{
+	return _interactions;
+}
+/**
+ * @brief Add a event of the interaction
+ * @return a bool to ok the addition
+ */
+
+bool
+Document::addInteractions (Event::Type intEvent, bool on)
+{
+	  auto it = _interactions.find (intEvent);
+	  if (it == _interactions.end ())
+	  {
+		  _interactions.insert(std::pair<Event::Type,bool>(intEvent,on));
+		  return true;
+
+	  }
+	  return false;
+}
+/**
+ * @brief Change true or false that signalize to on or off the modulo that trigger of the event
+ * @return a bool to signalize if happened the changing
+ */
+bool
+Document::setInteractions (Event::Type intEvent, bool on)
+{
+	  auto it = _interactions.find (intEvent);
+	  if (it == _interactions.end ())
+	    return false;
+
+	  it->second = on;
+
+	  return true;
+}
+
+map<Event::Type,Key> Document::getKeyList()
+{
+	return _keyList;
+}
+
+/**
+ * @brief Change true or false that sinilize to on or off the modulo that try of the event
+ * @return a bool to signalize if happened the checking
+*/
+bool
+Document::checkInteractions (Event::Type intEvent)
+{
+	  auto it = _interactions.find (intEvent);
+	  if (it == _interactions.end ())
+	    return false;
+
+	  return  it->second;
+}
+
+bool
+Document::addKeyList (Event::Type intEvent, Key key)
+{
+	_keyList.insert(std::pair<Event::Type, Key>(intEvent,key));
+	return  true;
+
 }
 
 GINGA_NAMESPACE_END

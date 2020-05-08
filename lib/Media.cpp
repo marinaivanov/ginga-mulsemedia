@@ -84,6 +84,7 @@ Media::setProperty (const string &name, const string &value, Time dur)
     _player->setProperty (name, value);
 }
 
+
 void
 Media::sendKey (const string &key,const string &user, bool press)
 {
@@ -103,7 +104,10 @@ Media::sendKey (const string &key,const string &user, bool press)
     {
 
       if (evt->getType () != Event::VOICE_RECOGNITION)
+      {
+   	    //TRACE ("Dentro do sendkey voive evento: %d \n\n", evt->getType ());
         continue;
+      }
 
       expected = "";
       parUser = "";
@@ -124,6 +128,7 @@ Media::sendKey (const string &key,const string &user, bool press)
        bool paramKeyUser = (expected != "") && (parUser != "") && (key == expected) && (parUser == user);
 
        TRACE ("****************************No voice parametro: %s user: %s\n\n", parUser.c_str (), user.c_str ());
+       TRACE ("****************************No voice parametro: %s key: %s\n\n", expected.c_str (), key.c_str ());
 
       if (!(noParam || paramKeyNoUser || paramKeyUser))
       {
@@ -174,13 +179,6 @@ Media::sendKey (const string &key, bool press)
   // Pass key to player.
   if (_player->isFocused ())
     _player->sendKeyEvent (key, press);
-
-
-  if (key == "RED")
-  {
-	 sendKey (std::string(key), std::string("FABIO"),press);
-  }
-
 
   // Collect the events to be triggered.
   for (auto evt : _events)
@@ -585,14 +583,8 @@ Media::afterTransition (Event *evt, Event::Transition transition)
               g_assert_not_reached ();
             }
 
-
-    	  break;
+          break;
       }
-
-
-
-
-
 
     default:
       g_assert_not_reached ();

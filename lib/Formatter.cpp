@@ -157,6 +157,7 @@ Formatter::start (const string &file, string *errmsg)
   MediaSettings *settings = _doc->getSettings ();
   g_assert_nonnull (settings);
 
+
   // Initialize formatter variables.
   _docPath = file;
   _eos = false;
@@ -180,6 +181,9 @@ Formatter::start (const string &file, string *errmsg)
   _state = GINGA_STATE_PLAYING;
 
   _intManager = new InteractionManager(this);
+  _intManager->start();
+  _intManager->setUserKeyListModules();
+
 
 
   return true;
@@ -364,7 +368,7 @@ Formatter::sendKey (const string &key, bool press)
 }
 
 bool
-Formatter::sendKey (const string &user, const string &key, bool press)
+Formatter::sendKey (const string &key, const string &user,bool press)
 {
   list<Object *> buf;
 
@@ -384,7 +388,7 @@ Formatter::sendKey (const string &user, const string &key, bool press)
     if (!obj->isSleeping ())
       buf.push_back (obj);
   for (auto obj : buf)
-    obj->sendKey (user, key, press);
+    obj->sendKey (key, user,  press);
 
   return true;
 }
