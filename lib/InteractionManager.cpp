@@ -1,16 +1,17 @@
 
-#include "InteractionManager.h"
-//#include "../interactionModules/voiceRecognition.hpp"
 #include "Formatter.h"
 #include <iostream>
 #include <iomanip>
-using json = nlohmann::json;
+#include "InteractionManager.h"
+#include "../intMod/VoiceRecognition.h"
+
 using std::vector;
 using std::string;
 using std::cout;
 using std::endl;
 using std::setw;
 
+GINGA_NAMESPACE_BEGIN
 
 InteractionManager::InteractionManager (Ginga *ginga)
 {
@@ -34,9 +35,10 @@ void InteractionManager::start()
 				case Event::VOICE_RECOGNITION:
 				{
 
-				//	InteractionModule * umExtModule = new voiceRecognition();
-				//	umExtModule->start();
-				//	ExtModules.insert(std::pair<>it->first, umExtModule);
+					//InteractionModule umExtModule = (InteractionModule ) new voiceRecognition();
+					VoiceRecognition * umExtModule = new VoiceRecognition();
+					//umExtModule->start();
+					//ExtModules.insert(std::pair<Event::Type,InteractionModule *>(it->first, umExtModule));
 
 					break;
 				}
@@ -154,4 +156,4 @@ void InteractionManager::setUserKeyListModules()
 	}
 
 }
-
+GINGA_NAMESPACE_END

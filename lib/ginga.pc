@@ -6,8 +6,8 @@ includedir=${prefix}/include
 
 Name: ginga
 Description: The iTV middleware.
-Version: 1.0.4-8e2a-dirty
+Version: 1.0.9-28be-dirty
 
-Cflags:
+Cflags:mqtt/src/mqtt.c mqtt/src/mqtt_pal.c -l
 Libs: -L${libdir} -lginga
 Libs.private:  -lcairo  -lglib-2.0 -lgstvideo-1.0 -lgstaudio-1.0 -lgstapp-1.0 -lgstbase-1.0 -lgstreamer-1.0 -lgobject-2.0 -lglib-2.0 -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lrsvg-2 -lm -lgio-2.0 -lgdk_pixbuf-2.0 -lgobject-2.0 -lglib-2.0 -lcairo -lxml2 -llua5.2 -export-dynamic -lnclua  -lpangocairo-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lcairo -lsoup-2.4 -lgio-2.0 -lgobject-2.0 -lglib-2.0

@@ -3,15 +3,19 @@
 #ifndef INTERACTION_MODULE_H
 #define INTERACTION_MODULE_H
 
-//#include "json.h"
-//#include "InteractionManager.h"
-#include "nlohmann/json.hpp"
+#include <string>
+#include "../lib/nlohmann/json.hpp"
 using json = nlohmann::json;
+using std::string;
+
+//GINGA_NAMESPACE_BEGIN
+
+class InteractionManager;
 
 class InteractionModule
 {
   public:
-
+	InteractionModule();
 
 	enum eventTransition
 	{
@@ -25,22 +29,19 @@ class InteractionModule
 		onEyeMotion,
 	};
 
-	explicit InteractionModule ();
+    virtual void start()= 0;
+    virtual void setUserKeyList(json)= 0;
+    virtual void stop()= 0;
 
-	virtual void start();
-	virtual void setUserKeyList(json);
-	virtual void stop();
-
-
-    void setEvent(eventTransition valor) { event = valor;}
-    eventTransition getEvent(void) { return event;}
-    std::string getId(){return id;}
+    void setEvent(eventTransition valor);
+    eventTransition getEvent(void);
+    std::string getId();
 
   private:
     std::string id;
-    InteractionModule *intManager;
+    InteractionManager *intManager;
     eventTransition event;
 
 };
-
+//GINGA_NAMESPACE_END
 #endif // INTERACTION_MODULE_H

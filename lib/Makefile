@@ -186,8 +186,11 @@ am__libginga_la_SOURCES_DIST = Composition.cpp Context.cpp \
 	PlayerAnimator.cpp PlayerImage.cpp PlayerSigGen.cpp \
 	PlayerText.cpp PlayerVideo.cpp PlayerStream.cpp Predicate.cpp \
 	Switch.cpp TemporalGraph.cpp PresentationOrchestrator.cpp \
+	mqtt/src/mqtt.c mqtt/src/mqtt_pal.c \
+	../intMod/InteractionModule.cpp ../intMod/VoiceRecognition.cpp \
 	InteractionManager.cpp aux-ginga.cpp aux-gl.cpp PlayerSvg.cpp \
 	ParserLua.cpp PlayerLua.cpp PlayerHTML.cpp
+am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 = libginga_la-PlayerSvg.lo
 am__objects_2 = libginga_la-ParserLua.lo
 am__objects_3 = libginga_la-PlayerLua.lo
@@ -202,7 +205,10 @@ am__objects_5 = libginga_la-Composition.lo libginga_la-Context.lo \
 	libginga_la-PlayerText.lo libginga_la-PlayerVideo.lo \
 	libginga_la-PlayerStream.lo libginga_la-Predicate.lo \
 	libginga_la-Switch.lo libginga_la-TemporalGraph.lo \
-	libginga_la-PresentationOrchestrator.lo \
+	libginga_la-PresentationOrchestrator.lo mqtt/src/mqtt.lo \
+	mqtt/src/mqtt_pal.lo \
+	../intMod/libginga_la-InteractionModule.lo \
+	../intMod/libginga_la-VoiceRecognition.lo \
 	libginga_la-InteractionManager.lo libginga_la-aux-ginga.lo \
 	libginga_la-aux-gl.lo $(am__objects_1) $(am__objects_2) \
 	$(am__objects_3) $(am__objects_4)
@@ -231,6 +237,24 @@ DEFAULT_INCLUDES = -I.
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
+CCLD = $(CC)
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -328,9 +352,9 @@ GINGA_LIBTOOL_CURRENT_MINUS_AGE = 0
 GINGA_LIBTOOL_REVISION = 0
 GINGA_LIBTOOL_STRING = 0:0:0
 GINGA_VERSION_MAJOR = 1
-GINGA_VERSION_MICRO = 4
+GINGA_VERSION_MICRO = 9
 GINGA_VERSION_MINOR = 0
-GINGA_VERSION_STRING = 1.0.4-8e2a-dirty
+GINGA_VERSION_STRING = 1.0.9-28be-dirty
 GLIB_CFLAGS = -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include
 GLIB_LIBS = -lglib-2.0
 GLIB_REQUIRED_VERSION = 2.32.4
@@ -390,10 +414,10 @@ OTOOL64 =
 PACKAGE = ginga
 PACKAGE_BUGREPORT = bugs@telemidia.puc-rio.br
 PACKAGE_NAME = Ginga
-PACKAGE_STRING = Ginga 1.0.4-8e2a-dirty
+PACKAGE_STRING = Ginga 1.0.9-28be-dirty
 PACKAGE_TARNAME = ginga
 PACKAGE_URL = http://github.com/TeleMidia/ginga
-PACKAGE_VERSION = 1.0.4-8e2a-dirty
+PACKAGE_VERSION = 1.0.9-28be-dirty
 PANGO_CFLAGS = -I/usr/include/pango-1.0 -I/usr/include/harfbuzz -I/usr/include/pango-1.0 -I/usr/include/cairo -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/freetype2 -I/usr/include/libpng16
 PANGO_LIBS = -lpangocairo-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lcairo
 PANGO_REQUIRED_VERSION = 1.30.0
@@ -413,7 +437,7 @@ SOUP_LIBS = -lsoup-2.4 -lgio-2.0 -lgobject-2.0 -lglib-2.0
 SOUP_REQUIRED_VERSION = 2.42
 STRIP = strip
 VALGRIND = 
-VERSION = 1.0.4-8e2a-dirty
+VERSION = 1.0.9-28be-dirty
 WARN_CFLAGS = 
 WERROR_CFLAGS = 
 WINDRES = 
@@ -486,7 +510,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = ginga.pc
 AM_CXXFLAGS = $(GINGA_ALL_CXXFLAGS)
 AM_LDFLAGS = $(GINGA_ALL_LDFLAGS)
-include_HEADERS = ginga.h
+include_HEADERS = ginga.h mqtt/src/mqtt.h mqtt/src/mqtt_pal.h mqtt/include/posix_sockets.h
 lib_LTLIBRARIES = libginga.la
 libginga_la_CXXFLAGS = $(AM_CXXFLAGS)
 libginga_la_LDFLAGS = $(AM_LDFLAGS)
@@ -496,6 +520,8 @@ src = Composition.cpp Context.cpp Document.cpp Event.cpp Formatter.cpp \
 	Player.cpp PlayerAnimator.cpp PlayerImage.cpp PlayerSigGen.cpp \
 	PlayerText.cpp PlayerVideo.cpp PlayerStream.cpp Predicate.cpp \
 	Switch.cpp TemporalGraph.cpp PresentationOrchestrator.cpp \
+	mqtt/src/mqtt.c mqtt/src/mqtt_pal.c \
+	../intMod/InteractionModule.cpp ../intMod/VoiceRecognition.cpp \
 	InteractionManager.cpp aux-ginga.cpp aux-gl.cpp \
 	$(am__append_1) $(am__append_2) $(am__append_3) \
 	$(am__append_4)
@@ -516,7 +542,7 @@ all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .cpp .lo .o .obj
+.SUFFIXES: .c .cpp .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(top_srcdir)/build-aux/Makefile.am.common $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -599,16 +625,42 @@ clean-libLTLIBRARIES:
 	  echo rm -f $${locs}; \
 	  rm -f $${locs}; \
 	}
+mqtt/src/$(am__dirstamp):
+	@$(MKDIR_P) mqtt/src
+	@: > mqtt/src/$(am__dirstamp)
+mqtt/src/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) mqtt/src/$(DEPDIR)
+	@: > mqtt/src/$(DEPDIR)/$(am__dirstamp)
+mqtt/src/mqtt.lo: mqtt/src/$(am__dirstamp) \
+	mqtt/src/$(DEPDIR)/$(am__dirstamp)
+mqtt/src/mqtt_pal.lo: mqtt/src/$(am__dirstamp) \
+	mqtt/src/$(DEPDIR)/$(am__dirstamp)
+../intMod/$(am__dirstamp):
+	@$(MKDIR_P) ../intMod
+	@: > ../intMod/$(am__dirstamp)
+../intMod/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../intMod/$(DEPDIR)
+	@: > ../intMod/$(DEPDIR)/$(am__dirstamp)
+../intMod/libginga_la-InteractionModule.lo: ../intMod/$(am__dirstamp) \
+	../intMod/$(DEPDIR)/$(am__dirstamp)
+../intMod/libginga_la-VoiceRecognition.lo: ../intMod/$(am__dirstamp) \
+	../intMod/$(DEPDIR)/$(am__dirstamp)
 
 libginga.la: $(libginga_la_OBJECTS) $(libginga_la_DEPENDENCIES) $(EXTRA_libginga_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(libginga_la_LINK) -rpath $(libdir) $(libginga_la_OBJECTS) $(libginga_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f ../intMod/*.$(OBJEXT)
+	-rm -f ../intMod/*.lo
+	-rm -f mqtt/src/*.$(OBJEXT)
+	-rm -f mqtt/src/*.lo
 
 distclean-compile:
 	-rm -f *.tab.c
 
+include ../intMod/$(DEPDIR)/libginga_la-InteractionModule.Plo
+include ../intMod/$(DEPDIR)/libginga_la-VoiceRecognition.Plo
 include ./$(DEPDIR)/libginga_la-Composition.Plo
 include ./$(DEPDIR)/libginga_la-Context.Plo
 include ./$(DEPDIR)/libginga_la-Document.Plo
@@ -637,6 +689,32 @@ include ./$(DEPDIR)/libginga_la-Switch.Plo
 include ./$(DEPDIR)/libginga_la-TemporalGraph.Plo
 include ./$(DEPDIR)/libginga_la-aux-ginga.Plo
 include ./$(DEPDIR)/libginga_la-aux-gl.Plo
+include mqtt/src/$(DEPDIR)/mqtt.Plo
+include mqtt/src/$(DEPDIR)/mqtt_pal.Plo
+
+.c.o:
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
+#	$(AM_V_CC)source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(COMPILE) -c -o $@ $<
+
+.c.obj:
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
+#	$(AM_V_CC)source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.c.lo:
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Plo
+#	$(AM_V_CC)source='$<' object='$@' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(LTCOMPILE) -c -o $@ $<
 
 .cpp.o:
 	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -809,6 +887,20 @@ libginga_la-PresentationOrchestrator.lo: PresentationOrchestrator.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libginga_la_CXXFLAGS) $(CXXFLAGS) -c -o libginga_la-PresentationOrchestrator.lo `test -f 'PresentationOrchestrator.cpp' || echo '$(srcdir)/'`PresentationOrchestrator.cpp
 
+../intMod/libginga_la-InteractionModule.lo: ../intMod/InteractionModule.cpp
+	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libginga_la_CXXFLAGS) $(CXXFLAGS) -MT ../intMod/libginga_la-InteractionModule.lo -MD -MP -MF ../intMod/$(DEPDIR)/libginga_la-InteractionModule.Tpo -c -o ../intMod/libginga_la-InteractionModule.lo `test -f '../intMod/InteractionModule.cpp' || echo '$(srcdir)/'`../intMod/InteractionModule.cpp
+	$(AM_V_at)$(am__mv) ../intMod/$(DEPDIR)/libginga_la-InteractionModule.Tpo ../intMod/$(DEPDIR)/libginga_la-InteractionModule.Plo
+#	$(AM_V_CXX)source='../intMod/InteractionModule.cpp' object='../intMod/libginga_la-InteractionModule.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libginga_la_CXXFLAGS) $(CXXFLAGS) -c -o ../intMod/libginga_la-InteractionModule.lo `test -f '../intMod/InteractionModule.cpp' || echo '$(srcdir)/'`../intMod/InteractionModule.cpp
+
+../intMod/libginga_la-VoiceRecognition.lo: ../intMod/VoiceRecognition.cpp
+	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libginga_la_CXXFLAGS) $(CXXFLAGS) -MT ../intMod/libginga_la-VoiceRecognition.lo -MD -MP -MF ../intMod/$(DEPDIR)/libginga_la-VoiceRecognition.Tpo -c -o ../intMod/libginga_la-VoiceRecognition.lo `test -f '../intMod/VoiceRecognition.cpp' || echo '$(srcdir)/'`../intMod/VoiceRecognition.cpp
+	$(AM_V_at)$(am__mv) ../intMod/$(DEPDIR)/libginga_la-VoiceRecognition.Tpo ../intMod/$(DEPDIR)/libginga_la-VoiceRecognition.Plo
+#	$(AM_V_CXX)source='../intMod/VoiceRecognition.cpp' object='../intMod/libginga_la-VoiceRecognition.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libginga_la_CXXFLAGS) $(CXXFLAGS) -c -o ../intMod/libginga_la-VoiceRecognition.lo `test -f '../intMod/VoiceRecognition.cpp' || echo '$(srcdir)/'`../intMod/VoiceRecognition.cpp
+
 libginga_la-InteractionManager.lo: InteractionManager.cpp
 	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libginga_la_CXXFLAGS) $(CXXFLAGS) -MT libginga_la-InteractionManager.lo -MD -MP -MF $(DEPDIR)/libginga_la-InteractionManager.Tpo -c -o libginga_la-InteractionManager.lo `test -f 'InteractionManager.cpp' || echo '$(srcdir)/'`InteractionManager.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/libginga_la-InteractionManager.Tpo $(DEPDIR)/libginga_la-InteractionManager.Plo
@@ -863,6 +955,8 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf ../intMod/.libs ../intMod/_libs
+	-rm -rf mqtt/src/.libs mqtt/src/_libs
 install-cef_filesDATA: $(cef_files_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(cef_files_DATA)'; test -n "$(cef_filesdir)" || list=; \
@@ -1043,6 +1137,10 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f ../intMod/$(DEPDIR)/$(am__dirstamp)
+	-rm -f ../intMod/$(am__dirstamp)
+	-rm -f mqtt/src/$(DEPDIR)/$(am__dirstamp)
+	-rm -f mqtt/src/$(am__dirstamp)
 	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
@@ -1055,7 +1153,7 @@ clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ../intMod/$(DEPDIR) ./$(DEPDIR) mqtt/src/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
@@ -1102,7 +1200,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ../intMod/$(DEPDIR) ./$(DEPDIR) mqtt/src/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

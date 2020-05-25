@@ -7,14 +7,9 @@
 #include "Event.h"
 #include <list>
 #include <string>
+#include "../intMod/InteractionModule.h"
 
-//#include "../interactionModules/InteractionModule.h"
-#include "../interactionModules/InteractionModule.h"
-
-//#include "../interactionModules/nlohmann/json.hpp"
-//#include "nlohmann/json.hpp"
-//using json = nlohmann::json;
-
+GINGA_NAMESPACE_BEGIN
 class InteractionManager
 {
 	public:
@@ -40,5 +35,5 @@ class InteractionManager
 
 };
 
-
+GINGA_NAMESPACE_END
 #endif // INTERACTION_MANAGER_H

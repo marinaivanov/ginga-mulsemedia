@@ -8,6 +8,6 @@ Name: ginga
 Description: The iTV middleware.
 Version: @VERSION@
 
-Cflags:
+Cflags:mqtt/src/mqtt.c mqtt/src/mqtt_pal.c -l
 Libs: -L${libdir} -lginga
 Libs.private: @GINGA_ALL_LDFLAGS@

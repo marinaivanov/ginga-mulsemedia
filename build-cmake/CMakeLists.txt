@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 project(ginga)
 
+
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules)
 
 # Defaul C++ params
@@ -135,6 +136,7 @@ set (LIBGINGA_SOURCES
   ../lib/Switch.cpp
   ../lib/TemporalGraph.cpp
   ../lib/PresentationOrchestrator.cpp
+  
   ../lib/Player.cpp
   ../lib/PlayerAnimator.cpp
   ../lib/PlayerImage.cpp
@@ -143,7 +145,7 @@ set (LIBGINGA_SOURCES
   ../lib/PlayerText.cpp
   ../lib/PlayerVideo.cpp
   ../lib/InteractionManager.cpp
-  ../interactionModules/voiceRecognition.cpp
+  ../intMod/VoiceRecognition.cpp
 
 #if WITH_LIBRSVG
   ../lib/PlayerSvg.cpp
@@ -152,9 +154,10 @@ set (LIBGINGA_SOURCES
 
 set (LIBGINGA_INCLUDE_DIRS
   ${CMAKE_BINARY_DIR}
-
   ${CMAKE_CURRENT_SOURCE_DIR}/../lib
+  
 
+  
   ${GLIB_INCLUDE_DIRS}
 
   ${LIBXML2_INCLUDE_DIR}
@@ -173,7 +176,7 @@ set (LIBGINGA_INCLUDE_DIRS
 
 set (LIBGINGA_LIBS
   pthread
-
+    
   expat
 
   ${GLIB_LIBRARIES}
@@ -226,6 +229,8 @@ set (GINGAGUI_GTK_SOURCES
   ../src-gui/view/MainWindow.cpp
   ../src-gui/view/TvControlWindow.cpp
 )
+
+
 
 set (GINGAGUI_GTK_INCLUDE_DIRS
   ../src-gui/
