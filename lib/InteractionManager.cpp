@@ -16,6 +16,8 @@ GINGA_NAMESPACE_BEGIN
 InteractionManager::InteractionManager (Ginga *ginga)
 {
 	this->ginga = ginga;
+	printf("INICIO  do interactionManager!\n\n");
+
 }
 
 void InteractionManager::start()
@@ -24,6 +26,7 @@ void InteractionManager::start()
 
 	//std::list<InteractionModule * >::iterator itList;
 	//itList = ExtModules.begin();
+	printf("voice INICIO\n ");
 
 	int cont = 0;
 	for (auto it=interactions.begin(); it!=interactions.end(); ++it)
@@ -34,11 +37,8 @@ void InteractionManager::start()
 			{
 				case Event::VOICE_RECOGNITION:
 				{
-
-					//InteractionModule umExtModule = (InteractionModule ) new voiceRecognition();
-					VoiceRecognition * umExtModule = new VoiceRecognition();
-					//umExtModule->start();
-					//ExtModules.insert(std::pair<Event::Type,InteractionModule *>(it->first, umExtModule));
+					InteractionModule * umExtModule =  new VoiceRecognition(this);
+					ExtModules.insert(std::pair<Event::Type,InteractionModule *>(it->first, umExtModule));
 
 					break;
 				}
@@ -88,9 +88,14 @@ void InteractionManager::startInteractionModule(Event::Type mod)
 	    return;
 
 	  it->second->start();
-
 }
-
+void InteractionManager::setUserkeyListInteractionModule(Event::Type mod, json _userKey)
+{
+	  auto it = ExtModules.find (mod);
+	  if (it == ExtModules.end ())
+	    return;
+	  it->second->setUserKeyList(_userKey);
+}
 
 void InteractionManager::setUserKeyListModules()
 {
@@ -125,35 +130,33 @@ void InteractionManager::setUserKeyListModules()
 
 				for (auto it2=it1->second.begin(); it2!=it1->second.end(); ++it2)
 				{
-					json user={};
-
-					user={"user",it2->first};
 
 					json keys={};
-
 					for (auto it3=it2->second.begin(); it3!=it2->second.end(); ++it3)
 					{
 						keys+=(*it3);
 					}
+					 userKeyList_voice.push_back({{"user",it2->first}, {"key",keys}});
 
-					json atrs;
-
-					atrs = {"key", keys};
-
-					json oneUserKeyList= {};
-
-					oneUserKeyList.push_back({user,atrs});
-
-					userKeyList_voice.push_back(oneUserKeyList);
-
-				    std::cout << std::setw(4) << userKeyList_voice << "\n";
 				}
+				std::cout << std::setw(2) << userKeyList_voice << std::endl;
+
+				setUserkeyListInteractionModule(it1->first,userKeyList_voice);
+
 				startInteractionModule(it1->first);
+
 				break;
 			}
 
 		}
 	}
-
 }
+
+void InteractionManager::startModules()
+{
+	for (auto it=ExtModules.begin(); it!=ExtModules.end(); ++it)
+		(it->second)->start();
+}
+
+
 GINGA_NAMESPACE_END

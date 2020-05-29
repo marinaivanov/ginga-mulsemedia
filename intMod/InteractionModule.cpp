@@ -4,10 +4,6 @@ using std::string;
 
 //GINGA_NAMESPACE_BEGIN
 
-InteractionModule::InteractionModule()
-{
-}
-
 void InteractionModule::setEvent(InteractionModule::eventTransition valor)
 {
 	event = valor;

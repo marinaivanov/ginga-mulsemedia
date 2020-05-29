@@ -47,6 +47,7 @@
         <bindParam name="var" value="red"/>
       </bind>
     </link>
+    
     <link xconnector="onSelectionSet">
       <bind role="onSelection" component="time">
         <bindParam name="key" value="GREEN"/>
@@ -63,6 +64,7 @@
         <bindParam name="var" value="blue"/>
       </bind>
     </link>
+    
     <link xconnector="onSelectionSet">
       <bind role="onSelection" component="time">
         <bindParam name="key" value="YELLOW"/>

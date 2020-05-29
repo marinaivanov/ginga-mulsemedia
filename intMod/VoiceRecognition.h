@@ -7,31 +7,23 @@ extern "C" {
 	#include "../lib/mqtt/src/mqtt.h"
 }
 #include "../lib/nlohmann/json.hpp"
+#include "../lib/InteractionManager.h"
 using json = nlohmann::json;
 using std::string;
 
-//#include "../lib/mqtt/src/mqtt_pal.h"
-//GINGA_NAMESPACE_BEGIN
-
-class VoiceRecognition : public InteractionModule
+class VoiceRecognition  : public InteractionModule
 {
    public:
+	 VoiceRecognition(InteractionManager *_intManager);
 	 void start();
 	 void setUserKeyList(json);
 	 void stop();
 
- //  private:
-	//static void publish_callback(void** unused, struct mqtt_response_publish *published);
-	//static void* client_refresher(void* client);
-	//static void exit_VR(int status);
-
-
-
-
-     //void handler();
-
+	 InteractionManager *intManager;
+   private:
+	 bool _run;
+	 json _userKeyList;
 };
 
-//GINGA_NAMESPACE_END
 
 #endif

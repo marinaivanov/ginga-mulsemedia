@@ -183,8 +183,7 @@ Formatter::start (const string &file, string *errmsg)
   _intManager = new InteractionManager(this);
   _intManager->start();
   _intManager->setUserKeyListModules();
-
-
+  _intManager->startModules();
 
   return true;
 }

@@ -22,7 +22,8 @@ class InteractionManager
 
 		void setUserKeyListModules();
 	    void startInteractionModule(Event::Type mod);
-
+	    void setUserkeyListInteractionModule(Event::Type mod, json _userKey);
+	    void startModules();
 
 //	    void addInteractionModule(InteractionModule *elem);
 //	    void stopInteractionModule(std::string &idModulo);

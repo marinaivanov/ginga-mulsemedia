@@ -5,18 +5,17 @@
 
 #include <string>
 #include "../lib/nlohmann/json.hpp"
+//#include "../lib/InteractionManager.h"
+
+
 using json = nlohmann::json;
 using std::string;
 
-//GINGA_NAMESPACE_BEGIN
-
-class InteractionManager;
+//class InteractionManager;
 
 class InteractionModule
 {
   public:
-	InteractionModule();
-
 	enum eventTransition
 	{
 		/**
@@ -37,9 +36,9 @@ class InteractionModule
     eventTransition getEvent(void);
     std::string getId();
 
-  private:
+  protected:
     std::string id;
-    InteractionManager *intManager;
+   // InteractionManager *intManager;
     eventTransition event;
 
 };
