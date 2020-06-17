@@ -24,6 +24,8 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 #include "Event.h"
 #include "Player.h"
 
+
+
 GINGA_NAMESPACE_BEGIN
 
 // Public.
@@ -82,6 +84,68 @@ Media::setProperty (const string &name, const string &value, Time dur)
     _player->setProperty (name, value);
 }
 
+
+void
+Media::sendKey (const string &key,const string &user, bool press)
+{
+  list<Event *> buf;
+  string expected;
+  string parUser;
+
+
+  if (unlikely (this->isSleeping ()))
+    return; // nothing to do
+
+  if (_player == nullptr)
+    return; // nothing to do
+
+  // Collect the events to be triggered.
+  for (auto evt : _events)
+    {
+
+      if (evt->getType () != Event::VOICE_RECOGNITION)
+      {
+   	    //TRACE ("Dentro do sendkey voive evento: %d \n\n", evt->getType ());
+        continue;
+      }
+
+      expected = "";
+      parUser = "";
+
+      evt->getParameter ("key", &expected);
+
+      evt->getParameter ("user", &parUser);
+
+ //     bool noParam = (expected == "");
+ //     bool paramKeyNoUser = (((expected != "") && (key == expected)) && (parUser = ""));
+ //     bool paramKeyUser = (((expected != "") && (parUser != "")) && ((key == expected) && (parUser == user)))
+
+
+       bool noParam = expected == "";
+
+       bool paramKeyNoUser = (expected != "") && (key == expected) && (parUser == "");
+
+       bool paramKeyUser = (expected != "") && (parUser != "") && (key == expected) && (parUser == user);
+
+       TRACE ("****************************No voice parametro: %s user: %s\n\n", parUser.c_str (), user.c_str ());
+       TRACE ("****************************No voice parametro: %s key: %s\n\n", expected.c_str (), key.c_str ());
+
+      if (!(noParam || paramKeyNoUser || paramKeyUser))
+      {
+          TRACE ("Valor booleano %d\n\n", paramKeyUser);
+          TRACE ("Dentro do if de descarte No voice parametro: %s user: %s\n\n", parUser.c_str (), user.c_str ());
+          TRACE ("Dentro do if de descarte No voice key param: %s key: %s\n\n", expected.c_str (), key.c_str ());
+    	  continue;
+       }
+
+      buf.push_back (evt);
+    }
+
+  // Run collected events.
+  for (Event *evt : buf)
+    _doc->evalAction (evt, press ? Event::START : Event::STOP);
+}
+
 void
 Media::sendKey (const string &key, bool press)
 {
@@ -124,6 +188,7 @@ Media::sendKey (const string &key, bool press)
       if (evt->getType () != Event::SELECTION)
         continue;
 
+
       expected = "";
       evt->getParameter ("key", &expected);
       if (!((expected == "" && key == "ENTER" && _player->isFocused ())
@@ -138,6 +203,7 @@ Media::sendKey (const string &key, bool press)
   for (Event *evt : buf)
     _doc->evalAction (evt, press ? Event::START : Event::STOP);
 }
+
 
 void
 Media::sendTick (Time total, Time diff, Time frame)
@@ -313,6 +379,9 @@ Media::beforeTransition (Event *evt, Event::Transition transition)
       break; // nothing to do
 
     case Event::PREPARATION:
+      break;
+
+    case Event::VOICE_RECOGNITION:
       break;
 
     default:
@@ -495,6 +564,26 @@ Media::afterTransition (Event *evt, Event::Transition transition)
             g_assert_not_reached ();
           }
         break;
+      }
+
+      case Event::VOICE_RECOGNITION:
+      {
+          string key, user;
+          evt->getParameter ("key", &key);
+          evt->getParameter ("user", &user);
+          switch (transition)
+            {
+            case Event::START:
+              TRACE ("start %s", evt->getFullId ().c_str ());
+              break;
+            case Event::STOP:
+              TRACE ("stop %s", evt->getFullId ().c_str ());
+              break;
+            default:
+              g_assert_not_reached ();
+            }
+
+          break;
       }
 
     default:

@@ -159,6 +159,7 @@ typedef struct ParserConnRole
   string duration;              ///< Role duration (if action).
   string delay;                 ///< Role delay.
   string key;                   ///< Role key (if selection).
+  string user;                  ///< Role user (if voice_recognition).
   string value;                 ///< Role value (if attribution).
 } ParserConnRole;
 
@@ -330,6 +331,8 @@ private:
   ParserSyntaxElt *checkNode (xmlNode *, map<string, string> *,
                               list<xmlNode *> *);
   bool processNode (xmlNode *);
+
+  Document* getDoc();
 };
 
 /// Asserted version of UserData::getData().
@@ -564,6 +567,7 @@ static map<string, ParserSyntaxElt> parser_syntax_table = {
         { {"role", ATTR_REQUIRED_NONEMPTY_NAME},
           {"eventType", 0},
           {"key", 0},
+          {"user", 0},
           {"transition", 0},
           {"delay", 0},         // unused
           {"min", 0},           // unused
@@ -856,7 +860,10 @@ static map<string, pair<Event::Type, Event::Transition> >
       {"onSelection", {Event::SELECTION, Event::START} },
       {"onBeginSelection", {Event::SELECTION, Event::START} },
       {"onEndSelection", {Event::SELECTION, Event::STOP} },
-      {"onBeginPreparation", {Event::PREPARATION, Event::START} }, // conditions
+
+	  {"onVoiceRecognition", {Event::VOICE_RECOGNITION, Event::STOP} }, //Added to represent voice interactions
+
+	  {"onBeginPreparation", {Event::PREPARATION, Event::START} }, // conditions
       {"onEndPreparation", {Event::PREPARATION, Event::STOP} },
       {"onAbortPreparation", {Event::PREPARATION, Event::ABORT} },
       {"onPausePreparation", {Event::PREPARATION, Event::PAUSE} },
@@ -895,6 +902,7 @@ static map<string, Event::Type> parser_syntax_event_type_table = {
   {"attribution", Event::ATTRIBUTION},
   {"selection", Event::SELECTION},
   {"preparation", Event::PREPARATION},
+  {"voice_recognition", Event::VOICE_RECOGNITION},
 };
 
 /// Known transitions.
@@ -2143,8 +2151,9 @@ ParserState::processNode (xmlNode *node)
   // Allocate and initialize element wrapper.
   elt = new ParserElt (node);
   for (auto it : attrs)
+  {
     g_assert (elt->setAttribute (it.first, it.second));
-
+  }
   // Initialize flags.
   cached = false;
   status = true;
@@ -2631,7 +2640,8 @@ borderColor='%s'}",
                 {
                   if (label == bind->role)
                     {
-                      found = true;
+
+                	  found = true;
                       break;
                     }
                 }
@@ -2658,6 +2668,7 @@ borderColor='%s'}",
                   if (unlikely (!st->resolveInterface (ctx, elt, &evt)))
                     return false;
                   (*it.second)[bind->role] = "$" + evt->getFullId ();
+
                 }
             }
 
@@ -2745,6 +2756,31 @@ borderColor='%s'}",
                     g_assert_nonnull (act.event);
                     break;
                   }
+                  case Event::VOICE_RECOGNITION:
+                    {
+                        act.value = st->resolveParameter (
+                            role->key, &bind->params, params, &ghosts_map);
+
+                        act.owner = st->resolveParameter (
+                            role->user, &bind->params, params, &ghosts_map);
+
+                        Key oneKey;
+                		oneKey.key = act.value;
+                		oneKey.user = act.owner;
+
+                		(st->getDoc())->addKeyList (role->eventType, oneKey);
+
+                		obj->addVoiceRecognitionEvent (act.value, act.owner);
+
+                		act.event = obj->getVoiceRecognitionEvent (act.value, act.owner);
+
+                		g_assert_nonnull (act.event);
+
+                		act.event->setParameter ("key", act.value);
+                		act.event->setParameter ("user", act.owner);
+                		break;
+                    }
+
                 default:
                   g_assert_not_reached ();
                 }
@@ -3095,14 +3131,30 @@ ParserState::pushSimpleCondition (ParserState *st, ParserElt *elt)
   if (!role.condition)
     elt->getAttribute ("delay", &role.delay);
 
-  if (role.eventType == Event::SELECTION)
+  if ((role.eventType == Event::SELECTION) || (role.eventType == Event::VOICE_RECOGNITION))
     elt->getAttribute ("key", &role.key);
+
+  if ((role.eventType == Event::VOICE_RECOGNITION))
+    elt->getAttribute ("user", &role.user);
 
   if (unlikely (!role.condition && role.eventType == Event::ATTRIBUTION
                 && !elt->getAttribute ("value", &role.value)))
     {
       return st->errEltMissingAttribute (node, "value");
     }
+
+  //Add the event of interaction in a list to start the Interaction manager
+  switch (role.eventType)
+  {
+	  case Event::VOICE_RECOGNITION:
+  	  {
+  		  (st->getDoc())->addInteractions (role.eventType, true);
+  	   	  break;
+  	  }
+  	  default:
+  		  break;
+
+  }
 
   UDATA_GET (st, "conn-elt", &conn_elt);
   UDATA_GET (conn_elt, "roles", &roles);
@@ -4049,6 +4101,15 @@ ParserState::pushBind (ParserState *st, ParserElt *elt)
   
   return true;
 }
+
+
+
+Document*
+ParserState::getDoc()
+{
+	return _doc;
+}
+
 
 // External API.
 

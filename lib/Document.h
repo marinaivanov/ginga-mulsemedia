@@ -22,6 +22,15 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 
 GINGA_NAMESPACE_BEGIN
 
+typedef struct
+{
+  string key;                 ///< Value key.
+  string user;                ///< Owner Action.
+  string delay;               ///< Delay.
+} Key;
+
+
+
 class Context;
 class Media;
 class Switch;
@@ -57,16 +66,28 @@ public:
   bool getData (const string &, void **);
   bool setData (const string &, void *, UserDataCleanFunc fn = nullptr);
 
+  map<Event::Type,bool> getInteractions();
+  map<Event::Type,Key> getKeyList();
+  bool addInteractions (Event::Type intEvent, bool on);
+  bool setInteractions (Event::Type intEvent, bool on);
+  bool checkInteractions (Event::Type intEvent);
+  bool addKeyList (Event::Type intEvent, Key key);
+
+
 private:
-  set<Object *> _objects;             ///< Objects.
-  map<string, Object *> _objectsById; ///< Objects indexed by id.
-  Context *_root;                     ///< Root context (body).
-  MediaSettings *_settings;           ///< Settings object.
-  set<Media *> _medias;               ///< Media objects.
-  set<Context *> _contexts;           ///< Context objects.
-  set<Switch *> _switches;            ///< Switch objects.
-  UserData _udata;                    ///< Attached user data.
+  set<Object *> _objects;             	///< Objects.
+  map<string, Object *> _objectsById; 	///< Objects indexed by id.
+  Context *_root;                     	///< Root context (body).
+  MediaSettings *_settings;           	///< Settings object.
+  set<Media *> _medias;               	///< Media objects.
+  set<Context *> _contexts;           	///< Context objects.
+  set<Switch *> _switches;            	///< Switch objects.
+  UserData _udata;                    	///< Attached user data.
+  map<Event::Type,bool> _interactions;  ///< Used to signal which types of interaction events that happen in this document.
+  map<Event::Type, Key> _keyList; ///< Used to store keys that to be recognized by modules.
 };
+
+
 
 GINGA_NAMESPACE_END
 

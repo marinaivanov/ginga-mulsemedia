@@ -28,7 +28,7 @@ pkgconfig_DATA= ginga.pc
 AM_CXXFLAGS= $(GINGA_ALL_CXXFLAGS)
 AM_LDFLAGS= $(GINGA_ALL_LDFLAGS)
 
-include_HEADERS= ginga.h
+include_HEADERS= ginga.h mqtt/src/mqtt.h mqtt/src/mqtt_pal.h mqtt/include/posix_sockets.h
 lib_LTLIBRARIES= libginga.la
 libginga_la_CXXFLAGS= $(AM_CXXFLAGS)
 libginga_la_LDFLAGS= $(AM_LDFLAGS)
@@ -55,8 +55,15 @@ src+= Predicate.cpp
 src+= Switch.cpp
 src+= TemporalGraph.cpp
 src+= PresentationOrchestrator.cpp
+src+= mqtt/src/mqtt.c
+src+= mqtt/src/mqtt_pal.c
+src+= ../intMod/InteractionModule.cpp
+src+= ../intMod/VoiceRecognition.cpp
+src+= InteractionManager.cpp
 src+= aux-ginga.cpp
 src+= aux-gl.cpp
+
+
 
 if WITH_LIBRSVG
 src+= PlayerSvg.cpp

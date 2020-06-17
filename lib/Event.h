@@ -64,6 +64,14 @@ public:
      * Stands for the preparation of a specific time interval of the object.
      */
     PREPARATION,
+
+	/**
+	 * @brief Voice Recognition event.
+	 *
+	 *Stands for the recognition of a  specific key (this case word), which is
+	 * directed to the object.
+	 */
+	 VOICE_RECOGNITION,
   };
 
   /// @brief Event state.
@@ -85,11 +93,13 @@ public:
   };
 
   Event (Event::Type, Object *, const string &id);
+  Event (Event::Type, Object *, const string &id, const string &owner);
   ~Event ();
 
   Event::Type getType ();
   Object *getObject ();
   string getId ();
+  string getOwner ();
   string getFullId ();
   Event::State getState ();
   string toString ();
@@ -118,6 +128,7 @@ private:
   Event::Type _type;               ///< Event type.
   Object *_object;                 ///< Target object.
   string _id;                      ///< Event id.
+  string _owner;                   ///< Event owner.
   Event::State _state;             ///< Event state.
   Time _begin;                     ///< Begin time.
   Time _end;                       ///< End time.
@@ -134,6 +145,7 @@ typedef struct
   Event::Transition transition; ///< Desired transition.
   Predicate *predicate;         ///< Predicate conditioning the execution.
   string value;                 ///< Value to set (if attribution).
+  string owner;                 ///< Owner Action.
   string duration;              ///< Duration.
   string delay;                 ///< Delay.
 } Action;

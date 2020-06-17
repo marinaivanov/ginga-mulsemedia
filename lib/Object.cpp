@@ -117,6 +117,7 @@ Object::toString ()
   list<string> pres;
   list<string> attr;
   list<string> sel;
+  list<string> vo_rec;
   for (auto evt : _events)
     switch (evt->getType ())
       {
@@ -129,6 +130,9 @@ Object::toString ()
       case Event::SELECTION:
         sel.push_back (evt->getId ());
         break;
+      case Event::VOICE_RECOGNITION:
+        vo_rec.push_back (evt->getId ());
+        break;
       default:
         g_assert_not_reached ();
       }
@@ -137,6 +141,7 @@ Object::toString ()
     { "evts pres.", &pres },
     { "evts attr.", &attr },
     { "evts sel.", &sel },
+    { "evts vo_rec.", &vo_rec },
   };
 
   for (auto it_evts : evts)
@@ -192,6 +197,15 @@ Object::getEvent (Event::Type type, const string &id)
 {
   for (auto evt : _events)
     if (evt->getType () == type && evt->getId () == id)
+      return evt;
+  return nullptr;
+}
+
+Event *
+Object::getEvent (Event::Type type, const string &id, const string &owner)
+{
+  for (auto evt : _events)
+    if (evt->getType () == type && evt->getId () == id && evt->getOwner () == owner)
       return evt;
   return nullptr;
 }
@@ -301,6 +315,25 @@ Object::addPreparationEvent (const string &id, Time begin, Time end)
   _events.insert (evt);
 }
 
+
+Event *
+Object::getVoiceRecognitionEvent (const string &key, const string &user)
+{
+  return this->getEvent (Event::VOICE_RECOGNITION, key, user);
+}
+
+void
+Object::addVoiceRecognitionEvent (const string &key,const string &user )
+{
+  Event *evt;
+
+  if (this->getVoiceRecognitionEvent (key, user))
+    return;
+
+  evt = new Event (Event::VOICE_RECOGNITION, this, key, user);
+  _events.insert (evt);
+}
+
 Event *
 Object::getLambda ()
 {
@@ -370,6 +403,10 @@ Object::addDelayedAction (Event *event, Event::Transition transition,
 }
 
 void Object::sendKey (unused (const string &key), unused (bool press))
+{
+}
+
+void Object::sendKey (unused (const string &user), unused (const string &key), unused (bool press))
 {
 }
 

@@ -22,6 +22,8 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 #include "aux-ginga.h"
 
 #include "Document.h"
+#include "InteractionManager.h"
+
 
 GINGA_NAMESPACE_BEGIN
 
@@ -45,6 +47,8 @@ public:
 
   void resize (int, int);
   void redraw (cairo_t *);
+
+  bool sendKey (const std::string &, const std::string &, bool);
 
   bool sendKey (const std::string &, bool);
   bool sendTick (uint64_t, uint64_t, uint64_t);
@@ -101,6 +105,9 @@ private:
 
   /// @brief Whether the presentation has ended naturally.
   bool _eos;
+
+  /// @brief Interaction Manager.
+  InteractionManager *_intManager;
 };
 
 GINGA_NAMESPACE_END
