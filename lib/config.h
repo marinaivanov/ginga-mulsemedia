@@ -100,7 +100,7 @@
 #define PACKAGE_NAME "Ginga"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Ginga 1.0.9-28be-dirty"
+#define PACKAGE_STRING "Ginga 1.0.12-0f6c-dirty"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "ginga"
@@ -109,7 +109,7 @@
 #define PACKAGE_URL "http://github.com/TeleMidia/ginga"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.0.9-28be-dirty"
+#define PACKAGE_VERSION "1.0.12-0f6c-dirty"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
@@ -137,7 +137,7 @@
 
 
 /* Version number of package */
-#define VERSION "1.0.9-28be-dirty"
+#define VERSION "1.0.12-0f6c-dirty"
 
 /* Define to 1 if you have libcef. */
 #define WITH_CEF 0

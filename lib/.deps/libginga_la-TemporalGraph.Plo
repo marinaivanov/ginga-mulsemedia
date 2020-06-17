@@ -621,7 +621,35 @@ libginga_la-TemporalGraph.lo: TemporalGraph.cpp \
  /usr/include/x86_64-linux-gnu/c++/7/bits/c++io.h \
  /usr/include/c++/7/bits/fstream.tcc /usr/include/c++/7/iostream Media.h \
  Player.h Formatter.h Document.h InteractionManager.h \
- ../interactionModules/InteractionModule.h InteractionManager.h \
+ ../intMod/InteractionModule.h ../intMod/../lib/nlohmann/json.hpp \
+ /usr/include/c++/7/cassert /usr/include/assert.h \
+ /usr/include/c++/7/ciso646 /usr/include/c++/7/cstddef \
+ /usr/include/c++/7/functional /usr/include/c++/7/bits/std_function.h \
+ /usr/include/c++/7/bits/refwrap.h /usr/include/c++/7/iterator \
+ /usr/include/c++/7/bits/stream_iterator.h /usr/include/c++/7/memory \
+ /usr/include/c++/7/bits/stl_raw_storage_iter.h \
+ /usr/include/c++/7/ext/concurrence.h \
+ /usr/include/c++/7/bits/unique_ptr.h \
+ /usr/include/c++/7/bits/shared_ptr.h \
+ /usr/include/c++/7/bits/shared_ptr_base.h \
+ /usr/include/c++/7/bits/shared_ptr_atomic.h \
+ /usr/include/c++/7/bits/atomic_base.h \
+ /usr/include/c++/7/bits/atomic_lockfree_defines.h \
+ /usr/include/c++/7/backward/auto_ptr.h /usr/include/c++/7/numeric \
+ /usr/include/c++/7/bits/stl_numeric.h /usr/include/c++/7/forward_list \
+ /usr/include/c++/7/bits/forward_list.h \
+ /usr/include/c++/7/bits/forward_list.tcc \
+ /usr/include/c++/7/unordered_map /usr/include/c++/7/bits/hashtable.h \
+ /usr/include/c++/7/bits/hashtable_policy.h \
+ /usr/include/c++/7/bits/unordered_map.h /usr/include/c++/7/valarray \
+ /usr/include/c++/7/bits/valarray_array.h \
+ /usr/include/c++/7/bits/valarray_array.tcc \
+ /usr/include/c++/7/bits/valarray_before.h \
+ /usr/include/c++/7/bits/slice_array.h \
+ /usr/include/c++/7/bits/valarray_after.h \
+ /usr/include/c++/7/bits/gslice.h /usr/include/c++/7/bits/gslice_array.h \
+ /usr/include/c++/7/bits/mask_array.h \
+ /usr/include/c++/7/bits/indirect_array.h /usr/include/c++/7/cstring \
  PlayerAnimator.h
 
 /usr/include/stdc-predef.h:
@@ -2062,8 +2090,86 @@ Document.h:
 
 InteractionManager.h:
 
-../interactionModules/InteractionModule.h:
+../intMod/InteractionModule.h:
 
-InteractionManager.h:
+../intMod/../lib/nlohmann/json.hpp:
+
+/usr/include/c++/7/cassert:
+
+/usr/include/assert.h:
+
+/usr/include/c++/7/ciso646:
+
+/usr/include/c++/7/cstddef:
+
+/usr/include/c++/7/functional:
+
+/usr/include/c++/7/bits/std_function.h:
+
+/usr/include/c++/7/bits/refwrap.h:
+
+/usr/include/c++/7/iterator:
+
+/usr/include/c++/7/bits/stream_iterator.h:
+
+/usr/include/c++/7/memory:
+
+/usr/include/c++/7/bits/stl_raw_storage_iter.h:
+
+/usr/include/c++/7/ext/concurrence.h:
+
+/usr/include/c++/7/bits/unique_ptr.h:
+
+/usr/include/c++/7/bits/shared_ptr.h:
+
+/usr/include/c++/7/bits/shared_ptr_base.h:
+
+/usr/include/c++/7/bits/shared_ptr_atomic.h:
+
+/usr/include/c++/7/bits/atomic_base.h:
+
+/usr/include/c++/7/bits/atomic_lockfree_defines.h:
+
+/usr/include/c++/7/backward/auto_ptr.h:
+
+/usr/include/c++/7/numeric:
+
+/usr/include/c++/7/bits/stl_numeric.h:
+
+/usr/include/c++/7/forward_list:
+
+/usr/include/c++/7/bits/forward_list.h:
+
+/usr/include/c++/7/bits/forward_list.tcc:
+
+/usr/include/c++/7/unordered_map:
+
+/usr/include/c++/7/bits/hashtable.h:
+
+/usr/include/c++/7/bits/hashtable_policy.h:
+
+/usr/include/c++/7/bits/unordered_map.h:
+
+/usr/include/c++/7/valarray:
+
+/usr/include/c++/7/bits/valarray_array.h:
+
+/usr/include/c++/7/bits/valarray_array.tcc:
+
+/usr/include/c++/7/bits/valarray_before.h:
+
+/usr/include/c++/7/bits/slice_array.h:
+
+/usr/include/c++/7/bits/valarray_after.h:
+
+/usr/include/c++/7/bits/gslice.h:
+
+/usr/include/c++/7/bits/gslice_array.h:
+
+/usr/include/c++/7/bits/mask_array.h:
+
+/usr/include/c++/7/bits/indirect_array.h:
+
+/usr/include/c++/7/cstring:
 
 PlayerAnimator.h:

@@ -6,7 +6,7 @@ includedir=${prefix}/include
 
 Name: ginga
 Description: The iTV middleware.
-Version: 1.0.9-28be-dirty
+Version: 1.0.12-0f6c-dirty
 
 Cflags:mqtt/src/mqtt.c mqtt/src/mqtt_pal.c -l
 Libs: -L${libdir} -lginga
