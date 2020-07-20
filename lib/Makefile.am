@@ -28,7 +28,9 @@ pkgconfig_DATA= ginga.pc
 AM_CXXFLAGS= $(GINGA_ALL_CXXFLAGS)
 AM_LDFLAGS= $(GINGA_ALL_LDFLAGS)
 
-include_HEADERS= ginga.h mqtt/src/mqtt.h mqtt/src/mqtt_pal.h mqtt/include/posix_sockets.h
+include_HEADERS= ginga.h mqtt/src/mqtt.h mqtt/src/mqtt_pal.h mqtt/include/posix_sockets.h \
+                 tobii/tobii.h tobii/tobii_advanced.h tobii/tobii_config.h tobii/tobii_licensing.h tobii/tobii_streams.h tobii/tobii_wearable.h
+
 lib_LTLIBRARIES= libginga.la
 libginga_la_CXXFLAGS= $(AM_CXXFLAGS)
 libginga_la_LDFLAGS= $(AM_LDFLAGS)
@@ -59,6 +61,7 @@ src+= mqtt/src/mqtt.c
 src+= mqtt/src/mqtt_pal.c
 src+= ../intMod/InteractionModule.cpp
 src+= ../intMod/VoiceRecognition.cpp
+src+= ../intMod/EyeGazeModule.cpp
 src+= InteractionManager.cpp
 src+= aux-ginga.cpp
 src+= aux-gl.cpp

@@ -25,7 +25,7 @@ class InteractionModule
 		 * directed to the object.
 		 */
 		onVoiceRecognition = 0,
-		onEyeMotion,
+		onEyeGaze = 1,
 	};
 
     virtual void start()= 0;
