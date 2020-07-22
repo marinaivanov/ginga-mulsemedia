@@ -18,19 +18,14 @@
 
 include $(top_srcdir)/build-aux/Makefile.am.common
 
-#Eye Gaze Module paths
-#set(TOBII_CXXFLAGS  "${top_srcdir}/lib/tobii")
-#set(TOBII_LDFLAGS "/usr/lib/tobii/libtobii_stream_engine.so")
-
-#nao aceitou a forma abaixo
-#TOBII_CXXFLAGS = -I$(top_builddir)/lib/tobii
-#TOBII_LDFLAGS = -L/usr/lib/tobii/libtobii_stream_engine.so 
-
+#Tobii variables 
+TOBII_CFLAG= -I/usr/include/tobii
+TOBII_LIB = -L/usr/lib/tobii -ltobii_stream_engine
 
 AM_CPPFLAGS= -I$(top_srcdir)/lib -I$(top_builddir)/lib
 AM_CXXFLAGS= $(WARN_CFLAGS) $(WERROR_CFLAGS)\
-  $(CAIRO_CFLAGS) $(GLIB_CFLAGS) $(GTK_CFLAGS) -I/../lib/tobii
-AM_LDFLAGS= $(CAIRO_LIBS) $(GLIB_LIBS) $(GTK_LIBS) -L/usr/lib/tobii/libtobii_stream_engine.so
+  $(CAIRO_CFLAGS) $(GLIB_CFLAGS) $(GTK_CFLAGS) $(TOBII_CFLAG)
+AM_LDFLAGS= $(CAIRO_LIBS) $(GLIB_LIBS) $(GTK_LIBS) $(TOBII_LIB)
 
 bin_PROGRAMS= ginga
 if WITH_OPENGL
@@ -46,6 +41,3 @@ ginga_gl_CXXFLAGS= $(AM_CXXFLAGS) $(OPENGL_CFLAGS)
 ginga_gl_LDFLAGS= $(AM_LDFLAGS) $(OPENGL_LIBS)
 ginga_gl_SOURCES= ginga-gl.cpp
 ginga_gl_LDADD= $(top_builddir)/lib/libginga.la
-
-#AM_CXXFLAGS= -I/$(top_builddir)/lib/tobii/tobii.h
-#AM_LDFLAGS= -L/usr/lib/tobii/libtobii_stream_engine.so -lXXXX
