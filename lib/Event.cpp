@@ -97,7 +97,9 @@ Event::getFullId ()
       else
         return obj_id + "$" + _id;
     case Event::VOICE_RECOGNITION:
-      return obj_id + "<" + _id + ">" + "<" + _owner + ">";
+      return obj_id + "&" + _owner + ":" + _id;
+    case Event::EYE_GAZE:
+      return obj_id + "&" + _owner + ":" + _id;
     default:
       g_assert_not_reached ();
     }
@@ -277,6 +279,8 @@ Event::getEventTypeAsString (Event::Type type)
       return "preparation";
     case Event::VOICE_RECOGNITION:
       return "voice_recognition";
+    case Event::EYE_GAZE:
+      return "eye_gaze";
     default:
       g_assert_not_reached ();
     }

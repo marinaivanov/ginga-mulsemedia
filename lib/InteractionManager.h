@@ -21,8 +21,8 @@ class InteractionManager
 	    bool notifyInteraction(InteractionModule::eventTransition, std::string &user, std::string &key);
 
 		void setUserKeyListModules();
-	    void startInteractionModule(Event::Type mod);
-	    void setUserkeyListInteractionModule(Event::Type mod, json _userKey);
+	    void startInteractionModule(std::string mod);
+	    void setUserkeyListInteractionModule(std::string mod, json _userKey);
 	    void startModules();
 
 //	    void addInteractionModule(InteractionModule *elem);
@@ -32,7 +32,7 @@ class InteractionManager
 	private:
 
 		Ginga *ginga;
-		std::map<Event::Type,InteractionModule *> ExtModules;
+		std::map<std::string,InteractionModule *> ExtModules;
 
 };
 
