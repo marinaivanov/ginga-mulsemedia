@@ -92,7 +92,6 @@ Media::sendKey (const string &key,const string &user, bool press)
   string expected;
   string parUser;
 
-
   if (unlikely (this->isSleeping ()))
     return; // nothing to do
 
@@ -101,49 +100,65 @@ Media::sendKey (const string &key,const string &user, bool press)
 
   // Collect the events to be triggered.
   for (auto evt : _events)
-    {
+  {
 
-      if (evt->getType () != Event::VOICE_RECOGNITION)
-      {
-   	    //TRACE ("Dentro do sendkey voive evento: %d \n\n", evt->getType ());
+     if (evt->getType () != Event::VOICE_RECOGNITION)
+     {
         continue;
-      }
+     }
 
-      expected = "";
-      parUser = "";
+     expected = "";
+     parUser = "";
 
-      evt->getParameter ("key", &expected);
+     evt->getParameter ("key", &expected);
+     evt->getParameter ("user", &parUser);
 
-      evt->getParameter ("user", &parUser);
+     bool noParam = expected == "";
 
- //     bool noParam = (expected == "");
- //     bool paramKeyNoUser = (((expected != "") && (key == expected)) && (parUser = ""));
- //     bool paramKeyUser = (((expected != "") && (parUser != "")) && ((key == expected) && (parUser == user)))
+     bool paramKeyNoUser = (expected != "") && (key == expected) && (parUser == "");
 
+     bool paramKeyUser = (expected != "") && (parUser != "") && (key == expected) && (parUser == user);
 
-       bool noParam = expected == "";
-
-       bool paramKeyNoUser = (expected != "") && (key == expected) && (parUser == "");
-
-       bool paramKeyUser = (expected != "") && (parUser != "") && (key == expected) && (parUser == user);
-
-       TRACE ("****************************No voice parametro: %s user: %s\n\n", parUser.c_str (), user.c_str ());
-       TRACE ("****************************No voice parametro: %s key: %s\n\n", expected.c_str (), key.c_str ());
-
-      if (!(noParam || paramKeyNoUser || paramKeyUser))
-      {
-          TRACE ("Valor booleano %d\n\n", paramKeyUser);
-          TRACE ("Dentro do if de descarte No voice parametro: %s user: %s\n\n", parUser.c_str (), user.c_str ());
-          TRACE ("Dentro do if de descarte No voice key param: %s key: %s\n\n", expected.c_str (), key.c_str ());
-    	  continue;
-       }
-
-      buf.push_back (evt);
-    }
+     if (!(noParam || paramKeyNoUser || paramKeyUser))
+     {
+   	  continue;
+     }
+     buf.push_back (evt);
+  }
 
   // Run collected events.
   for (Event *evt : buf)
     _doc->evalAction (evt, press ? Event::START : Event::STOP);
+}
+
+void Media::sendViewed(const string &user)
+{
+	list<Event *> buf;
+
+    if (unlikely (this->isSleeping ()))
+	    return; // nothing to do
+
+	if (_player == nullptr)
+	    return; // nothing to do
+
+	// Collect the events to be triggered.
+	for (auto evt : _events)
+	{
+
+	    if (evt->getType () != Event::EYE_GAZE)
+	    {
+	        continue;
+        }
+
+	   buf.push_back (evt);
+	}
+
+	for (Event *evt : buf)
+	{
+	   _doc->evalAction (evt, Event::START);
+	   _doc->evalAction (evt, Event::STOP);
+	}
+
 }
 
 void
@@ -384,6 +399,9 @@ Media::beforeTransition (Event *evt, Event::Transition transition)
     case Event::VOICE_RECOGNITION:
       break;
 
+    case Event::EYE_GAZE:
+      break;
+
     default:
       g_assert_not_reached ();
     }
@@ -574,10 +592,10 @@ Media::afterTransition (Event *evt, Event::Transition transition)
           switch (transition)
             {
             case Event::START:
-              TRACE ("start %s", evt->getFullId ().c_str ());
+              TRACE ("start voice recognition %s", evt->getFullId ().c_str ());
               break;
             case Event::STOP:
-              TRACE ("stop %s", evt->getFullId ().c_str ());
+              TRACE ("stop voice recognition %s", evt->getFullId ().c_str ());
               break;
             default:
               g_assert_not_reached ();
@@ -585,6 +603,10 @@ Media::afterTransition (Event *evt, Event::Transition transition)
 
           break;
       }
+      case Event::EYE_GAZE:
+	  {
+    	  break;
+	  }
 
     default:
       g_assert_not_reached ();
@@ -602,7 +624,7 @@ Media::getCurrentPreparationEvent ()
 void
 Media::createPlayer ()
 {
-  TRACE("---------------------MEDIA:CREATEPLAYER\n");
+ // TRACE("---------------------MEDIA:CREATEPLAYER\n");
   if (_player)
     return;
   Formatter *fmt;

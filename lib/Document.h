@@ -67,11 +67,11 @@ public:
   bool setData (const string &, void *, UserDataCleanFunc fn = nullptr);
 
   map<Event::Type,bool> getInteractions();
-  map<Event::Type,Key> getKeyList();
+  map<Event::Type,list<Key>> getKeyList();
   bool addInteractions (Event::Type intEvent, bool on);
   bool setInteractions (Event::Type intEvent, bool on);
   bool checkInteractions (Event::Type intEvent);
-  bool addKeyList (Event::Type intEvent, Key key);
+  void addKeyList (Event::Type intEvent, Key key);
 
 
 private:
@@ -84,7 +84,9 @@ private:
   set<Switch *> _switches;            	///< Switch objects.
   UserData _udata;                    	///< Attached user data.
   map<Event::Type,bool> _interactions;  ///< Used to signal which types of interaction events that happen in this document.
-  map<Event::Type, Key> _keyList; ///< Used to store keys that to be recognized by modules.
+  //map<Event::Type, Key> _keyList; ///< Used to store keys that to be recognized by modules.
+  map<Event::Type,list<Key>> _keyList;
+
 };
 
 

@@ -21,12 +21,12 @@ using std::cout;
 using std::endl;
 using std::setw;
 
-
-
 char * ADDRESS = {"localhost"};
+//char * ADDRESS = {"broker.mqttdashboard.com"};
 char * PORTA = {"1883"};
 char * CLIENT = {"voz"};
-char * TOPIC = {"voiceReg"};
+//char * TOPIC = {"topic/voice_recog"};
+char * TOPIC = {"voice_recog"};
 int QOS = 1;
 
 
@@ -56,8 +56,6 @@ void VoiceRecognition::start()
 	if (!_run)
 	{
 	    intManagerShared = intManager;
-
-		printf("Start voiceReg\n ");
 		_run = true;
 
 		pthread_t client_daemon;
@@ -91,36 +89,52 @@ void VoiceRecognition::start()
 
 	/* note that published->topic_name is NOT null-terminated (here we'll change it to a c-string) */
     char* topic_name = (char*) malloc(published->topic_name_size + 1);
- //	printf("************************************** Callback: ");
-    memcpy(topic_name, published->topic_name, published->topic_name_size);
-    topic_name[published->topic_name_size] = '\0';
+    //	printf("************************************** Callback: ");
+	memcpy(topic_name, published->topic_name, published->topic_name_size);
+	topic_name[published->topic_name_size] = '\0';
 
-    std::string msg = (const char*) published->application_message;
+	char* message = (char*) malloc(published->application_message_size + 1);
+	//	printf("************************************** Callback: ");
+	memcpy(message, published->application_message, published->application_message_size);
+	message[published->application_message_size] = '\0';
+
+    std::string msg = (const char*) message;
+  //  printf("Mansagem no topico: %s\n", msg.c_str());
+
+    TRACE ("---> Mesagem capturada! do MQTT");
+
+    //    int pos = msg.find_first_of(':');
     int pos = msg.find_first_of(':');
     std::string user = msg.substr(0, pos),
                 key  = msg.substr(pos+1);
 
+    for (auto & c: user) c = toupper(c);
+    for (auto & c: key) c = toupper(c);
+/*
     printf("Received publish('%s'): %s\n", topic_name, (const char*) published->application_message);
+    printf("Received publish('%s'): %s\n", topic_name, message);
     printf("User: %s Key: %s\n", user.c_str(),key.c_str());
+*/
 
-
-    std::cout << std::setw(4) << userKeyListShared << "\n";
+    //std::cout << std::setw(4) << userKeyListShared << "\n";
 
 
     for (auto& itUser : userKeyListShared)
     {
-    	printf("\nUser:\n");
-    	std::cout << std::setw(4) << itUser["user"] << "\n";
-
-       if (user.compare((string)itUser["user"]) == 0)
+   //	printf("\nUser:\n");
+  //  	std::cout << std::setw(4) << itUser["user"] << "\n";
+    	std::string userDoc = (string)itUser["user"];
+        for (auto & c: userDoc) c = toupper(c);
+        if (user.compare(userDoc) == 0)
        {
 
           for (auto& itKey : itUser["key"])
           {
-
-             if (key.compare(itKey) == 0)
-             {
-            	 printf("**************Notify**********");
+        	 std::string keyDoc = (string)itKey;
+             for (auto & c: keyDoc) c = toupper(c);
+             if (key.compare(keyDoc) == 0)
+        	 {
+           // 	 printf("**************Notify**********");
             	intManagerShared->notifyInteraction(InteractionModule::eventTransition::onVoiceRecognition, user, key);
                 break;
              }
@@ -129,7 +143,7 @@ void VoiceRecognition::start()
        }
     }
 
-    printf("Received publish('%s'): %s\n", topic_name, (const char*) published->application_message);
+ //   printf("Received publish('%s'): %s\n", topic_name, (const char*) published->application_message);
 
     free(topic_name);
  }

@@ -16,17 +16,11 @@ GINGA_NAMESPACE_BEGIN
 InteractionManager::InteractionManager (Ginga *ginga)
 {
 	this->ginga = ginga;
-	printf("INICIO  do interactionManager!\n\n");
-
 }
 
 void InteractionManager::start()
 {
 	map<Event::Type,bool> interactions = (((Formatter *)ginga)->getDocument())->getInteractions();
-
-	//std::list<InteractionModule * >::iterator itList;
-	//itList = ExtModules.begin();
-	printf("voice INICIO\n ");
 
 	int cont = 0;
 	for (auto it=interactions.begin(); it!=interactions.end(); ++it)
@@ -38,16 +32,33 @@ void InteractionManager::start()
 				case Event::VOICE_RECOGNITION:
 				{
 					InteractionModule * umExtModule =  new VoiceRecognition(this);
-					ExtModules.insert(std::pair<Event::Type,InteractionModule *>(it->first, umExtModule));
+					ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umExtModule));
 
 					break;
+				}
+				case Event::EYE_GAZE:
+				{
+/*
+					map<Event::Type,list<Key>> keyList = (((Formatter *)ginga)->getDocument())->getKeyList();
+
+					list<Key>gazeList = keyList[it->first];
+
+					for (auto it1=gazeList.begin(); it1!=gazeList.begin(); ++it1)
+					{
+						string idDevice = Event::getEventTypeAsString(it->first) + "_" + it1->user;
+						InteractionModule * umEyeGaze =  new EyeGaze(this,it1->user);
+						ExtModules.insert(std::pair<std::string,InteractionModule *>(idDevice, umEyeGaze));
+					}
+*/
+					//Para cada media chamar o metodo ((Formatter *)ginga)->getDocument())->getObjectbyId(idMedia)
+					//pegar as propriedades da media -> getProperty(Left), top, width, height.
+					//Construir um json com tais parâmnetros e com id da media
 				}
 
 			}
 		}
 	}
 }
-
 
 bool InteractionManager::notifyInteraction(InteractionModule::eventTransition ev, std::string &user, std::string &key)
 {
@@ -56,17 +67,21 @@ bool InteractionManager::notifyInteraction(InteractionModule::eventTransition ev
 		case InteractionModule::eventTransition::onVoiceRecognition:
 		{
 			if (!(ginga->sendKey (std::string(key),std::string(user),true)))
-					return false;
-
-  	        if (!(ginga->sendKey (std::string(key), std::string(user),false)))
-					return false;
-
-			return true;
+				return false;
+	        if (!(ginga->sendKey (std::string(key), std::string(user),false)))
+				return false;
+	        return true;
 		}
+		case InteractionModule::eventTransition::onEyeMotion:
+		{
+			if (!(ginga->sendViewed (user,key)))
+				return false;
+	        return true;
+		}
+
 	}
     return false;
 }
-
 
 //void InteractionManager::addInteractionModule(InteractionModule *elem)
 //{
@@ -81,7 +96,7 @@ bool InteractionManager::notifyInteraction(InteractionModule::eventTransition ev
 //{
 
 //}
-void InteractionManager::startInteractionModule(Event::Type mod)
+void InteractionManager::startInteractionModule(std::string mod)
 {
 	  auto it = ExtModules.find (mod);
 	  if (it == ExtModules.end ())
@@ -89,7 +104,7 @@ void InteractionManager::startInteractionModule(Event::Type mod)
 
 	  it->second->start();
 }
-void InteractionManager::setUserkeyListInteractionModule(Event::Type mod, json _userKey)
+void InteractionManager::setUserkeyListInteractionModule(std::string mod, json _userKey)
 {
 	  auto it = ExtModules.find (mod);
 	  if (it == ExtModules.end ())
@@ -99,55 +114,87 @@ void InteractionManager::setUserkeyListInteractionModule(Event::Type mod, json _
 
 void InteractionManager::setUserKeyListModules()
 {
+	map<Event::Type,list<Key>> keyList = (((Formatter *)ginga)->getDocument())->getKeyList();
 
-	map<Event::Type,Key > keyList = (((Formatter *)ginga)->getDocument())->getKeyList();
-//userKeyList padrao
+
 	map<Event::Type,map<string, list<string>>> keyListUser;
 
-	for (auto it=keyList.begin(); it!=keyList.end(); ++it)
+	for (auto it1=keyList.begin(); it1!=keyList.end(); ++it1)
 	{
-		//TRACE("-------------SetUserKeyListModules--------------------");
-		//TRACE("Evento: %d; user: %s; key: %s", it->first, it->second.user.c_str(), it->second.key.c_str());
-
-		keyListUser[it->first][it->second.user].push_back(it->second.key);
+		for (auto it2=it1->second.begin(); it2!=it1->second.end(); ++it2)
+		{
+			//printf("\n%d:  %s : %s \n", it1->first,it2->user.c_str(), it2->key.c_str());
+			keyListUser[it1->first][it2->user].push_back(it2->key);
+		}
 	}
 
 	for (auto it1=keyListUser.begin(); it1!=keyListUser.end(); ++it1)
-		for (auto it2=it1->second.begin(); it2!=it1->second.end(); ++it2)
-			for (auto it3=it2->second.begin(); it3!=it2->second.end(); ++it3)
-			{
-				TRACE("-------------SetUserKeyListModules--------------------");
-				TRACE("Evento: %d; user: %s; key: %s", it1->first, it2->first.c_str(), (*it3).c_str());
-			}
-
-	for (auto it1=keyListUser.begin(); it1!=keyListUser.end(); ++it1)
 	{
-		switch (it1->first)
+		for (auto it2=it1->second.begin(); it2!=it1->second.end(); ++it2)
 		{
-			case Event::VOICE_RECOGNITION:
+			switch (it1->first)
 			{
-				json userKeyList_voice={};
 
-				for (auto it2=it1->second.begin(); it2!=it1->second.end(); ++it2)
+				case Event::VOICE_RECOGNITION:
 				{
+					json userKeyList_voice={};
 
 					json keys={};
 					for (auto it3=it2->second.begin(); it3!=it2->second.end(); ++it3)
 					{
 						keys+=(*it3);
 					}
-					 userKeyList_voice.push_back({{"user",it2->first}, {"key",keys}});
+
+					userKeyList_voice.push_back({{"user",it2->first}, {"key",keys}});
+					string strEvent  = Event::getEventTypeAsString(it1->first);
+					setUserkeyListInteractionModule(strEvent,userKeyList_voice);
+					startInteractionModule(strEvent);
+
+					break;
 
 				}
-				std::cout << std::setw(2) << userKeyList_voice << std::endl;
+				case Event::EYE_GAZE:
+				{
+/*
+					json UserKeyList;
 
-				setUserkeyListInteractionModule(it1->first,userKeyList_voice);
+					const GingaOptions *options = ginga->getOptions();
 
-				startInteractionModule(it1->first);
+					UserKeyList.emplace("user", it2->first);
+					UserKeyList.emplace("screenWidth", options->width);
+					UserKeyList.emplace("screenHeight", options->height);
 
-				break;
+					json keys={};
+					Object * md;
+
+					for (auto it3=it2->second.begin(); it3!=it2->second.end(); ++it3)
+					{
+
+						md = (((Formatter *)ginga)->getDocument())->getObjectById(it3->c_str());
+
+						string left = md->getProperty("left");
+						string top = md->getProperty("top");
+						string width = md->getProperty("width");
+						string height = md->getProperty("height");
+						json media;
+						media.emplace("id",it3);
+						media.emplace("left",left);
+						media.emplace("top",top);
+						media.emplace("width",width);
+						media.emplace("height",height);
+
+						keys+=(media);
+
+					}
+	//				printf("\n%s:%s:%s:%s \n", left.c_str(),top.c_str(), width.c_str(),height.c_str());
+					UserKeyList.push_back({"key",keys});
+					//	setUserkeyListInteractionModule(it1->first,userKeyList_voice);
+					//	startInteractionModule(it1->first);
+
+*/
+					break;
+				}
 			}
-
 		}
 	}
 }

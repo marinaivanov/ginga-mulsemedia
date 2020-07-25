@@ -72,6 +72,14 @@ public:
 	 * directed to the object.
 	 */
 	 VOICE_RECOGNITION,
+
+	 /**
+		 * @brief Eye Recognition event.
+		 *
+		 *Stands for the recognition of a specific area (this case a region), which is
+		 * directed to the object.
+	*/
+	 EYE_GAZE,
   };
 
   /// @brief Event state.

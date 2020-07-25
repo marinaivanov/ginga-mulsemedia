@@ -202,7 +202,7 @@ Document::evalAction (Event *event, Event::Transition transition,
 
   Action act;
   act.event = event;
-  TRACE("\n Evento: %s", event->toString().c_str ());
+ // TRACE("\n Evento: %s", event->toString().c_str ());
   g_assert_nonnull (event);
   act.transition = transition;
   act.predicate = nullptr;
@@ -500,7 +500,7 @@ Document::setInteractions (Event::Type intEvent, bool on)
 	  return true;
 }
 
-map<Event::Type,Key> Document::getKeyList()
+map<Event::Type,list<Key>> Document::getKeyList()
 {
 	return _keyList;
 }
@@ -519,11 +519,20 @@ Document::checkInteractions (Event::Type intEvent)
 	  return  it->second;
 }
 
-bool
+void
 Document::addKeyList (Event::Type intEvent, Key key)
 {
-	_keyList.insert(std::pair<Event::Type, Key>(intEvent,key));
-	return  true;
+	  auto it = _keyList.find (intEvent);
+	  if (it == _keyList.end ())
+	  {  list<Key> lst;
+	  	  lst.push_back(key);
+		  _keyList.insert(std::pair<Event::Type, list<Key>>(intEvent,lst));
+	  }
+	  else
+	  {  // auto list  =  it->second();
+		  it->second.push_back(key);
+	  }
+
 
 }
 

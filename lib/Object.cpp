@@ -133,6 +133,9 @@ Object::toString ()
       case Event::VOICE_RECOGNITION:
         vo_rec.push_back (evt->getId ());
         break;
+      case Event::EYE_GAZE:
+        vo_rec.push_back (evt->getId ());
+        break;
       default:
         g_assert_not_reached ();
       }
@@ -335,6 +338,24 @@ Object::addVoiceRecognitionEvent (const string &key,const string &user )
 }
 
 Event *
+Object::getEyeGazeEvent (const string &key, const string &user)
+{
+  return this->getEvent (Event::EYE_GAZE, key, user);
+}
+
+void
+Object::addEyeGazeEvent (const string &key,const string &user )
+{
+  Event *evt;
+
+  if (this->getEyeGazeEvent(key, user))
+    return;
+
+  evt = new Event (Event::EYE_GAZE, this, key, user);
+  _events.insert (evt);
+}
+
+Event *
 Object::getLambda ()
 {
   g_assert_nonnull (_lambda);
@@ -407,6 +428,9 @@ void Object::sendKey (unused (const string &key), unused (bool press))
 }
 
 void Object::sendKey (unused (const string &user), unused (const string &key), unused (bool press))
+{
+}
+void Object::sendViewed (unused (const string &user))
 {
 }
 

@@ -49,6 +49,7 @@ public:
   void redraw (cairo_t *);
 
   bool sendKey (const std::string &, const std::string &, bool);
+  bool sendViewed(const std::string &, const std::string &);
 
   bool sendKey (const std::string &, bool);
   bool sendTick (uint64_t, uint64_t, uint64_t);

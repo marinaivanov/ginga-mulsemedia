@@ -862,6 +862,7 @@ static map<string, pair<Event::Type, Event::Transition> >
       {"onEndSelection", {Event::SELECTION, Event::STOP} },
 
 	  {"onVoiceRecognition", {Event::VOICE_RECOGNITION, Event::STOP} }, //Added to represent voice interactions
+	  {"onEyeGaze", {Event::EYE_GAZE, Event::STOP} }, //Added to represent eye interactions
 
 	  {"onBeginPreparation", {Event::PREPARATION, Event::START} }, // conditions
       {"onEndPreparation", {Event::PREPARATION, Event::STOP} },
@@ -903,6 +904,7 @@ static map<string, Event::Type> parser_syntax_event_type_table = {
   {"selection", Event::SELECTION},
   {"preparation", Event::PREPARATION},
   {"voice_recognition", Event::VOICE_RECOGNITION},
+  {"eye_gaze", Event::EYE_GAZE},
 };
 
 /// Known transitions.
@@ -2764,6 +2766,10 @@ borderColor='%s'}",
                         act.owner = st->resolveParameter (
                             role->user, &bind->params, params, &ghosts_map);
 
+                		for (auto & c: act.owner) c = toupper(c);
+                		for (auto & c: act.value) c = toupper(c);
+
+
                         Key oneKey;
                 		oneKey.key = act.value;
                 		oneKey.user = act.owner;
@@ -2780,6 +2786,32 @@ borderColor='%s'}",
                 		act.event->setParameter ("user", act.owner);
                 		break;
                     }
+                  	case Event::EYE_GAZE:
+                     {
+                    	 //Pegar os componentes que participa no onGaze e adicionar numa lista no documento
+                    	 // Lista de media a serem vigiadas
+                    	 act.value = bind->component;
+                    	 act.owner = st->resolveParameter (
+                             role->user, &bind->params, params, &ghosts_map);
+
+                    	 for (auto & c: act.owner) c = toupper(c);
+
+                    	 Key oneKey;
+                    	 oneKey.key = act.value;
+                    	 oneKey.user = act.owner;
+
+                    	 (st->getDoc())->addKeyList (role->eventType, oneKey);
+
+                    	 obj->addEyeGazeEvent (act.value, act.owner);
+                    	 act.event = obj->getEyeGazeEvent (act.value, act.owner);
+
+                    	 g_assert_nonnull (act.event);
+
+                    	 act.event->setParameter ("key", act.value);
+                    	 act.event->setParameter ("user", act.owner);
+
+                    	 break;
+                     }
 
                 default:
                   g_assert_not_reached ();
@@ -3134,7 +3166,7 @@ ParserState::pushSimpleCondition (ParserState *st, ParserElt *elt)
   if ((role.eventType == Event::SELECTION) || (role.eventType == Event::VOICE_RECOGNITION))
     elt->getAttribute ("key", &role.key);
 
-  if ((role.eventType == Event::VOICE_RECOGNITION))
+  if ((role.eventType == Event::VOICE_RECOGNITION)||(role.eventType == Event::EYE_GAZE))
     elt->getAttribute ("user", &role.user);
 
   if (unlikely (!role.condition && role.eventType == Event::ATTRIBUTION
@@ -3146,11 +3178,16 @@ ParserState::pushSimpleCondition (ParserState *st, ParserElt *elt)
   //Add the event of interaction in a list to start the Interaction manager
   switch (role.eventType)
   {
-	  case Event::VOICE_RECOGNITION:
-  	  {
-  		  (st->getDoc())->addInteractions (role.eventType, true);
-  	   	  break;
-  	  }
+  	  case Event::VOICE_RECOGNITION:
+	  {
+		  (st->getDoc())->addInteractions (role.eventType, true);
+	   	  break;
+	  }
+  	  case Event::EYE_GAZE:
+	  {
+		  (st->getDoc())->addInteractions (role.eventType, true);
+	   	  break;
+	  }
   	  default:
   		  break;
 
