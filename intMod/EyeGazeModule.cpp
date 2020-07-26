@@ -1,8 +1,8 @@
-#include "../lib/tobii/tobii.h"
-#include "../lib/tobii/tobii_streams.h"
-#include "EyeGazeModule.h"
+#include <tobii/tobii.h>
+#include <tobii/tobii_streams.h>
 #include <string>
 #include <assert.h>
+#include "EyeGazeModule.h"
 
 typedef struct point {
     double x, y;

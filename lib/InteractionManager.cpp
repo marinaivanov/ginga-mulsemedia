@@ -4,6 +4,7 @@
 #include <iomanip>
 #include "InteractionManager.h"
 #include "../intMod/VoiceRecognition.h"
+#include "../intMod/EyeGazeModule.h"
 
 using std::vector;
 using std::string;
@@ -38,7 +39,7 @@ void InteractionManager::start()
 				}
 				case Event::EYE_GAZE:
 				{
-/*
+
 					map<Event::Type,list<Key>> keyList = (((Formatter *)ginga)->getDocument())->getKeyList();
 
 					list<Key>gazeList = keyList[it->first];
@@ -46,10 +47,10 @@ void InteractionManager::start()
 					for (auto it1=gazeList.begin(); it1!=gazeList.begin(); ++it1)
 					{
 						string idDevice = Event::getEventTypeAsString(it->first) + "_" + it1->user;
-						InteractionModule * umEyeGaze =  new EyeGaze(this,it1->user);
+						InteractionModule * umEyeGaze =  new EyeGazeModule(this);
 						ExtModules.insert(std::pair<std::string,InteractionModule *>(idDevice, umEyeGaze));
 					}
-*/
+
 					//Para cada media chamar o metodo ((Formatter *)ginga)->getDocument())->getObjectbyId(idMedia)
 					//pegar as propriedades da media -> getProperty(Left), top, width, height.
 					//Construir um json com tais parâmnetros e com id da media
@@ -72,7 +73,7 @@ bool InteractionManager::notifyInteraction(InteractionModule::eventTransition ev
 				return false;
 	        return true;
 		}
-		case InteractionModule::eventTransition::onEyeMotion:
+		case InteractionModule::eventTransition::onEyeGaze:
 		{
 			if (!(ginga->sendViewed (user,key)))
 				return false;
@@ -155,7 +156,7 @@ void InteractionManager::setUserKeyListModules()
 				}
 				case Event::EYE_GAZE:
 				{
-/*
+
 					json UserKeyList;
 
 					const GingaOptions *options = ginga->getOptions();
@@ -177,11 +178,11 @@ void InteractionManager::setUserKeyListModules()
 						string width = md->getProperty("width");
 						string height = md->getProperty("height");
 						json media;
-						media.emplace("id",it3);
-						media.emplace("left",left);
-						media.emplace("top",top);
-						media.emplace("width",width);
-						media.emplace("height",height);
+						media.emplace("id",it3->c_str());
+						media.emplace("left",left.c_str());
+						media.emplace("top",top.c_str());
+						media.emplace("width",width.c_str());
+						media.emplace("height",height.c_str());
 
 						keys+=(media);
 
@@ -191,7 +192,7 @@ void InteractionManager::setUserKeyListModules()
 					//	setUserkeyListInteractionModule(it1->first,userKeyList_voice);
 					//	startInteractionModule(it1->first);
 
-*/
+
 					break;
 				}
 			}
