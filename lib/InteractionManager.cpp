@@ -72,7 +72,7 @@ bool InteractionManager::notifyInteraction(InteractionModule::eventTransition ev
 				return false;
 	        return true;
 		}
-		case InteractionModule::eventTransition::onEyeMotion:
+		case InteractionModule::eventTransition::onEyeGaze:
 		{
 			if (!(ginga->sendViewed (user,key)))
 				return false;
@@ -188,7 +188,7 @@ void InteractionManager::setUserKeyListModules()
 					}
 	//				printf("\n%s:%s:%s:%s \n", left.c_str(),top.c_str(), width.c_str(),height.c_str());
 					UserKeyList.push_back({"key",keys});
-					//	setUserkeyListInteractionModule(it1->first,userKeyList_voice);
+					//	setUserkeyListInteractionModule(it1->first,UserKeyList);
 					//	startInteractionModule(it1->first);
 
 */

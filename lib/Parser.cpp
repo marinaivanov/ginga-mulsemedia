@@ -244,7 +244,7 @@ private:
   UserData _udata;     ///< Attached user data.
   set<string> _unique; ///< Unique attributes seen so far.
 
-  TemporalGraph *_htg;  ///< The resulting #TemporalGraph
+//  TemporalGraph *_htg;  ///< The resulting #TemporalGraph
   PresentationOrchestrator *_presOrch; ///< Element that controls the multimedia presentation
 
   ParserState::Error _error; ///< Last error code.
@@ -2209,7 +2209,7 @@ ParserState::ParserState (int width, int height)
 {
   _doc = nullptr;
   _xml = nullptr;
-  _htg = nullptr;
+  //_htg = nullptr;
   _presOrch = nullptr;
   g_assert_cmpint (width, >, 0);
   g_assert_cmpint (height, >, 0);
@@ -2258,7 +2258,7 @@ ParserState::process (xmlDoc *xml)
   g_assert_nonnull (xml);
   _xml = xml;
   _doc = new Document ();
-  _htg = new TemporalGraph ();
+ // _htg = new TemporalGraph ();
   _presOrch = new PresentationOrchestrator ();
 
   root = xmlDocGetRootElement (xml);
@@ -2267,9 +2267,9 @@ ParserState::process (xmlDoc *xml)
   if (unlikely (!this->processNode (root)))
     {
       delete _doc;
-      delete _htg;
+   //   delete _htg;
       _doc = nullptr;
-      _htg = nullptr;
+   //   _htg = nullptr;
       _presOrch = nullptr;
       return nullptr;
     }
@@ -2855,10 +2855,10 @@ borderColor='%s'}",
                 actions.push_back (act);
             }
           ctx->addLink (conditions, actions);
-          st->_htg->addRelations(conditions, actions);
+       //   st->_htg->addRelations(conditions, actions);
         }
     }
-  st->_presOrch->createPresentationPlan(st->_htg);
+//  st->_presOrch->createPresentationPlan(st->_htg);
   g_assert_nonnull (st->objStackPop ());
   
   return true;
@@ -3670,17 +3670,17 @@ ParserState::popContext (ParserState *st, ParserElt *elt)
       ctx->addPort (evt);
       if (elt->getTag () == "body")
       {
-        Vertex* v = st->_htg->findVertex (evt->getObject()->getId(), Event::START, Event::PRESENTATION);
-        if (v != NULL)
-        {
-          Edge* e = new Edge (v);
-          st->_htg->start_vertex->insertEdge(e);
-        }
+//        Vertex* v = st->_htg->findVertex (evt->getObject()->getId(), Event::START, Event::PRESENTATION);
+//        if (v != NULL)
+//        {
+//          Edge* e = new Edge (v);
+  //        st->_htg->start_vertex->insertEdge(e);
+  //      }
       }
 
     }
 
-  st->objStackPop ();
+ // st->objStackPop ();
   return true;
 }
 
@@ -3912,8 +3912,8 @@ almost_done:
 
 done:
   Vertex* v = new Vertex (media->getId(), Event::START, Event::PRESENTATION, media, "media");
-  st->_htg->insertVertex(v);
-  st->_htg->createVerticesByMedia (media->getId(), Event::START, Event::PRESENTATION, media);
+//  st->_htg->insertVertex(v);
+ // st->_htg->createVerticesByMedia (media->getId(), Event::START, Event::PRESENTATION, media);
   st->objStackPush (media);
   return true;
 }
@@ -3995,22 +3995,22 @@ ParserState::pushArea (ParserState *st, ParserElt *elt)
       media->addPreparationEvent (id, begin, end);
      
       Vertex* v = new Vertex (id, Event::START, Event::PRESENTATION, media, "area");
-      st->_htg->insertVertex (v);
-      Vertex* vSource = st->_htg->findVertex(media->getId(), Event::START, Event::PRESENTATION);
-      g_assert_nonnull (vSource);
+  //    st->_htg->insertVertex (v);
+ //     Vertex* vSource = st->_htg->findVertex(media->getId(), Event::START, Event::PRESENTATION);
+  //    g_assert_nonnull (vSource);
       if (begin > 0)
         {
-          st->_htg->createEdge (vSource,v,"Duration",strB);
+ //         st->_htg->createEdge (vSource,v,"Duration",strB);
         }
       else
         {
-          st->_htg->createEdge (vSource, v);
+   //       st->_htg->createEdge (vSource, v);
         }
       if(end != GINGA_TIME_NONE)
         {
           Vertex* v_stop = new Vertex (id, Event::STOP, Event::PRESENTATION, media, "area"); 
-          st->_htg->insertVertex (v_stop);
-          st->_htg->createEdge (vSource,v_stop,"Duration", strE);
+   //       st->_htg->insertVertex (v_stop);
+  //        st->_htg->createEdge (vSource,v_stop,"Duration", strE);
         }
     }
 
