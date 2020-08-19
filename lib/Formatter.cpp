@@ -410,7 +410,7 @@ bool Formatter::sendViewed(const string &user, const string &key)
 	  // should receive the key, i.e., those that are not sleeping, and then
 	  // propagate the key only to the objects in this buffer.
 	  for (auto obj : *_doc->getObjects ())
-	    if (!obj->isSleeping ())
+	    if (!obj->isSleeping () && obj->getId()==key)
 	      buf.push_back (obj);
 
 	  //Ordernar buf pelo zindex (executar o sendViewed de maior zindex)

@@ -18,10 +18,14 @@
 
 include $(top_srcdir)/build-aux/Makefile.am.common
 
+#Tobii variables 
+TOBII_CFLAG= -I/usr/include/tobii
+TOBII_LIB = -L/usr/lib/tobii -ltobii_stream_engine
+
 AM_CPPFLAGS= -I$(top_srcdir)/lib -I$(top_builddir)/lib
 AM_CXXFLAGS= $(WARN_CFLAGS) $(WERROR_CFLAGS)\
-  $(CAIRO_CFLAGS) $(GLIB_CFLAGS) $(GTK_CFLAGS)
-AM_LDFLAGS= $(CAIRO_LIBS) $(GLIB_LIBS) $(GTK_LIBS)
+  $(CAIRO_CFLAGS) $(GLIB_CFLAGS) $(GTK_CFLAGS) $(TOBII_CFLAG)
+AM_LDFLAGS= $(CAIRO_LIBS) $(GLIB_LIBS) $(GTK_LIBS) $(TOBII_LIB)
 
 bin_PROGRAMS= ginga
 if WITH_OPENGL

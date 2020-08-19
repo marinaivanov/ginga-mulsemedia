@@ -25,13 +25,17 @@ DISTCLEANFILES+= ginga.pc
 pkgconfigdir= $(libdir)/pkgconfig
 pkgconfig_DATA= ginga.pc
 
+TOBII_CFLAG= -I/usr/include/tobii
+TOBII_LIB = -L/usr/lib/tobii -ltobii_stream_engine
+
 AM_CXXFLAGS= $(GINGA_ALL_CXXFLAGS)
 AM_LDFLAGS= $(GINGA_ALL_LDFLAGS)
 
-include_HEADERS= ginga.h mqtt/src/mqtt.h mqtt/src/mqtt_pal.h mqtt/include/posix_sockets.h
+include_HEADERS= ginga.h mqtt/src/mqtt.h mqtt/src/mqtt_pal.h mqtt/include/posix_sockets.h 
+
 lib_LTLIBRARIES= libginga.la
-libginga_la_CXXFLAGS= $(AM_CXXFLAGS)
-libginga_la_LDFLAGS= $(AM_LDFLAGS)
+libginga_la_CXXFLAGS= $(AM_CXXFLAGS) $(TOBII_CFLAG)
+libginga_la_LDFLAGS= $(AM_LDFLAGS) $(TOBII_LIB)
 libginga_la_SOURCES= $(src)
 src=
 src+= Composition.cpp
@@ -59,6 +63,7 @@ src+= mqtt/src/mqtt.c
 src+= mqtt/src/mqtt_pal.c
 src+= ../intMod/InteractionModule.cpp
 src+= ../intMod/VoiceRecognition.cpp
+src+= ../intMod/GazeRecognition.cpp
 src+= InteractionManager.cpp
 src+= aux-ginga.cpp
 src+= aux-gl.cpp

@@ -4,6 +4,7 @@
 #include <iomanip>
 #include "InteractionManager.h"
 #include "../intMod/VoiceRecognition.h"
+#include "../intMod/GazeRecognition.h"
 
 using std::vector;
 using std::string;
@@ -38,18 +39,16 @@ void InteractionManager::start()
 				}
 				case Event::EYE_GAZE:
 				{
-/*
 					map<Event::Type,list<Key>> keyList = (((Formatter *)ginga)->getDocument())->getKeyList();
 
 					list<Key>gazeList = keyList[it->first];
 
-					for (auto it1=gazeList.begin(); it1!=gazeList.begin(); ++it1)
+					for (auto it1=gazeList.begin(); it1!=gazeList.end(); it1++)
 					{
-						string idDevice = Event::getEventTypeAsString(it->first) + "_" + it1->user;
-						InteractionModule * umEyeGaze =  new EyeGaze(this,it1->user);
-						ExtModules.insert(std::pair<std::string,InteractionModule *>(idDevice, umEyeGaze));
+						InteractionModule * umEyeGaze =  new GazeRecognition(this);
+						ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umEyeGaze));
 					}
-*/
+
 					//Para cada media chamar o metodo ((Formatter *)ginga)->getDocument())->getObjectbyId(idMedia)
 					//pegar as propriedades da media -> getProperty(Left), top, width, height.
 					//Construir um json com tais parâmnetros e com id da media
@@ -123,7 +122,6 @@ void InteractionManager::setUserKeyListModules()
 	{
 		for (auto it2=it1->second.begin(); it2!=it1->second.end(); ++it2)
 		{
-			//printf("\n%d:  %s : %s \n", it1->first,it2->user.c_str(), it2->key.c_str());
 			keyListUser[it1->first][it2->user].push_back(it2->key);
 		}
 	}
@@ -155,7 +153,7 @@ void InteractionManager::setUserKeyListModules()
 				}
 				case Event::EYE_GAZE:
 				{
-/*
+
 					json UserKeyList;
 
 					const GingaOptions *options = ginga->getOptions();
@@ -177,21 +175,20 @@ void InteractionManager::setUserKeyListModules()
 						string width = md->getProperty("width");
 						string height = md->getProperty("height");
 						json media;
-						media.emplace("id",it3);
-						media.emplace("left",left);
-						media.emplace("top",top);
-						media.emplace("width",width);
-						media.emplace("height",height);
+						media.emplace("id",it3->c_str());
+						media.emplace("left",left.c_str());
+						media.emplace("top",top.c_str());
+						media.emplace("width",width.c_str());
+						media.emplace("height",height.c_str());
 
 						keys+=(media);
 
 					}
-	//				printf("\n%s:%s:%s:%s \n", left.c_str(),top.c_str(), width.c_str(),height.c_str());
-					UserKeyList.push_back({"key",keys});
-					//	setUserkeyListInteractionModule(it1->first,UserKeyList);
-					//	startInteractionModule(it1->first);
+					//printf("\n%s:%s:%s:%s \n", left.c_str(),top.c_str(), width.c_str(),height.c_str());
+					UserKeyList.push_back({"key", keys});
+					string strEvent  = Event::getEventTypeAsString(it1->first);
+					setUserkeyListInteractionModule(strEvent, UserKeyList);
 
-*/
 					break;
 				}
 			}
@@ -201,8 +198,9 @@ void InteractionManager::setUserKeyListModules()
 
 void InteractionManager::startModules()
 {
-	for (auto it=ExtModules.begin(); it!=ExtModules.end(); ++it)
+	for (auto it=ExtModules.begin(); it!=ExtModules.end(); ++it){
 		(it->second)->start();
+	}
 }
 
 
