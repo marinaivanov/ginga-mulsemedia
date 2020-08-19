@@ -2,7 +2,20 @@
 #include <tobii/tobii_streams.h>
 #include <string>
 #include <assert.h>
-#include "EyeGazeModule.h"
+#include <chrono>
+#include <ctime>
+#include <iostream>
+#include "GazeRecognition.h"
+#include "aux-ginga.h"
+
+using std::string;
+using std::vector;
+using std::cout;
+using std::endl;
+using std::time_t;
+using std::ctime;
+using std::chrono::time_point;
+using std::chrono::system_clock;
 
 typedef struct point {
     double x, y;
@@ -12,25 +25,27 @@ typedef struct region {
     string id;
     Point topLeft;
     Point bottomRight;
+    time_point<system_clock> startTime;
+    bool gazed;
 } Region;
 
-std::string user = "";
-std::string viewedRegions = "";
+string user = "";
+string viewedRegions = "";
 vector<Region> regionList;
 InteractionManager* sharedIntManager;
 
 
 bool pointIsInsideRegion(Region R, Point P)
 {
-    return  (P.x <= R.bottomRight.x) && (P.x >= R.topLeft.x) && 
-		    (P.y >= R.bottomRight.y) && (P.y <= R.topLeft.y);
+    return  (P.x >= R.topLeft.x) && (P.x <= R.bottomRight.x) && 
+		    (P.y >= R.topLeft.y) && (P.y <= R.bottomRight.y);
 }
 
 void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
 {
     // Check that the data is valid before using it
     if( gaze_point->validity == TOBII_VALIDITY_VALID ){
-        /*printf( "Gaze point: %f, %f\n",
+        /*TRACE( "--------------->>>>>Gaze point: %f, %f\n",
             gaze_point->position_xy[ 0 ], 
             gaze_point->position_xy[ 1 ] );*/
 
@@ -38,21 +53,46 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
         p.x = static_cast<double>(gaze_point->position_xy[ 0 ]);
         p.y = static_cast<double>(gaze_point->position_xy[ 1 ]);
 
+        time_point<system_clock> curTimeStamp = system_clock::now();
+
         for (auto& reg : regionList)
         {
             if (pointIsInsideRegion(reg, p))
             {
-                if(viewedRegions.empty()){
-                    viewedRegions += ";";
+                if (reg.gazed)
+                {
+                    chrono::duration<double> gazeTime = curTimeStamp - reg.startTime;
+
+                    if (gazeTime.count() >= 1)
+                    {
+                        if(!viewedRegions.empty()){
+                            viewedRegions += ";";
+                        }
+                        viewedRegions += reg.id;
+                        reg.gazed = false;
+                    }
                 }
-                viewedRegions += reg.id;
+                else
+                {
+                    reg.gazed = true;
+                    reg.startTime = curTimeStamp;
+                }
+            }
+            else
+            {
+                if (reg.gazed)
+                {
+                    reg.gazed = false;
+                }
             }
         }
 
         if (!viewedRegions.empty())
         {
+            cout << "\n\n Midia notificada: " << viewedRegions << "\n\n";
             sharedIntManager->notifyInteraction(
                 InteractionModule::eventTransition::onEyeGaze, user, viewedRegions);
+            viewedRegions = "";
         }
     }
 }
@@ -66,7 +106,7 @@ void url_receiver( char const* url, void* user_data )
         strcpy( buffer, url );
 }
 
-void eyeTrackingStart()
+void* eyeTrackingStart(void* d)
 {
     tobii_api_t* api = NULL;
     tobii_error_t result = tobii_api_create( &api, NULL, NULL );
@@ -99,8 +139,6 @@ void eyeTrackingStart()
         // Process callbacks on this thread if data is available
         result = tobii_device_process_callbacks( device );
         assert( result == TOBII_ERROR_NO_ERROR );
-
-        //colocar condição de parada;
     }
 
     // Cleanup
@@ -114,29 +152,35 @@ void eyeTrackingStart()
 
 
 
-EyeGazeModule::EyeGazeModule(InteractionManager* manager)
+GazeRecognition::GazeRecognition(InteractionManager* manager)
 {
     intManager = manager;
+    run = false;
 }
 
-EyeGazeModule::~EyeGazeModule()
+GazeRecognition::~GazeRecognition()
 {
 
 }
 
-void EyeGazeModule::start()
+void GazeRecognition::start()
 {
     if(!run){
         run = true;
         sharedIntManager = intManager;
-        eyeTrackingStart();
+
+        pthread_t pDaemon;
+        if (pthread_create(&pDaemon, NULL, eyeTrackingStart, NULL))
+        {
+            printf("Error: failure to create a pthread client daemon");
+        }
     }
 }
 
-void EyeGazeModule::setUserKeyList(json userKeyList)
+void GazeRecognition::setUserKeyList(json userKeyList)
 {
-    double screenWidth, screenHeight, left, top, width, height;
     Region region;
+    double screenWidth, screenHeight, left, top, width, height;
 
     user = userKeyList["user"];
 	screenWidth = static_cast<double>(userKeyList["screenWidth"]);
@@ -144,28 +188,23 @@ void EyeGazeModule::setUserKeyList(json userKeyList)
 
     for (auto& key : userKeyList["key"])
 	{
-		Region region;
-		double left, top, width, height;
-
-		left = static_cast<double>(key["left"]);
-		top = static_cast<double>(key["top"]);
-		width = static_cast<double>(key["width"]);
-		height = static_cast<double>(key["height"]);
+		left = ginga::parse_percent(key["left"], screenWidth, 0, G_MAXINT);
+		top = ginga::parse_percent(key["top"], screenHeight, 0, G_MAXINT);
+		width = ginga::parse_percent(key["width"], screenWidth, 0, G_MAXINT);
+		height = ginga::parse_percent(key["height"], screenHeight, 0, G_MAXINT);
 
 		region.id = key["id"];
 		region.topLeft.x = left/screenWidth;
 		region.topLeft.y = top/screenHeight;
 		region.bottomRight.x = (left + width)/screenWidth;
 		region.bottomRight.y = (top + height)/screenHeight;
+        region.gazed = false;
 
 		regionList.push_back(region);
 	}
 }
 
-void EyeGazeModule::stop()
+void GazeRecognition::stop()
 {
     run = false;
 }
-
-
-

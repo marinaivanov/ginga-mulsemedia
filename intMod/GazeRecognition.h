@@ -1,5 +1,5 @@
-#ifndef EYEGAZEMODULE_H
-#define EYEGAZEMODULE_H
+#ifndef GAZERECOGNITION_H
+#define GAZERECOGNITION_H
 
 #include "../lib/nlohmann/json.hpp"
 #include "../lib/InteractionManager.h"
@@ -7,14 +7,14 @@
 
 using json = nlohmann::json;
 
-class EyeGazeModule : public InteractionModule
+class GazeRecognition : public InteractionModule
 {
     private:
         bool run;
     public:
         InteractionManager* intManager;
-        EyeGazeModule(InteractionManager*);
-        ~EyeGazeModule();
+        GazeRecognition(InteractionManager*);
+        ~GazeRecognition();
         void start();
         void setUserKeyList(json);
         void stop();

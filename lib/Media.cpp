@@ -605,7 +605,21 @@ Media::afterTransition (Event *evt, Event::Transition transition)
       }
       case Event::EYE_GAZE:
 	  {
-    	  break;
+      string key, user;
+      evt->getParameter ("key", &key);
+      evt->getParameter ("user", &user);
+      switch (transition)
+      {
+        case Event::START:
+              TRACE ("start eye gaze %s", evt->getFullId ().c_str ());
+              break;
+            case Event::STOP:
+              TRACE ("stop eye gaze %s", evt->getFullId ().c_str ());
+              break;
+            default:
+              g_assert_not_reached ();
+      }
+      break;
 	  }
 
     default:
