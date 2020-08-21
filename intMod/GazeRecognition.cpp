@@ -8,6 +8,7 @@
 #include "GazeRecognition.h"
 #include "aux-ginga.h"
 
+
 using std::string;
 using std::vector;
 using std::cout;
@@ -16,6 +17,13 @@ using std::time_t;
 using std::ctime;
 using std::chrono::time_point;
 using std::chrono::system_clock;
+
+
+typedef enum state{ 
+    standby = 0,
+    start, 
+    stop, 
+} State;
 
 typedef struct point {
     double x, y;
@@ -26,11 +34,15 @@ typedef struct region {
     Point topLeft;
     Point bottomRight;
     time_point<system_clock> startTime;
+    //chrono::duration<double> durationGaze;
     bool gazed;
+    State regState = standby;
 } Region;
 
 string user = "";
-string viewedRegions = "";
+string startRegions = "";
+string stopRegions = "";
+string abortRegions = "";
 vector<Region> regionList;
 InteractionManager* sharedIntManager;
 
@@ -44,11 +56,8 @@ bool pointIsInsideRegion(Region R, Point P)
 void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
 {
     // Check that the data is valid before using it
-    if( gaze_point->validity == TOBII_VALIDITY_VALID ){
-        /*TRACE( "--------------->>>>>Gaze point: %f, %f\n",
-            gaze_point->position_xy[ 0 ], 
-            gaze_point->position_xy[ 1 ] );*/
-
+    if( gaze_point->validity == TOBII_VALIDITY_VALID )
+    {
         Point p;
         p.x = static_cast<double>(gaze_point->position_xy[ 0 ]);
         p.y = static_cast<double>(gaze_point->position_xy[ 1 ]);
@@ -63,18 +72,30 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
                 {
                     chrono::duration<double> gazeTime = curTimeStamp - reg.startTime;
 
-                    if (gazeTime.count() >= 1)
+                    if ((reg.regState != start) && (gazeTime.count() >= 0.33) && (gazeTime.count() < 1))
                     {
-                        if(!viewedRegions.empty()){
-                            viewedRegions += ";";
+                        if(!startRegions.empty()){
+                            startRegions += ";";
                         }
-                        viewedRegions += reg.id;
-                        reg.gazed = false;
+                        startRegions += reg.id;
+                        reg.regState = start;
+                    }
+                    else{
+                        if ((reg.regState == start) && (gazeTime.count() >= 1))
+                        {
+                            if(!stopRegions.empty()){
+                                stopRegions += ";";
+                            }
+                            stopRegions += reg.id;
+                            reg.regState = stop;
+                            reg.gazed = false;
+                        }
                     }
                 }
                 else
                 {
                     reg.gazed = true;
+                    reg.regState = standby;
                     reg.startTime = curTimeStamp;
                 }
             }
@@ -83,16 +104,40 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
                 if (reg.gazed)
                 {
                     reg.gazed = false;
+                    reg.regState = standby;
+                    if (reg.regState == start)
+                    {
+                        if(!abortRegions.empty()){
+                            abortRegions += ";";
+                        }
+                        abortRegions += reg.id;
+                    }
                 }
             }
         }
 
-        if (!viewedRegions.empty())
+        if (!startRegions.empty())
         {
-            cout << "\n\n Midia notificada: " << viewedRegions << "\n\n";
+            cout << "\n\n Midia notificada START: " << startRegions << "\n\n";
             sharedIntManager->notifyInteraction(
-                InteractionModule::eventTransition::onEyeGaze, user, viewedRegions);
-            viewedRegions = "";
+                InteractionModule::eventTransition::onEyeGaze, user, startRegions);
+            startRegions = "";
+        }
+
+        if (!stopRegions.empty())
+        {
+            cout << "\n\n Midia notificada STOP: " << stopRegions << "\n\n";
+            sharedIntManager->notifyInteraction(
+                InteractionModule::eventTransition::onEyeGaze, user, stopRegions);
+            stopRegions = "";
+        }
+
+        if (!abortRegions.empty())
+        {
+            cout << "\n\n Midia notificada ABORT: " << abortRegions << "\n\n";
+            sharedIntManager->notifyInteraction(
+                InteractionModule::eventTransition::onEyeGaze, user, abortRegions);
+            abortRegions = "";
         }
     }
 }
