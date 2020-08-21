@@ -34,7 +34,7 @@ typedef struct region {
     Point topLeft;
     Point bottomRight;
     time_point<system_clock> startTime;
-    //chrono::duration<double> durationGaze;
+    double durationGaze;
     bool gazed;
     State regState = standby;
 } Region;
@@ -72,7 +72,9 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
                 {
                     chrono::duration<double> gazeTime = curTimeStamp - reg.startTime;
 
-                    if ((reg.regState != start) && (gazeTime.count() >= 0.33) && (gazeTime.count() < 1))
+                    if ( (reg.regState != start) && 
+                         (gazeTime.count() >= reg.durationGaze/3) && 
+                         (gazeTime.count() < reg.durationGaze) )
                     {
                         if(!startRegions.empty()){
                             startRegions += ";";
@@ -81,7 +83,7 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
                         reg.regState = start;
                     }
                     else{
-                        if ((reg.regState == start) && (gazeTime.count() >= 1))
+                        if ((reg.regState == start) && (gazeTime.count() >= reg.durationGaze))
                         {
                             if(!stopRegions.empty()){
                                 stopRegions += ";";
@@ -225,6 +227,7 @@ void GazeRecognition::start()
 void GazeRecognition::setUserKeyList(json userKeyList)
 {
     Region region;
+    double duration;
     double screenWidth, screenHeight, left, top, width, height;
 
     user = userKeyList["user"];
@@ -243,6 +246,8 @@ void GazeRecognition::setUserKeyList(json userKeyList)
 		region.topLeft.y = top/screenHeight;
 		region.bottomRight.x = (left + width)/screenWidth;
 		region.bottomRight.y = (top + height)/screenHeight;
+
+        region.durationGaze = static_cast<double>(key["duration"]);
         region.gazed = false;
 
 		regionList.push_back(region);
