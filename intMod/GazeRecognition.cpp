@@ -247,6 +247,13 @@ void GazeRecognition::setUserKeyList(json userKeyList)
         region.durationGaze = static_cast<double>(key["duration"]);
         region.gazed = false;
 
+        if (key["duration"].empty()){
+            region.durationGaze = 1;
+        }
+        else{
+            region.durationGaze = static_cast<double>(key["duration"]);
+        }
+
 		regionList.push_back(region);
 	}
 }
