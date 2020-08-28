@@ -131,6 +131,8 @@ Object::toString ()
         sel.push_back (evt->getId ());
         break;
       case Event::VOICE_RECOGNITION:
+      case Event::FACE_RECOGNITION:
+      case Event::GESTURE_RECOGNITION:
         vo_rec.push_back (evt->getId ());
         break;
       case Event::EYE_GAZE:
@@ -318,6 +320,23 @@ Object::addPreparationEvent (const string &id, Time begin, Time end)
   _events.insert (evt);
 }
 
+Event *
+Object::getInteractionEvent (Event::Type ev,const string &key, const string &user)
+{
+  return this->getEvent (ev, key, user);
+}
+
+void
+Object::addInteractionEvent (Event::Type ev, const string &key,const string &user )
+{
+  Event *evt;
+
+  if (this->getInteractionEvent (ev, key, user))
+    return;
+
+  evt = new Event (ev, this, key, user);
+  _events.insert (evt);
+}
 
 Event *
 Object::getVoiceRecognitionEvent (const string &key, const string &user)
@@ -334,6 +353,42 @@ Object::addVoiceRecognitionEvent (const string &key,const string &user )
     return;
 
   evt = new Event (Event::VOICE_RECOGNITION, this, key, user);
+  _events.insert (evt);
+}
+
+Event *
+Object::getFaceRecognitionEvent (const string &key, const string &user)
+{
+  return this->getEvent (Event::FACE_RECOGNITION, key, user);
+}
+
+void
+Object::addFaceRecognitionEvent (const string &key,const string &user )
+{
+  Event *evt;
+
+  if (this->getFaceRecognitionEvent (key, user))
+    return;
+
+  evt = new Event (Event::FACE_RECOGNITION, this, key, user);
+  _events.insert (evt);
+}
+
+Event *
+Object::getGestureRecognitionEvent (const string &key, const string &user)
+{
+  return this->getEvent (Event::GESTURE_RECOGNITION, key, user);
+}
+
+void
+Object::addGestureRecognitionEvent (const string &key,const string &user )
+{
+  Event *evt;
+
+  if (this->getGestureRecognitionEvent (key, user))
+    return;
+
+  evt = new Event (Event::FACE_RECOGNITION, this, key, user);
   _events.insert (evt);
 }
 
@@ -430,7 +485,7 @@ void Object::sendKey (unused (const string &key), unused (bool press))
 void Object::sendKey (unused (const string &user), unused (const string &key), unused (bool press))
 {
 }
-void Object::sendViewed (unused (const string &user))
+void Object::sendViewed (Event::Transition tr , unused (const string &user))
 {
 }
 

@@ -59,11 +59,11 @@ void InteractionManager::start()
 	}
 }
 
-bool InteractionManager::notifyInteraction(InteractionModule::eventTransition ev, std::string &user, std::string &key)
+bool InteractionManager::notifyInteraction(Event::Type ev, Event::Transition tran, std::string &user, std::string &key)
 {
 	switch (ev)
 	{
-		case InteractionModule::eventTransition::onVoiceRecognition:
+		case Event::VOICE_RECOGNITION:
 		{
 			if (!(ginga->sendKey (std::string(key),std::string(user),true)))
 				return false;
@@ -71,9 +71,9 @@ bool InteractionManager::notifyInteraction(InteractionModule::eventTransition ev
 				return false;
 	        return true;
 		}
-		case InteractionModule::eventTransition::onEyeGaze:
+		case Event::EYE_GAZE:
 		{
-			if (!(ginga->sendViewed (user,key)))
+			if (!(((Formatter *)ginga)->sendViewed (tran, user,key)))
 				return false;
 	        return true;
 		}
@@ -116,13 +116,16 @@ void InteractionManager::setUserKeyListModules()
 	map<Event::Type,list<Key>> keyList = (((Formatter *)ginga)->getDocument())->getKeyList();
 
 
-	map<Event::Type,map<string, list<string>>> keyListUser;
+//	map<Event::Type,map<string, list<string>>> keyListUser;
 
+	map<Event::Type,map<string, list<Key>>> keyListUser;
+ 
 	for (auto it1=keyList.begin(); it1!=keyList.end(); ++it1)
 	{
 		for (auto it2=it1->second.begin(); it2!=it1->second.end(); ++it2)
 		{
-			keyListUser[it1->first][it2->user].push_back(it2->key);
+//			keyListUser[it1->first][it2->user].push_back(it2->key);
+			keyListUser[it1->first][it2->user].push_back(*it2);
 		}
 	}
 
@@ -140,7 +143,8 @@ void InteractionManager::setUserKeyListModules()
 					json keys={};
 					for (auto it3=it2->second.begin(); it3!=it2->second.end(); ++it3)
 					{
-						keys+=(*it3);
+//						keys+=(*it3);
+						keys+=(it3->key);
 					}
 
 					userKeyList_voice.push_back({{"user",it2->first}, {"key",keys}});
@@ -168,18 +172,22 @@ void InteractionManager::setUserKeyListModules()
 					for (auto it3=it2->second.begin(); it3!=it2->second.end(); ++it3)
 					{
 
-						md = (((Formatter *)ginga)->getDocument())->getObjectById(it3->c_str());
+//						md = (((Formatter *)ginga)->getDocument())->getObjectById(it3->c_str());
+
+						md = (((Formatter *)ginga)->getDocument())->getObjectById(it3->component);
 
 						string left = md->getProperty("left");
 						string top = md->getProperty("top");
 						string width = md->getProperty("width");
 						string height = md->getProperty("height");
 						json media;
-						media.emplace("id",it3->c_str());
+						media.emplace("id",it3->component);
 						media.emplace("left",left.c_str());
 						media.emplace("top",top.c_str());
 						media.emplace("width",width.c_str());
 						media.emplace("height",height.c_str());
+						media.emplace("duration",it3->key);
+						
 
 						keys+=(media);
 

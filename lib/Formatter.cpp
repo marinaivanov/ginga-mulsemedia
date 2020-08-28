@@ -392,7 +392,8 @@ Formatter::sendKey (const string &key, const string &user,bool press)
   return true;
 }
 
-bool Formatter::sendViewed(const string &user, const string &key)
+bool Formatter::sendViewed(Event::Transition tr, const string &user, const string &key)
+//bool Formatter::sendViewed(int tr, const string &user, const string &key)
 {
 
 	 list<Object *> buf;
@@ -416,7 +417,7 @@ bool Formatter::sendViewed(const string &user, const string &key)
 	  //Ordernar buf pelo zindex (executar o sendViewed de maior zindex)
 	  // e dos obje que estão na key
 	  for (auto obj : buf) //olhar o zindex
-	    obj->sendViewed(user);
+	    obj->sendViewed(tr, user);
 
 	  return true;
 }

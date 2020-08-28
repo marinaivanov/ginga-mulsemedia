@@ -121,24 +121,21 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
         if (!startRegions.empty())
         {
             cout << "\n\n Midia notificada START: " << startRegions << "\n\n";
-            sharedIntManager->notifyInteraction(
-                InteractionModule::eventTransition::onEyeGaze, user, startRegions);
+            sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::START, user, startRegions);
             startRegions = "";
         }
 
         if (!stopRegions.empty())
         {
             cout << "\n\n Midia notificada STOP: " << stopRegions << "\n\n";
-            sharedIntManager->notifyInteraction(
-                InteractionModule::eventTransition::onEyeGaze, user, stopRegions);
+            sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::STOP, user, stopRegions);
             stopRegions = "";
         }
 
         if (!abortRegions.empty())
         {
             cout << "\n\n Midia notificada ABORT: " << abortRegions << "\n\n";
-            sharedIntManager->notifyInteraction(
-                InteractionModule::eventTransition::onEyeGaze, user, abortRegions);
+            sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::ABORT, user, abortRegions);
             abortRegions = "";
         }
     }

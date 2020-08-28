@@ -66,8 +66,17 @@ public:
   void addPreparationEvent (const string &, Time, Time);
   
 
+  Event *getInteractionEvent (Event::Type, const string &, const string &);
+  void addInteractionEvent (Event::Type, const string &, const string &);
+
   Event *getVoiceRecognitionEvent (const string &, const string &);
   void addVoiceRecognitionEvent (const string &, const string &);
+
+  Event *getFaceRecognitionEvent (const string &, const string &);
+  void addFaceRecognitionEvent (const string &, const string &);
+
+  Event *getGestureRecognitionEvent (const string &, const string &);
+  void addGestureRecognitionEvent (const string &, const string &);
 
   Event *getEyeGazeEvent (const string &, const string &);
   void addEyeGazeEvent (const string &, const string &);
@@ -86,7 +95,7 @@ public:
 
   virtual void sendKey (const string &, bool);
   virtual void sendKey (const string &, const string &, bool);
-  virtual void sendViewed (const string &);
+  virtual void sendViewed (Event::Transition, const string &);
   virtual void sendTick (Time, Time, Time);
 
   Time getTime ();

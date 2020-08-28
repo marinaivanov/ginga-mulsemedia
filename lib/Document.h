@@ -24,6 +24,7 @@ GINGA_NAMESPACE_BEGIN
 
 typedef struct
 {
+  string component;           ///< id component.
   string key;                 ///< Value key.
   string user;                ///< Owner Action.
   string delay;               ///< Delay.

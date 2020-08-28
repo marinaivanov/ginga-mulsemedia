@@ -18,7 +18,8 @@ class InteractionManager
 	    InteractionManager(Ginga *ginga);
 
 	    void start();
-	    bool notifyInteraction(InteractionModule::eventTransition, std::string &user, std::string &key);
+//	    bool notifyInteraction(InteractionModule::eventTransition, std::string &user, std::string &key);
+	    bool notifyInteraction(Event::Type, Event::Transition, std::string &user, std::string &key);
 
 		void setUserKeyListModules();
 	    void startInteractionModule(std::string mod);

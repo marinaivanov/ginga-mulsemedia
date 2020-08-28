@@ -159,7 +159,7 @@ typedef struct ParserConnRole
   string duration;              ///< Role duration (if action).
   string delay;                 ///< Role delay.
   string key;                   ///< Role key (if selection).
-  string user;                  ///< Role user (if voice_recognition).
+  string user;                  ///< Role user (if voice_recognition, face_recognition, gesture_recognition).
   string value;                 ///< Role value (if attribution).
 } ParserConnRole;
 
@@ -863,6 +863,8 @@ static map<string, pair<Event::Type, Event::Transition> >
 
 	  {"onVoiceRecognition", {Event::VOICE_RECOGNITION, Event::STOP} }, //Added to represent voice interactions
 	  {"onEyeGaze", {Event::EYE_GAZE, Event::STOP} }, //Added to represent eye interactions
+	  {"onFaceRecognition", {Event::FACE_RECOGNITION, Event::STOP} }, //Added to represent Face interactions
+	  {"onGestureRecognition", {Event::GESTURE_RECOGNITION, Event::STOP} }, //Added to represent Gesture interactions
 
 	  {"onBeginPreparation", {Event::PREPARATION, Event::START} }, // conditions
       {"onEndPreparation", {Event::PREPARATION, Event::STOP} },
@@ -905,6 +907,8 @@ static map<string, Event::Type> parser_syntax_event_type_table = {
   {"preparation", Event::PREPARATION},
   {"voice_recognition", Event::VOICE_RECOGNITION},
   {"eye_gaze", Event::EYE_GAZE},
+  {"face_recognition", Event::FACE_RECOGNITION},
+  {"gesture_recognition", Event::GESTURE_RECOGNITION},
 };
 
 /// Known transitions.
@@ -2758,8 +2762,10 @@ borderColor='%s'}",
                     g_assert_nonnull (act.event);
                     break;
                   }
+                  case Event::FACE_RECOGNITION:
+                  case Event::GESTURE_RECOGNITION:
                   case Event::VOICE_RECOGNITION:
-                    {
+                  {
                         act.value = st->resolveParameter (
                             role->key, &bind->params, params, &ghosts_map);
 
@@ -2769,34 +2775,35 @@ borderColor='%s'}",
                 		for (auto & c: act.owner) c = toupper(c);
                 		for (auto & c: act.value) c = toupper(c);
 
-
                         Key oneKey;
                 		oneKey.key = act.value;
                 		oneKey.user = act.owner;
 
                 		(st->getDoc())->addKeyList (role->eventType, oneKey);
 
-                		obj->addVoiceRecognitionEvent (act.value, act.owner);
+                		obj->addInteractionEvent (role->eventType,act.value, act.owner);
 
-                		act.event = obj->getVoiceRecognitionEvent (act.value, act.owner);
+                		act.event = obj->getInteractionEvent (role->eventType, act.value, act.owner);
 
                 		g_assert_nonnull (act.event);
 
                 		act.event->setParameter ("key", act.value);
                 		act.event->setParameter ("user", act.owner);
                 		break;
-                    }
-                  	case Event::EYE_GAZE:
+                  }
+                  case Event::EYE_GAZE:
                      {
                     	 //Pegar os componentes que participa no onGaze e adicionar numa lista no documento
-                    	 // Lista de media a serem vigiadas
-                    	 act.value = bind->component;
+                    	 // Lista de media a serem vigiadas                      
+                       act.value = st->resolveParameter (
+                            role->key, &bind->params, params, &ghosts_map);
                     	 act.owner = st->resolveParameter (
                              role->user, &bind->params, params, &ghosts_map);
 
                     	 for (auto & c: act.owner) c = toupper(c);
 
                     	 Key oneKey;
+                       oneKey.component = bind->component;
                     	 oneKey.key = act.value;
                     	 oneKey.user = act.owner;
 
@@ -3163,10 +3170,12 @@ ParserState::pushSimpleCondition (ParserState *st, ParserElt *elt)
   if (!role.condition)
     elt->getAttribute ("delay", &role.delay);
 
-  if ((role.eventType == Event::SELECTION) || (role.eventType == Event::VOICE_RECOGNITION))
+  if ((role.eventType == Event::SELECTION) || (role.eventType == Event::VOICE_RECOGNITION)||
+      (role.eventType == Event::FACE_RECOGNITION)||(role.eventType == Event::GESTURE_RECOGNITION))
     elt->getAttribute ("key", &role.key);
 
-  if ((role.eventType == Event::VOICE_RECOGNITION)||(role.eventType == Event::EYE_GAZE))
+  if ((role.eventType == Event::VOICE_RECOGNITION)||(role.eventType == Event::EYE_GAZE)||
+      (role.eventType == Event::FACE_RECOGNITION)||(role.eventType == Event::GESTURE_RECOGNITION))
     elt->getAttribute ("user", &role.user);
 
   if (unlikely (!role.condition && role.eventType == Event::ATTRIBUTION
@@ -3178,7 +3187,10 @@ ParserState::pushSimpleCondition (ParserState *st, ParserElt *elt)
   //Add the event of interaction in a list to start the Interaction manager
   switch (role.eventType)
   {
-  	  case Event::VOICE_RECOGNITION:
+   
+  	case Event::FACE_RECOGNITION: 
+    case Event::GESTURE_RECOGNITION:
+    case Event::VOICE_RECOGNITION:
 	  {
 		  (st->getDoc())->addInteractions (role.eventType, true);
 	   	  break;

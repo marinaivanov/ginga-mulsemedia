@@ -134,8 +134,8 @@ void VoiceRecognition::start()
              for (auto & c: keyDoc) c = toupper(c);
              if (key.compare(keyDoc) == 0)
         	 {
-           // 	 printf("**************Notify**********");
-            	intManagerShared->notifyInteraction(InteractionModule::eventTransition::onVoiceRecognition, user, key);
+           // 	 printf("**************Notify********** voice");
+            	intManagerShared->notifyInteraction(Event::VOICE_RECOGNITION, Event::STOP, user, key);
                 break;
              }
           }

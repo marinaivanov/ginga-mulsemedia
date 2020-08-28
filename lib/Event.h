@@ -80,6 +80,22 @@ public:
 		 * directed to the object.
 	*/
 	 EYE_GAZE,
+
+	 /**
+		 * @brief Face Recognition event.
+		 *
+		 *Stands for the recognition of a Face expression, which is
+		 * directed to the object.
+	*/
+	 FACE_RECOGNITION,
+
+	 /**
+		 * @brief Gesture Recognition event.
+		 *
+		 *Stands for the recognition of a gesture, which is
+		 * directed to the object.
+	*/
+	 GESTURE_RECOGNITION,
   };
 
   /// @brief Event state.
