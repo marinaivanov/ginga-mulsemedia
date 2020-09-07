@@ -7,14 +7,17 @@
 
 using json = nlohmann::json;
 
+/**
+ * @brief Eye gaze recognition module.
+ */
 class GazeRecognition : public InteractionModule
 {
     private:
+        /// @brief Control variable for the module execution current status.
         bool run;
     public:
         InteractionManager* intManager;
         GazeRecognition(InteractionManager*);
-        ~GazeRecognition();
         void start();
         void setUserKeyList(json);
         void stop();
