@@ -101,9 +101,10 @@ Object::toString ()
   auto it = _aliases.begin ();
   if (it != _aliases.end ())
     {
-      str += "  aliases: " + *it;
+      str += "  aliases: " + (*it).first;
       while (++it != _aliases.end ())
-        str += ", " + *it;
+        str += ", " + (*it).first + "(at Composition "
+               + xstrbuild ("%p", (*it).second) + ")";
       str += "\n";
     }
 
@@ -121,22 +122,26 @@ Object::toString ()
     switch (evt->getType ())
       {
       case Event::PRESENTATION:
-        pres.push_back (evt->getId ());
+        pres.push_back (evt->getId () + " ("
+                        + Event::getEventStateAsString (evt->getState ())
+                        + ')');
         break;
       case Event::ATTRIBUTION:
-        attr.push_back (evt->getId ());
+        attr.push_back (evt->getId () + " ("
+                        + Event::getEventStateAsString (evt->getState ())
+                        + ')');
         break;
       case Event::SELECTION:
-        sel.push_back (evt->getId ());
+        sel.push_back (evt->getId () + " ("
+                       + Event::getEventStateAsString (evt->getState ())
+                       + ')');
         break;
       default:
         g_assert_not_reached ();
       }
 
   list<pair<string, list<string> *> > evts = {
-    { "evts pres.", &pres },
-    { "evts attr.", &attr },
-    { "evts sel.", &sel },
+    { "evts pres.", &pres }, { "evts attr.", &attr }, { "evts sel.", &sel },
   };
 
   for (auto it_evts : evts)
@@ -160,7 +165,7 @@ Object::toString ()
   return str;
 }
 
-const list<string> *
+const list<pair<string, Composition *> > *
 Object::getAliases ()
 {
   return &_aliases;
@@ -170,15 +175,17 @@ bool
 Object::hasAlias (const string &alias)
 {
   for (auto curr : _aliases)
-    if (curr == alias)
+    if (curr.first == alias)
       return true;
   return false;
 }
 
 void
-Object::addAlias (const string &alias)
+Object::addAlias (const string &alias, Composition *parent)
 {
-  tryinsert (alias, _aliases, push_back);
+  auto alias_pair = make_pair (alias, parent);
+  // _aliases.push_back (alias_pair);
+  tryinsert (alias_pair, _aliases, push_back);
 }
 
 const set<Event *> *
@@ -233,6 +240,7 @@ void
 Object::addPresentationEvent (const string &id, Time begin, Time end)
 {
   Event *evt;
+
   if (this->getPresentationEvent (id))
     return;
 
@@ -362,14 +370,15 @@ Object::addDelayedAction (Event *event, Event::Transition transition,
                           const string &value, Time delay)
 {
   Action act;
-  
+
   act.event = event;
   act.transition = transition;
   act.value = value;
   _delayed.push_back (std::make_pair (act, _time + delay));
 }
 
-void Object::sendKey (unused (const string &key), unused (bool press))
+void
+Object::sendKey (unused (const string &key), unused (bool press))
 {
 }
 
