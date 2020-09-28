@@ -21,7 +21,7 @@ using std::chrono::system_clock;
 //Media Region's possible states.
 typedef enum state{ 
     sleeping = 0,
-    iniciated, 
+    initiated, 
     finished, 
 } State;
 
@@ -101,12 +101,12 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
                             startRegions += ";";
                         }
                         startRegions += reg.id;
-                        reg.regState = iniciated;
+                        reg.regState = initiated;
                     }
                     // If the region was already sent to the formatter to start AND 
                     // The user already looked it sufficient time to complete the gaze event.
                     else{
-                        if ((reg.regState == iniciated) && (gazeTime.count() >= reg.durationGaze))
+                        if ((reg.regState == initiated) && (gazeTime.count() >= reg.durationGaze))
                         {
                             if(!stopRegions.empty()){
                                 stopRegions += ";";
@@ -131,7 +131,7 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
                 if (reg.gazed)
                 {
                     // If the region was already sent to the formatter to start and needs to be abort.
-                    if (reg.regState == iniciated)
+                    if (reg.regState == initiated)
                     {
                         if(!abortRegions.empty()){
                             abortRegions += ";";
@@ -293,13 +293,11 @@ void GazeRecognition::setUserKeyList(json userKeyList)
 		region.bottomRight.x = (left + width)/screenWidth;
 		region.bottomRight.y = (top + height)/screenHeight;
 
-        region.durationGaze = static_cast<double>(key["duration"]);
-
-        if (key["duration"].empty()){
-            region.durationGaze = 1;
+        if (key["duration"].is_number()){
+            region.durationGaze = static_cast<double>(key["duration"]);
         }
         else{
-            region.durationGaze = static_cast<double>(key["duration"]);
+            region.durationGaze = 1;
         }
 
 		regionList.push_back(region);

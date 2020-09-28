@@ -862,7 +862,9 @@ static map<string, pair<Event::Type, Event::Transition> >
       {"onEndSelection", {Event::SELECTION, Event::STOP} },
 
 	  {"onVoiceRecognition", {Event::VOICE_RECOGNITION, Event::STOP} }, //Added to represent voice interactions
-	  {"onEyeGaze", {Event::EYE_GAZE, Event::STOP} }, //Added to represent eye interactions
+	  {"onBeginEyeGaze", {Event::EYE_GAZE, Event::START} }, //Added to represent eye interactions
+    {"onEndEyeGaze", {Event::EYE_GAZE, Event::STOP} }, //Added to represent eye interactions
+    {"onAbortEyeGaze", {Event::EYE_GAZE, Event::ABORT} }, //Added to represent eye interactions
 	  {"onFaceRecognition", {Event::FACE_RECOGNITION, Event::STOP} }, //Added to represent Face interactions
 	  {"onGestureRecognition", {Event::GESTURE_RECOGNITION, Event::STOP} }, //Added to represent Gesture interactions
 
