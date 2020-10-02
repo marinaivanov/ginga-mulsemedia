@@ -212,6 +212,10 @@ public:
   static bool popNcl (ParserState *, ParserElt *);
   static bool pushRegion (ParserState *, ParserElt *);
   static bool popRegion (ParserState *, ParserElt *);
+  static bool pushUserAgent (ParserState *, ParserElt *);
+  static bool popUserAgent (ParserState *, ParserElt *);
+  static bool pushUserProfile (ParserState *, ParserElt *);
+  static bool popUserProfile (ParserState *, ParserElt *);
   static bool pushDescriptorParam (ParserState *, ParserElt *);
   static bool pushCausalConnector (ParserState *, ParserElt *);
   static bool popCausalConnector (ParserState *, ParserElt *);
@@ -525,6 +529,37 @@ static map<string, ParserSyntaxElt> parser_syntax_table = {
         { {"name", ATTR_REQUIRED_NONEMPTY_NAME},
           {"value", ATTR_REQUIRED} } },
   },
+
+  {
+      "userBase",
+      {nullptr,
+        nullptr,
+        ELT_CACHE,
+        {"head"},
+        { {"id", ATTR_OPT_ID} } },   // unused
+  },
+  {
+      "userAgent",
+      {ParserState::pushUserAgent,
+        ParserState::popUserAgent,
+        ELT_CACHE,
+        {"userAgent", "userBase"},
+        { {"id", ATTR_ID},       
+          {"profile", ATTR_OPT_IDREF} } }, // unused
+  },
+  {
+      "userProfile",
+      {ParserState::pushUserProfile,
+        ParserState::popUserProfile,
+        ELT_CACHE,
+        {"userBase"},
+        { {"id", ATTR_ID},
+          {"min", 0},
+          {"max", 0},
+          {"type", 0},
+          {"src", 0} } }, // unused
+  },
+
   {
       "connectorBase",
       {nullptr,
@@ -860,13 +895,13 @@ static map<string, pair<Event::Type, Event::Transition> >
       {"onSelection", {Event::SELECTION, Event::START} },
       {"onBeginSelection", {Event::SELECTION, Event::START} },
       {"onEndSelection", {Event::SELECTION, Event::STOP} },
-
-	  {"onVoiceRecognition", {Event::VOICE_RECOGNITION, Event::STOP} }, //Added to represent voice interactions
-	  {"onEyeGaze", {Event::EYE_GAZE, Event::STOP} }, //Added to represent eye interactions
-	  {"onFaceRecognition", {Event::FACE_RECOGNITION, Event::STOP} }, //Added to represent Face interactions
-	  {"onGestureRecognition", {Event::GESTURE_RECOGNITION, Event::STOP} }, //Added to represent Gesture interactions
-
-	  {"onBeginPreparation", {Event::PREPARATION, Event::START} }, // conditions
+	    {"onVoiceRecognition", {Event::VOICE_RECOGNITION, Event::STOP} }, //Added to represent voice interactions
+	    {"onBeginEyeGaze", {Event::EYE_GAZE, Event::START} }, //Added to represent eye interactions
+	    {"onEndEyeGaze", {Event::EYE_GAZE, Event::STOP} }, //Added to represent eye interactions
+	    {"onAbortEyeGaze", {Event::EYE_GAZE, Event::ABORT} }, //Added to represent eye interactions
+	    {"onFaceRecognition", {Event::FACE_RECOGNITION, Event::STOP} }, //Added to represent Face interactions
+	    {"onGestureRecognition", {Event::GESTURE_RECOGNITION, Event::STOP} }, //Added to represent Gesture interactions
+	    {"onBeginPreparation", {Event::PREPARATION, Event::START} }, // conditions
       {"onEndPreparation", {Event::PREPARATION, Event::STOP} },
       {"onAbortPreparation", {Event::PREPARATION, Event::ABORT} },
       {"onPausePreparation", {Event::PREPARATION, Event::PAUSE} },
@@ -2976,6 +3011,109 @@ ParserState::pushDescriptorParam (ParserState *st, ParserElt *elt)
 
   return true;
 }
+
+
+
+
+/**
+ * @brief Starts the processing of \<UserAgent\> element.
+ *
+ * This function uses the initial user features stored in #ParserState
+ * to convert into absolute values any relative values used in \<UserAgent\>
+ * attributes.
+ *
+ * @fn ParserState::pushUserAgent
+ * @param st #ParserState.
+ * @param elt Element wrapper.
+ * @return \c true if successful, or \c false otherwise.
+ */
+bool
+ParserState::pushUserAgent(ParserState *st, ParserElt *elt)
+{
+
+  /*
+  static int last_zorder = 0;
+  xmlNode *parent_node;
+  Rect screen;
+  Rect parent;
+  Rect rect;
+  string str;
+
+  parent_node = elt->getParentNode ();
+  g_assert_nonnull (parent_node);
+
+  screen = st->_rectStack.front ();
+  rect = parent = st->rectStackPeek ();
+  if (elt->getAttribute ("left", &str))
+    {
+      rect.x += ginga::parse_percent (str, parent.width, 0, G_MAXINT);
+    }
+  if (elt->getAttribute ("top", &str))
+    {
+      rect.y += ginga::parse_percent (str, parent.height, 0, G_MAXINT);
+    }
+  if (elt->getAttribute ("width", &str))
+    {
+      rect.width = ginga::parse_percent (str, parent.width, 0, G_MAXINT);
+    }
+  if (elt->getAttribute ("height", &str))
+    {
+      rect.height = ginga::parse_percent (str, parent.height, 0, G_MAXINT);
+    }
+  if (elt->getAttribute ("right", &str))
+    {
+      rect.x += parent.width - rect.width
+                - ginga::parse_percent (str, parent.width, 0, G_MAXINT);
+    }
+  if (elt->getAttribute ("bottom", &str))
+    {
+      rect.y += parent.height - rect.height
+                - ginga::parse_percent (str, parent.height, 0, G_MAXINT);
+    }
+
+  // Update region position to absolute values.
+  st->rectStackPush (rect);
+  double left = ((double) rect.x / screen.width) * 100.;
+  double top = ((double) rect.y / screen.height) * 100.;
+  double width = ((double) rect.width / screen.width) * 100.;
+  double height = ((double) rect.height / screen.height) * 100.;
+
+  elt->setAttribute ("zOrder", xstrbuild ("%d", last_zorder++));
+  elt->setAttribute ("left", xstrbuild ("%g%%", left));
+  elt->setAttribute ("top", xstrbuild ("%g%%", top));
+  elt->setAttribute ("width", xstrbuild ("%g%%", width));
+  elt->setAttribute ("height", xstrbuild ("%g%%", height));
+*/
+  return true;
+}
+
+/**
+ * @brief Ends the processing of \<region\> element.
+ * @param st #ParserState.
+ * @param elt Element wrapper.
+ * @return \c true if successful, or \c false otherwise.
+ */
+bool
+ParserState::popUserAgent (ParserState *st, unused (ParserElt *elt))
+{
+  //st->rectStackPop ();
+  return true;
+}
+bool ParserState::pushUserProfile (ParserState *st, unused (ParserElt *elt))
+{
+  //st->rectStackPop ();
+  return true;
+}
+bool ParserState::popUserProfile (ParserState *st, unused (ParserElt *elt))
+{
+  //st->rectStackPop ();
+  return true;
+}
+
+
+
+
+
 
 /**
  * @brief Starts the processing of \<causalConnector\> element.

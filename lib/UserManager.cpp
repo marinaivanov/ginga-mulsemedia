@@ -171,21 +171,23 @@ void InteractionManager::setUserKeyListModules()
 
 					for (auto it3=it2->second.begin(); it3!=it2->second.end(); ++it3)
 					{
+
 //						md = (((Formatter *)ginga)->getDocument())->getObjectById(it3->c_str());
+
 						md = (((Formatter *)ginga)->getDocument())->getObjectById(it3->component);
 
 						string left = md->getProperty("left");
 						string top = md->getProperty("top");
 						string width = md->getProperty("width");
 						string height = md->getProperty("height");
-						string dur = md->getProperty("gazeTime");
 						json media;
 						media.emplace("id",it3->component);
 						media.emplace("left",left.c_str());
 						media.emplace("top",top.c_str());
 						media.emplace("width",width.c_str());
 						media.emplace("height",height.c_str());
-						media.emplace("key",dur.c_str());//
+						media.emplace("duration",it3->key);
+						
 
 						keys+=(media);
 

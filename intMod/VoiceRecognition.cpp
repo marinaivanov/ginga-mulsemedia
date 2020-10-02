@@ -21,12 +21,13 @@ using std::cout;
 using std::endl;
 using std::setw;
 
-char * ADDRESS = {"localhost"};
+
+char *ADDRESS = {"localhost"};
 //char * ADDRESS = {"broker.mqttdashboard.com"};
-char * PORTA = {"1883"};
-char * CLIENT = {"voz"};
-//char * TOPIC = {"topic/voice_recog"};
-char * TOPIC = {"voice_recog"};
+char *PORTA = {"1883"};
+char *CLIENT = {"voz"};
+ //char * TOPIC = {"topic/voice_recog"};
+char *TOPIC = {"voice_recog"};
 int QOS = 1;
 
 

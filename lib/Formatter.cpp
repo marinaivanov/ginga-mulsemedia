@@ -386,9 +386,11 @@ Formatter::sendKey (const string &key, const string &user,bool press)
   for (auto obj : *_doc->getObjects ())
     if (!obj->isSleeping ())
       buf.push_back (obj);
+      
   for (auto obj : buf)
+  {
     obj->sendKey (key, user,  press);
-
+  }
   return true;
 }
 
@@ -414,11 +416,28 @@ bool Formatter::sendViewed(Event::Transition tr, const string &user, const strin
 	    if (!obj->isSleeping () && obj->getId()==key)
 	      buf.push_back (obj);
 
-	  //Ordernar buf pelo zindex (executar o sendViewed de maior zindex)
+	  //Ordernar buf pelo zIndex (executar o sendViewed de maior zIndex)
 	  // e dos obje que estão na key
-	  for (auto obj : buf) //olhar o zindex
-	    obj->sendViewed(tr, user);
-
+    Object * maiorIndex;
+    int maior = -1;
+    for (auto obj : buf) //olhar o zindex
+    {
+        int zIndex = 0;
+        if (obj->getProperty("zIndex").empty())
+          zIndex = 0;
+        else
+        {
+          char * aux = (char *) obj->getProperty("zIndex").c_str();
+          // zIndex = (int)std::strtol(obj->getProperty("zIndex").c_str(), nullptr, 10);
+          zIndex = atoi(aux);
+        }
+        if (zIndex > maior)
+        {
+          maior = zIndex;
+          maiorIndex = obj;
+        }
+    }
+ 	  maiorIndex->sendViewed(tr, user);
 	  return true;
 }
 
