@@ -184,9 +184,6 @@ void InteractionManager::setUserKeyListModules()
 						media.emplace("top",top.c_str());
 						media.emplace("width",width.c_str());
 						media.emplace("height",height.c_str());
-						media.emplace("duration",it3->key);
-
-						printf("\n\n>>>>>>>>>>>> JSON duration: %s \n\n", it3->key.c_str());
 					
 						keys+=(media);
 

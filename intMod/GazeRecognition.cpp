@@ -5,6 +5,7 @@
 #include <chrono>
 #include <ctime>
 #include <iostream>
+#include <fstream>
 #include "GazeRecognition.h"
 #include "aux-ginga.h"
 
@@ -17,6 +18,7 @@ using std::time_t;
 using std::ctime;
 using std::chrono::time_point;
 using std::chrono::system_clock;
+using std::ifstream;
 
 //Media Region's possible states.
 typedef enum state{ 
@@ -34,7 +36,6 @@ typedef struct region {
     Point topLeft;
     Point bottomRight;
     time_point<system_clock> startTime; // Time instant where the user started to look at the region
-    double durationGaze; // Amount of much time that the user must look at the region.
     bool gazed = false;
     State regState = sleeping;
 } Region;
@@ -45,6 +46,18 @@ string stopRegions = "";
 string abortRegions = "";
 vector<Region> regionList;
 InteractionManager* sharedIntManager;
+
+/**
+ * @brief Amount of time (in seconds) that the user must look at a region to COMPLETE the eyeGaze event.
+ */
+double durationGaze;
+
+/**
+ * @brief Constant between 0 and 1. It represents a time slice of the fixation duration (variable 
+ *        "durationGaze"). It is used to define the amount of time that the user must look at a 
+ *        region to START the eyeGaze event.
+*/
+double startConstant;
 
 
 //Auxiliary functions ****************************************
@@ -94,8 +107,8 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
                     // If the region was not sent to the formatter to start yet AND  
                     // The user is looking at it sufficient time to start the gaze event.
                     if ( (reg.regState == sleeping) && 
-                         (gazeTime.count() >= reg.durationGaze/3) && 
-                         (gazeTime.count() < reg.durationGaze) )
+                         (gazeTime.count() >= durationGaze*startConstant) && 
+                         (gazeTime.count() < durationGaze) )
                     {
                         if(!startRegions.empty()){
                             startRegions += ";";
@@ -106,7 +119,7 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
                     // If the region was already sent to the formatter to start AND 
                     // The user already looked it sufficient time to complete the gaze event.
                     else{
-                        if ((reg.regState == initiated) && (gazeTime.count() >= reg.durationGaze))
+                        if ((reg.regState == initiated) && (gazeTime.count() >= durationGaze))
                         {
                             if(!stopRegions.empty()){
                                 stopRegions += ";";
@@ -235,6 +248,57 @@ void* eyeTrackingStart(void* data)
     assert( result == TOBII_ERROR_NO_ERROR );
 }
 
+/**
+ * @brief This function initializes some eyeGaze event parameters: the duration of the 
+ *        eyeGaze event and the amount of time needed to initiate it. The parameters are 
+ *        read from a JSON configuration file in this directory.
+ */
+void setGazeConfigurations()
+{
+    json jsonObj;
+    ifstream configFile("config.json");
+
+    durationGaze = 1;
+    startConstant = 0.33;
+
+    if(configFile.good())
+    {
+        configFile >> jsonObj;
+
+        if (jsonObj["eyeGaze"]["duration"].is_number())
+        {
+            durationGaze = static_cast<double>(jsonObj["eyeGaze"]["duration"]);
+        }
+        else
+        {
+            cout << endl << "The informed duration is not a number. Thus, the default duration of 1 second will be used." << endl;
+        }
+
+        if (jsonObj["eyeGaze"]["constant"].is_number())
+        {
+            double auxConstant = static_cast<double>(jsonObj["eyeGaze"]["constant"]);
+
+            if (auxConstant >= 0 && auxConstant <= 1)
+            {
+                startConstant = auxConstant;
+            }
+            else
+            {
+                cout << endl << "The informed constant is not valid: must be between 0 and 1. Thus, the default constant of 0.33 will be used." << endl;
+            }
+        }
+        else
+        {
+            cout << endl << "The informed constant is not a number. Thus, the default constant of 0.33 will be used." << endl;
+        }
+    }
+    else
+    {
+        cout << endl << "The configuration file could not be found.  Must exist a config.json in the Gaze Recognition module directory." << endl;
+    }
+
+    configFile.close();
+}
 
 //GazeRecognition class functions ****************************************
 
@@ -256,6 +320,7 @@ void GazeRecognition::start()
     if(!run){
         run = true;
         sharedIntManager = intManager;
+        setGazeConfigurations();
 
         pthread_t pDaemon;
         if (pthread_create(&pDaemon, NULL, eyeTrackingStart, NULL))
@@ -273,7 +338,6 @@ void GazeRecognition::start()
 void GazeRecognition::setUserKeyList(json userKeyList)
 {
     Region region;
-    double duration;
     double screenWidth, screenHeight, left, top, width, height;
 
     user = userKeyList["user"];
@@ -292,13 +356,6 @@ void GazeRecognition::setUserKeyList(json userKeyList)
 		region.topLeft.y = top/screenHeight;
 		region.bottomRight.x = (left + width)/screenWidth;
 		region.bottomRight.y = (top + height)/screenHeight;
-
-        if (key["duration"].is_number()){
-            region.durationGaze = static_cast<double>(key["duration"]);
-        }
-        else{
-            region.durationGaze = 1;
-        }
 
 		regionList.push_back(region);
 	}
