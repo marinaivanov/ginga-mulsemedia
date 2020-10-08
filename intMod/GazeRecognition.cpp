@@ -9,7 +9,6 @@
 #include "GazeRecognition.h"
 #include "aux-ginga.h"
 
-
 using std::string;
 using std::vector;
 using std::cout;
@@ -60,7 +59,8 @@ double durationGaze;
 double startConstant;
 
 
-//Auxiliary functions ****************************************
+
+/*** Auxiliary functions *****************************************/
 
 /**
  * @brief Verifies if a Point P is inside a Region R.
@@ -162,21 +162,21 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
 
         if (!startRegions.empty())
         {
-            cout << "\n\n Midia notificada START: " << startRegions << "\n\n";
+            cout << "Notified media START: " << startRegions << endl;
             sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::START, user, startRegions);
             startRegions = "";
         }
 
         if (!stopRegions.empty())
         {
-            cout << "\n\n Midia notificada STOP: " << stopRegions << "\n\n";
+            cout << "Notified media STOP: " << stopRegions << endl;
             sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::STOP, user, stopRegions);
             stopRegions = "";
         }
 
         if (!abortRegions.empty())
         {
-            cout << "\n\n Midia notificada ABORT: " << abortRegions << "\n\n";
+            cout << "Notified media ABORT: " << abortRegions << endl;
             sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::ABORT, user, abortRegions);
             abortRegions = "";
         }
@@ -251,12 +251,12 @@ void* eyeTrackingStart(void* data)
 /**
  * @brief This function initializes some eyeGaze event parameters: the duration of the 
  *        eyeGaze event and the amount of time needed to initiate it. The parameters are 
- *        read from a JSON configuration file in this directory.
+ *        read from a JSON configuration file.
  */
 void setGazeConfigurations()
 {
     json jsonObj;
-    ifstream configFile("config.json");
+    ifstream configFile("interaction-config.json");
 
     durationGaze = 1;
     startConstant = 0.33;
@@ -264,6 +264,7 @@ void setGazeConfigurations()
     if(configFile.good())
     {
         configFile >> jsonObj;
+        cout << "Configuration file 'interaction-config.json' successfully read." << endl;
 
         if (jsonObj["eyeGaze"]["duration"].is_number())
         {
@@ -271,7 +272,7 @@ void setGazeConfigurations()
         }
         else
         {
-            cout << endl << "The informed duration is not a number. Thus, the default duration of 1 second will be used." << endl;
+            cout << "The informed duration is not a number. Thus, the default duration of 1 second will be used." << endl;
         }
 
         if (jsonObj["eyeGaze"]["constant"].is_number())
@@ -284,23 +285,25 @@ void setGazeConfigurations()
             }
             else
             {
-                cout << endl << "The informed constant is not valid: must be between 0 and 1. Thus, the default constant of 0.33 will be used." << endl;
+                cout << "The informed constant is not valid: must be between 0 and 1. Thus, the default constant of 0.33 will be used." << endl;
             }
         }
         else
         {
-            cout << endl << "The informed constant is not a number. Thus, the default constant of 0.33 will be used." << endl;
+            cout << "The informed constant is not a number. Thus, the default constant of 0.33 will be used." << endl;
         }
     }
     else
     {
-        cout << endl << "The configuration file could not be found.  Must exist a config.json in the Gaze Recognition module directory." << endl;
+        cout << "The configuration file 'interaction-config.json' could not be found in XXXXXXX. Thus, the default configuration will be used." << endl;
     }
 
     configFile.close();
 }
 
-//GazeRecognition class functions ****************************************
+
+
+/*** GazeRecognition class functions *****************************************/
 
 /**
  * @brief GazeRecognition's constructor. 

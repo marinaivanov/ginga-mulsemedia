@@ -585,9 +585,9 @@ Media::afterTransition (Event *evt, Event::Transition transition)
         break;
       }
 
-      case Event::VOICE_RECOGNITION: 
-      case Event::FACE_RECOGNITION: 
-      case Event::GESTURE_RECOGNITION:
+    case Event::VOICE_RECOGNITION: 
+    case Event::FACE_RECOGNITION: 
+    case Event::GESTURE_RECOGNITION:
       {
           string key, user;
           evt->getParameter ("key", &key);
@@ -606,24 +606,28 @@ Media::afterTransition (Event *evt, Event::Transition transition)
 
           break;
       }
-      case Event::EYE_GAZE:
-	  {
-      string key, user;
-      evt->getParameter ("key", &key);
-      evt->getParameter ("user", &user);
-      switch (transition)
-      {
-        case Event::START:
-              TRACE ("start eye gaze %s", evt->getFullId ().c_str ());
-              break;
-            case Event::STOP:
-              TRACE ("stop eye gaze %s", evt->getFullId ().c_str ());
-              break;
-            default:
-              g_assert_not_reached ();
+    
+    case Event::EYE_GAZE:
+	    {
+        string key, user;
+        evt->getParameter ("key", &key);
+        evt->getParameter ("user", &user);
+        switch (transition)
+        {
+          case Event::START:
+            TRACE ("start eye gaze %s", evt->getFullId ().c_str ());
+            break;
+          case Event::STOP:
+            TRACE ("stop eye gaze %s", evt->getFullId ().c_str ());
+            break;
+          case Event::ABORT:
+            TRACE ("abort eye gaze %s", evt->getFullId ().c_str ());
+            break;
+          default:
+            g_assert_not_reached ();
+        }
+        break;
       }
-      break;
-	  }
 
     default:
       g_assert_not_reached ();

@@ -48,10 +48,6 @@ void InteractionManager::start()
 						InteractionModule * umEyeGaze =  new GazeRecognition(this);
 						ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umEyeGaze));
 					}
-
-					//Para cada media chamar o metodo ((Formatter *)ginga)->getDocument())->getObjectbyId(idMedia)
-					//pegar as propriedades da media -> getProperty(Left), top, width, height.
-					//Construir um json com tais parâmnetros e com id da media
 				}
 
 			}
@@ -177,8 +173,9 @@ void InteractionManager::setUserKeyListModules()
 						string top = md->getProperty("top");
 						string width = md->getProperty("width");
 						string height = md->getProperty("height");
-						string dur = md->getProperty("gazeTime");
+
 						json media;
+						
 						media.emplace("id",it3->component);
 						media.emplace("left",left.c_str());
 						media.emplace("top",top.c_str());
