@@ -438,7 +438,8 @@ typedef enum {
   }
 
 /// NCL syntax table (grammar).
-static map<string, ParserSyntaxElt> parser_syntax_table = {
+static map<string, ParserSyntaxElt> 
+parser_syntax_table = {
   {
       "ncl",                     // element name
       {ParserState::pushNcl,    // push function
@@ -529,7 +530,6 @@ static map<string, ParserSyntaxElt> parser_syntax_table = {
         { {"name", ATTR_REQUIRED_NONEMPTY_NAME},
           {"value", ATTR_REQUIRED} } },
   },
-
   {
       "userBase",
       {nullptr,
@@ -540,11 +540,15 @@ static map<string, ParserSyntaxElt> parser_syntax_table = {
   },
   {
       "userAgent",
-      {ParserState::pushUserAgent,
-        ParserState::popUserAgent,
+//      {ParserState::pushUserAgent,
+//       ParserState::popUserAgent,
+      {nullptr,
+       nullptr,
         ELT_CACHE,
-        {"userAgent", "userBase"},
-        { {"id", ATTR_ID},       
+        {"userBase"},
+        { {"id", ATTR_ID},   
+          {"src", 0},
+          {"type", 0},
           {"profile", ATTR_OPT_IDREF} } }, // unused
   },
   {
@@ -559,7 +563,6 @@ static map<string, ParserSyntaxElt> parser_syntax_table = {
           {"type", 0},
           {"src", 0} } }, // unused
   },
-
   {
       "connectorBase",
       {nullptr,
@@ -800,6 +803,7 @@ static map<string, ParserSyntaxElt> parser_syntax_table = {
           {"type", 0},
           {"descriptor", ATTR_OPT_IDREF},
           {"refer", ATTR_OPT_IDREF},
+          {"user", ATTR_OPT_IDREF},
           {"instance", 0} } }, // unused
   },
   {
@@ -2336,7 +2340,7 @@ ParserState::pushNcl (ParserState *st, ParserElt *elt)
 
   if (elt->getAttribute ("id", &id))
     root->addAlias (id);
-
+  
   st->objStackPush (root);
   return true;
 }
@@ -2357,6 +2361,8 @@ ParserState::popNcl (ParserState *st, unused (ParserElt *elt))
   list<ParserElt *> media_list;
   list<ParserElt *> switch_list;
   list<ParserElt *> link_list;
+  list<ParserElt *> userAgent_list;
+  list<ParserElt *> userProfile_list;
 
   // Resolve descriptor references to region/transition.
   // (I.e., move region/transition attributes to associated descriptor.)
@@ -2900,6 +2906,47 @@ borderColor='%s'}",
        //   st->_htg->addRelations(conditions, actions);
         }
     }
+  if (st->eltCacheIndexByTag ({"userAgent"}, &userAgent_list) > 0)
+  {
+    printf("\n Tem userAgents!!!!!!!!!!!!!!!!**********\n");
+   for (auto userAgent_elt : userAgent_list)
+        {
+          user _userAgent;
+          g_assert (userAgent_elt->getAttribute ("id", &_userAgent.id));
+          g_assert (userAgent_elt->getAttribute ("profile", &_userAgent.profile));
+          userAgent_elt->getAttribute ("src", &_userAgent.src);
+          userAgent_elt->getAttribute ("type", &_userAgent.type);
+
+          st->_doc->addUser(_userAgent);
+        
+        }
+  }
+  else
+  {
+    printf("\n não tem userAgents!!!!!!!!!!!!!!!!**********\n");
+  }
+  if (st->eltCacheIndexByTag ({"userProfile"}, &userProfile_list) > 0)
+  {
+    printf("\n Tem Profiles!!!!!!!!!!!!!!!!**********\n");
+    for (auto userProfile_elt : userProfile_list)
+        {
+          profile _userProfile;
+          g_assert (userProfile_elt->getAttribute ("id", &_userProfile.id));
+          userProfile_elt->getAttribute ("src", &_userProfile.src);
+          userProfile_elt->getAttribute ("type", &_userProfile.type);
+          userProfile_elt->getAttribute ("min", &_userProfile.min);
+          userProfile_elt->getAttribute ("max", &_userProfile.max);
+
+          st->_doc->addProfile(_userProfile);
+
+        }
+  }
+  else
+  {
+    printf("\n não tem Profiles!!!!!!!!!!!!!!!!**********\n");
+  }
+  
+
 //  st->_presOrch->createPresentationPlan(st->_htg);
   g_assert_nonnull (st->objStackPop ());
   
@@ -3013,8 +3060,6 @@ ParserState::pushDescriptorParam (ParserState *st, ParserElt *elt)
 }
 
 
-
-
 /**
  * @brief Starts the processing of \<UserAgent\> element.
  *
@@ -3109,11 +3154,6 @@ bool ParserState::popUserProfile (ParserState *st, unused (ParserElt *elt))
   //st->rectStackPop ();
   return true;
 }
-
-
-
-
-
 
 /**
  * @brief Starts the processing of \<causalConnector\> element.
@@ -3991,9 +4031,11 @@ ParserState::pushMedia (ParserState *st, ParserElt *elt)
   string refer;
   string src;
 
+
   g_assert (elt->getAttribute ("id", &id));
   if (elt->getAttribute ("type", &type))
     {
+      printf("\n Tem user setting!! tipo = %s******\n", type.c_str());
       if (unlikely (elt->getAttribute ("refer", &refer)))
         {
           return st->errEltMutuallyExclAttributes (elt->getNode (), "type",
@@ -4006,6 +4048,18 @@ ParserState::pushMedia (ParserState *st, ParserElt *elt)
           media->addAlias (id);
           goto done;
         }
+      if (type == "application/x-ginga-user-settings")
+      { 
+        printf("\n Tem user setting!!!!!!!!!!!!!!!!**********\n");
+        string _idUser;
+        g_assert (elt->getAttribute ("user", &_idUser));
+       
+        media = st->_doc->addUserSetting(_idUser);
+        g_assert_nonnull (media);
+        media->addAlias (id);
+
+        goto done;
+      }
     }
 
   if (elt->getAttribute ("refer", &refer))
