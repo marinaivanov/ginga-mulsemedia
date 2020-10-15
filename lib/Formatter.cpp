@@ -394,51 +394,87 @@ Formatter::sendKey (const string &key, const string &user,bool press)
   return true;
 }
 
+/**
+ * @brief This auxiliary function splits a string by given a delimiter.
+ * @param text Is the string that needs to be split.
+ * @param delimiter Is the delimiter that will be used to split the string.
+ * @return Return a Vector of strings. Each one of the elements is the result of the split.
+ */
+const vector<string> split(const string& text, const char& delimiter)
+{
+	string buffer{""};
+	vector<string> v;
+	
+	for(auto item:text)
+	{
+		if(item != delimiter)
+    {
+      buffer += item; 
+    }
+    else if(item == delimiter && !buffer.empty()) 
+    { 
+      v.push_back(buffer); 
+      buffer = ""; 
+    }
+	}
+
+	if(!buffer.empty()){
+    v.push_back(buffer);
+  }
+	
+	return v;
+}
+
 bool Formatter::sendViewed(Event::Transition tr, const string &user, const string &key)
 //bool Formatter::sendViewed(int tr, const string &user, const string &key)
 {
+	list<Object *> buf;
+  vector<string> list = split(key,';');
 
-	 list<Object *> buf;
+	// This must be the first check.
+	if (_state != GINGA_STATE_PLAYING)
+	  return false;
+	_GINGA_CHECK_EOS (this);
+	if (_state != GINGA_STATE_PLAYING)
+	  return false;
 
-	  // This must be the first check.
-	  if (_state != GINGA_STATE_PLAYING)
-	    return false;
-	  _GINGA_CHECK_EOS (this);
-	  if (_state != GINGA_STATE_PLAYING)
-	    return false;
-
-	  // IMPORTANT: When propagating a key to the objects, we cannot traverse
-	  // the object set directly, as the reception of a key may cause this set
-	  // to be modified.  We thus need to create a buffer with the objects that
-	  // should receive the key, i.e., those that are not sleeping, and then
-	  // propagate the key only to the objects in this buffer.
-	  for (auto obj : *_doc->getObjects ())
-	    if (!obj->isSleeping () && obj->getId()==key)
-	      buf.push_back (obj);
-
-	  //Ordernar buf pelo zIndex (executar o sendViewed de maior zIndex)
-	  // e dos obje que estão na key
-    Object * maiorIndex;
-    int maior = -1;
-    for (auto obj : buf) //olhar o zindex
+	// IMPORTANT: When propagating a key to the objects, we cannot traverse
+	// the object set directly, as the reception of a key may cause this set
+	// to be modified.  We thus need to create a buffer with the objects that
+	// should receive the key, i.e., those that are not sleeping, and then
+	// propagate the key only to the objects in this buffer.
+	for (auto obj : *_doc->getObjects ())
+  {
+    for (auto &&item : list)
     {
-        int zIndex = 0;
-        if (obj->getProperty("zIndex").empty())
-          zIndex = 0;
-        else
-        {
-          char * aux = (char *) obj->getProperty("zIndex").c_str();
-          // zIndex = (int)std::strtol(obj->getProperty("zIndex").c_str(), nullptr, 10);
-          zIndex = atoi(aux);
-        }
-        if (zIndex > maior)
-        {
-          maior = zIndex;
-          maiorIndex = obj;
-        }
+      if (!obj->isSleeping () && obj->getId() == item)
+	      buf.push_back (obj);
     }
- 	  maiorIndex->sendViewed(tr, user);
-	  return true;
+  }
+
+	//Ordernar buf pelo zIndex (executar o sendViewed de maior zIndex)
+	// e dos obje que estão na key
+  Object * maiorIndex;
+  int maior = -1;
+  for (auto obj : buf) //olhar o zindex
+  {
+    int zIndex = 0;
+    if (obj->getProperty("zIndex").empty())
+      zIndex = 0;
+    else
+    {
+      char * aux = (char *) obj->getProperty("zIndex").c_str();
+      // zIndex = (int)std::strtol(obj->getProperty("zIndex").c_str(), nullptr, 10);
+      zIndex = atoi(aux);
+    }
+    if (zIndex > maior)
+    {
+      maior = zIndex;
+      maiorIndex = obj;
+    }
+  }
+ 	maiorIndex->sendViewed(tr, user);
+	return true;
 }
 
 bool
