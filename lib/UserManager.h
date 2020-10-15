@@ -8,6 +8,10 @@
 #include <list>
 #include <string>
 
+#include <libxml/tree.h>
+#include <libxml/parser.h>
+#include <libxml/uri.h>
+
 GINGA_NAMESPACE_BEGIN
 class UserManager
 {
@@ -15,10 +19,7 @@ class UserManager
 	    // Os parâmetros poderam ser as opções do documento tendo a especificações dos modulos
 	    UserManager(Ginga *ginga);
 	    void start();
-		void setUsersProfile();
-	    void setUserkeyList();
-	    void startModules();
-		
+		void setUsersProfile();	
 	private:
 		Ginga *ginga;
 

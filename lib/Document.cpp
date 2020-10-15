@@ -121,7 +121,7 @@ Document::addObject (Object *obj)
 
   // Settings can only be added once.
   if (unlikely (_settings != nullptr && instanceof (MediaSettings *, obj)))
-    g_assert_false (instanceof (MediaSettings *, obj));
+        g_assert_false (instanceof (MediaSettings *, obj));
 
   obj->initDocument (this);
   _objects.insert (obj);
@@ -532,8 +532,86 @@ Document::addKeyList (Event::Type intEvent, Key key)
 	  {  // auto list  =  it->second();
 		  it->second.push_back(key);
 	  }
+}
 
+/**
+ * @brief Gets document's users.
+ * @return The users who will participate in the application
+ */
+map<string,user> 
+Document::getUsers()
+{
+	return _userList;
+}
+/**
+ * @brief Gets document's profilies.
+ * @return The profilies that will participate in the application
+ */
+map<string,profile>
+Document::getProfiles()
+{
+	return _profileList;
+}
+/**
+ * @brief Gets document's user settings.
+ * @return The user properties that will participate in the application
+ */
+ map<string, MediaSettings *>
+ Document::getuserSettings()
+{
+	return _userSettingsList;
+}
 
+/**
+ * @brief add user to the document
+ * @return true if you managed to add
+ */
+bool
+Document::addUser (user _user)
+{
+	  auto it = _userList.find (_user.id);
+	  if (it == _userList.end ())
+	  {
+		  _userList.insert(std::pair<string, user>(_user.id,_user));
+		  return true;
+
+	  }
+	  return false;
+}
+/**
+ * @brief add profile to the document
+ * @return true if you managed to add
+ */
+bool
+Document::addProfile (profile _profile)
+{
+	  auto it = _profileList.find (_profile.id);
+	  if (it == _profileList.end ())
+	  {
+		  _profileList.insert(std::pair<string, profile>(_profile.id,_profile ));
+		  return true;
+
+	  }
+	  return false;
+}
+/**
+ * @brief add profile to the document
+ * @return true if you managed to add
+ */
+MediaSettings *
+Document::addUserSetting (string idUser)
+{
+	  auto it = _userSettingsList.find (idUser);
+	  if (it == _userSettingsList.end ())
+	  {
+      MediaSettings *userSetting;
+      userSetting = new MediaSettings ("__settings__");
+      userSetting->setProperty("type","application/x−ginga-user−settings",NULL);
+		  _userSettingsList.insert(std::pair<string, MediaSettings *>(idUser,userSetting));
+		  return userSetting;
+
+	  }
+	  return NULL;
 }
 
 GINGA_NAMESPACE_END
