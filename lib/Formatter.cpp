@@ -138,6 +138,7 @@ Formatter::start (const string &file, string *errmsg)
 #if defined WITH_LUA && WITH_LUA
   if (xstrhassuffix (file, ".lua"))
     {
+      printf("\nArquivo:        %s", file.c_str());
       _doc = ParserLua::parseFile (file, errmsg);
       if (unlikely (_doc == nullptr))
         return false;
@@ -184,6 +185,10 @@ Formatter::start (const string &file, string *errmsg)
   _intManager->start();
   _intManager->setUserKeyListModules();
   _intManager->startModules();
+
+  _userManager = new UserContextManager(this);
+  _userManager->start();
+
 
   return true;
 }

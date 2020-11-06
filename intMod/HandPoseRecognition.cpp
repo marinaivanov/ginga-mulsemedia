@@ -20,12 +20,12 @@ using std::setw;
 using std::string;
 using std::vector;
 
-char *ADDRESS = {"localhost"};
+const char *ADDRESS = {"localhost"};
 //char * ADDRESS = {"broker.mqttdashboard.com"};
-char *PORTA = {"1883"};
-char *CLIENT = {"gesto"};
-char *TOPIC = {"handpose_recog"};
-int QOS = 1;
+const char *PORTA = {"1883"};
+const char *CLIENT = {"gesto"};
+const char *TOPIC = {"handpose_recog"};
+const int QOS = 1;
 
 json userKeyListShared;
 

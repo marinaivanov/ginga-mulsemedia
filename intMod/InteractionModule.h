@@ -7,7 +7,6 @@
 #include "../lib/nlohmann/json.hpp"
 #include "../lib/Event.h"
 
-
 using json = nlohmann::json;
 using std::string;
 
@@ -31,5 +30,5 @@ class InteractionModule
    Event::Type event;
 
 };
-//GINGA_NAMESPACE_END
+
 #endif // INTERACTION_MODULE_H

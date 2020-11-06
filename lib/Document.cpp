@@ -606,8 +606,11 @@ Document::addUserSetting (string idUser)
 	  {
       MediaSettings *userSetting;
       userSetting = new MediaSettings ("__settings__");
-      userSetting->setProperty("type","application/x−ginga-user−settings",NULL);
-		  _userSettingsList.insert(std::pair<string, MediaSettings *>(idUser,userSetting));
+      if (userSetting != NULL)
+      {
+          userSetting->setProperty("type","application/x−ginga-user−settings",NULL);
+		      _userSettingsList.insert(std::pair<string, MediaSettings *>(idUser,userSetting));
+      }
 		  return userSetting;
 
 	  }

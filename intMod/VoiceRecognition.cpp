@@ -1,18 +1,19 @@
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
 extern "C" {
   #include "../lib/mqtt/include/posix_sockets.h"
+  #include "../lib/mqtt/src/mqtt.h"
 }
+//#include "InteractionModule.h"
 #include "VoiceRecognition.h"
-#include "InteractionModule.h"
 
 #include <iostream>
 #include <iomanip>
 
-
-using namespace std;
 using json = nlohmann::json;
 
 using std::vector;
@@ -31,13 +32,14 @@ char *TOPIC = {"voice_recog"};
 int QOS = 1;
 
 
+
 json userKeyListShared;
 
 InteractionManager *intManagerShared;
-
+//extern int open_nb_socket(const char* addr, const char* port);
 void exit_VR(int status, int sockfd, pthread_t *client_daemon);
 void publish_callback(void** unused, struct mqtt_response_publish *published);
-void* client_refresher(void* client);
+void* client_refresher(void* d);
 
 void VoiceRecognition::setUserKeyList(json userKeyList){
     _userKeyList = userKeyList;

@@ -120,4 +120,10 @@ MediaSettings::scheduleFocusUpdate (const string &next)
   _nextFocus = next;
 }
 
+ map<string, string>
+ MediaSettings::getProperties()
+ {
+   return _properties;
+ }
+
 GINGA_NAMESPACE_END

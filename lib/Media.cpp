@@ -102,7 +102,7 @@ Media::sendKey (const string &key,const string &user, bool press)
   for (auto evt : _events)
   {
 
-     if (evt->getType () != Event::VOICE_RECOGNITION)
+     if ((evt->getType () != Event::VOICE_RECOGNITION) && (evt->getType () != Event::FACE_RECOGNITION))
      {
         continue;
      }

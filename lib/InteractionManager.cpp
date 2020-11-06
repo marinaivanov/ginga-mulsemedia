@@ -5,6 +5,7 @@
 #include "InteractionManager.h"
 #include "../intMod/VoiceRecognition.h"
 #include "../intMod/GazeRecognition.h"
+#include "../intMod/FacialExpressionRecognition.h"
 
 using std::vector;
 using std::string;
@@ -48,7 +49,16 @@ void InteractionManager::start()
 						InteractionModule * umEyeGaze =  new GazeRecognition(this);
 						ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umEyeGaze));
 					}
+					break;
 				}
+				case Event::FACE_RECOGNITION:
+				{
+					InteractionModule * umExtModule =  new FacialExpressionRecognition(this);
+					ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umExtModule));
+
+					break;
+				}
+
 
 			}
 		}
@@ -56,7 +66,7 @@ void InteractionManager::start()
 }
 
 bool InteractionManager::notifyInteraction(Event::Type ev, Event::Transition tran, std::string &user, std::string &key)
-{
+{   printf("\nUser: %s e Key: %s", user.c_str(),key.c_str());
 	switch (ev)
 	{
 		case Event::VOICE_RECOGNITION:
@@ -73,6 +83,16 @@ bool InteractionManager::notifyInteraction(Event::Type ev, Event::Transition tra
 				return false;
 	        return true;
 		}
+		case Event::FACE_RECOGNITION:
+		{
+			//printf("\nUser: %s e Key: %s", user.c_str(),key.c_str());
+			if (!(ginga->sendKey (std::string(key),std::string(user),true)))
+				return false;
+	        if (!(ginga->sendKey (std::string(key), std::string(user),false)))
+				return false;
+	        return true;
+		}
+
 	}
     return false;
 }
@@ -130,7 +150,8 @@ void InteractionManager::setUserKeyListModules()
 		{
 			switch (it1->first)
 			{
-
+                case Event::FACE_RECOGNITION:
+                case Event::GESTURE_RECOGNITION:
 				case Event::VOICE_RECOGNITION:
 				{
 					json userKeyList_voice={};

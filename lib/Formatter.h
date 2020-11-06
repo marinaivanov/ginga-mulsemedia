@@ -23,6 +23,7 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #include "Document.h"
 #include "InteractionManager.h"
+#include "UserContextManager.h"
 
 
 GINGA_NAMESPACE_BEGIN
@@ -110,6 +111,9 @@ private:
 
   /// @brief Interaction Manager.
   InteractionManager *_intManager;
+
+  /// @brief User Context Manager.
+  UserContextManager *_userManager;
 };
 
 GINGA_NAMESPACE_END

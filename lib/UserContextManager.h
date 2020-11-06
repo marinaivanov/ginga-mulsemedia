@@ -4,22 +4,22 @@
 #define USER_MANAGER_H
 
 #include "ginga.h"
-#include "Event.h"
-#include <list>
 #include <string>
+
 
 #include <libxml/tree.h>
 #include <libxml/parser.h>
-#include <libxml/uri.h>
+//#include <libxml/uri.h>
+
 
 GINGA_NAMESPACE_BEGIN
-class UserManager
+class UserContextManager
 {
 	public:
 	    // Os parâmetros poderam ser as opções do documento tendo a especificações dos modulos
-	    UserManager(Ginga *ginga);
+	    UserContextManager(Ginga *ginga);
 	    void start();
-		void setUsersProfile();	
+	
 	private:
 		Ginga *ginga;
 
