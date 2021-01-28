@@ -60,7 +60,7 @@ void FacialExpressionRecognition::start()
 	{
 		FR_intManagerShared = intManager;
 		_run = true;
-		printf("\n------------->   Comecouo Face Recognition");
+		//printf("\n------------->   Comecouo Face Recognition");
 		pthread_t client_daemon;
 		/* start a thread to refresh the client (handle egress and ingree client traffic) */
 		if (pthread_create(&client_daemon, NULL, FR_client_refresher, NULL))
@@ -105,7 +105,7 @@ void FR_publish_callback(void **unused, struct mqtt_response_publish *published)
 
 	TRACE("---> Mesagem capturada! do MQTT");
 
-    printf("\nMensagem: %s ", msg.c_str());
+//    printf("\nMensagem: %s ", msg.c_str());
 	
 	int pos = msg.find_first_of(':');
 	std::string user = msg.substr(0, pos),
@@ -139,9 +139,10 @@ void FR_publish_callback(void **unused, struct mqtt_response_publish *published)
 				for (auto &c : keyDoc)
 					c = toupper(c);
 				if (key.compare(keyDoc) == 0)
-				{  printf("\nUser: %s e Key: %s", user.c_str(),key.c_str());
+				{
+//printf("\nUser: %s e Key: %s", user.c_str(),key.c_str());
 					FR_intManagerShared->notifyInteraction(Event::FACE_RECOGNITION, Event::STOP, user, key);
-					printf("\n VOltei do notify");
+//printf("\n VOltei do notify");
 					break;
 				}
 			}
@@ -189,7 +190,7 @@ void *FR_client_refresher(void *d)
 	while (1)
 	{
 		mqtt_sync((struct mqtt_client *)&client);
-		usleep(100000U);
+		usleep(10000U);
 	}
 	return NULL;
 }

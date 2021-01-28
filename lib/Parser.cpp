@@ -2942,7 +2942,7 @@ borderColor='%s'}",
     }
   if (st->eltCacheIndexByTag ({"userAgent"}, &userAgent_list) > 0)
   {
-    printf("\n Tem userAgents!!!!!!!!!!!!!!!!**********\n");
+//printf("\n Tem userAgents!!!!!!!!!!!!!!!!**********\n");
    for (auto userAgent_elt : userAgent_list)
         {
           user _userAgent;
@@ -2957,11 +2957,11 @@ borderColor='%s'}",
   }
   else
   {
-    printf("\n não tem userAgents!!!!!!!!!!!!!!!!**********\n");
+//printf("\n não tem userAgents!!!!!!!!!!!!!!!!**********\n");
   }
   if (st->eltCacheIndexByTag ({"userProfile"}, &userProfile_list) > 0)
   {
-    printf("\n Tem Profiles!!!!!!!!!!!!!!!!**********\n");
+//    printf("\n Tem Profiles!!!!!!!!!!!!!!!!**********\n");
     for (auto userProfile_elt : userProfile_list)
         {
           profile _userProfile;
@@ -2977,7 +2977,7 @@ borderColor='%s'}",
   }
   else
   {
-    printf("\n não tem Profiles!!!!!!!!!!!!!!!!**********\n");
+//printf("\n não tem Profiles!!!!!!!!!!!!!!!!**********\n");
   }
   
 

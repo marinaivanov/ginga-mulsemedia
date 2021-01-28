@@ -186,7 +186,7 @@ void VoiceRecognition::start()
     while(1)
     {
     	mqtt_sync((struct mqtt_client*) &client);
-        usleep(100000U);
+        usleep(10000U);
     }
     return NULL;
  }

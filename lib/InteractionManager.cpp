@@ -6,6 +6,9 @@
 #include "../intMod/VoiceRecognition.h"
 #include "../intMod/GazeRecognition.h"
 #include "../intMod/FacialExpressionRecognition.h"
+#include "aux-glib.h"
+#include <cairo.h>
+#include <gtk/gtk.h>
 
 using std::vector;
 using std::string;
@@ -20,6 +23,21 @@ InteractionManager::InteractionManager (Ginga *ginga)
 	this->ginga = ginga;
 }
 
+int userAuthorization(std::string msg)
+{
+	GtkWidget *dialog;
+    gint response;
+ 
+    dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL,GTK_MESSAGE_INFO,GTK_BUTTONS_YES_NO, msg.c_str());
+	//gtk_message_dialog_set_markup (GTK_MESSAGE_DIALOG (dialog),markup);
+    response = gtk_dialog_run (GTK_DIALOG (dialog));
+    gtk_widget_destroy (dialog);
+    if (response == GTK_RESPONSE_YES)
+ 		return 1;
+    else
+		return 0;
+}
+
 void InteractionManager::start()
 {
 	map<Event::Type,bool> interactions = (((Formatter *)ginga)->getDocument())->getInteractions();
@@ -32,11 +50,14 @@ void InteractionManager::start()
 			switch (it->first)
 			{
 				case Event::VOICE_RECOGNITION:
-				{
-					InteractionModule * umExtModule =  new VoiceRecognition(this);
-					ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umExtModule));
-
-					break;
+				{	
+					if (userAuthorization("Permite habilitar seu microfone?\n"))
+					{
+						printf("\n yes:\n ");
+						InteractionModule * umExtModule =  new VoiceRecognition(this);
+						ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umExtModule));
+					}
+ 					break;
 				}
 				case Event::EYE_GAZE:
 				{
@@ -53,9 +74,11 @@ void InteractionManager::start()
 				}
 				case Event::FACE_RECOGNITION:
 				{
-					InteractionModule * umExtModule =  new FacialExpressionRecognition(this);
-					ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umExtModule));
-
+					if (userAuthorization("Permite habilitar sua camera?\n"))
+					{
+						InteractionModule * umExtModule =  new FacialExpressionRecognition(this);
+						ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umExtModule));
+					}
 					break;
 				}
 
