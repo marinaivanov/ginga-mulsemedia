@@ -70,7 +70,6 @@ src+= InteractionManager.cpp
 src+= UserContextManager.cpp
 src+= aux-ginga.cpp
 src+= aux-gl.cpp
-src+= ParserUserDescription.cpp
 
 
 

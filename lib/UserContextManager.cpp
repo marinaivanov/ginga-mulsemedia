@@ -2,8 +2,8 @@
 #include "Formatter.h"
 #include "MediaSettings.h"
 #include "UserContextManager.h"
-#include "UserDocument.h"
-#include "ParserUserDescription.h"
+//#include "UserDocument.h"
+//#include "ParserUserDescription.h"
 
 #include "aux-glib.h"
 #include <cairo.h>
@@ -129,8 +129,8 @@ printf("\nCaminho: %s", uri.c_str());
 	  w = 20;
 	  h = 20;
   	string *errmsg;
-  	if (_docUser == nullptr)
-    	_docUser = ParserUserDescription::parseFile (it->second.src.c_str(), w, h, errmsg);
+  //	if (_docUser == nullptr)
+    	//_docUser = ParserUserDescription::parseFile (it->second.src.c_str(), w, h, errmsg);
 
   //if (unlikely (_docUser == nullptr))
    // return false;
