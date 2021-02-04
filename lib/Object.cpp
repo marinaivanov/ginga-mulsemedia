@@ -481,7 +481,7 @@ Object::addDelayedAction (Event *event, Event::Transition transition,
                           const string &value, Time delay)
 {
   Action act;
-  
+
   act.event = event;
   act.transition = transition;
   act.value = value;
@@ -489,7 +489,7 @@ Object::addDelayedAction (Event *event, Event::Transition transition,
 }
 
 void
- Object::sendKey (unused (const string &key), unused (bool press))
+Object::sendKey (unused (const string &key), unused (bool press))
 {
 }
 

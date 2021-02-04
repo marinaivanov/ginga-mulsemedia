@@ -134,15 +134,15 @@ public:
 
 protected:
   bool _isPreparing;
-  string _id;                         // id
-  Document *_doc;                     // parent document
-  Composition *_parent;               // parent object
-  list<pair<string, Composition *> > _aliases;            // aliases
-  Time _time;                         // playback time
-  map<string, string> _properties;    // property map
-  Event *_lambda;                     // lambda event
-  set<Event *> _events;               // all events
-  list<pair<Action, Time> > _delayed; // delayed actions
+  string _id;                                  // id
+  Document *_doc;                              // parent document
+  Composition *_parent;                        // parent object
+  list<pair<string, Composition *> > _aliases; // aliases
+  Time _time;                                  // playback time
+  map<string, string> _properties;             // property map
+  Event *_lambda;                              // lambda event
+  set<Event *> _events;                        // all events
+  list<pair<Action, Time> > _delayed;          // delayed actions
 
   virtual void doStart ();
   virtual void doStop ();

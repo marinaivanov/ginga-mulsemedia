@@ -473,15 +473,15 @@ parser_syntax_table = {
         ParserState::popRegion,
         ELT_CACHE,
         {"region", "regionBase"},
-        { {"id", ATTR_ID},
-          {"left", 0},
-          {"right", 0},
-          {"top", 0},
-          {"bottom", 0},
-          {"height", 0},
-          {"width", 0},
-          {"zIndex", 0},
-          {"title", 0} } }, // unused
+        {  { "id", ATTR_ID },	
+	          { "title", 0 },	
+	          { "left", 0 },	
+	          { "right", 0 },	
+	          { "top", 0 },	
+	          { "bottom", 0 },	
+	          { "height", 0 },	
+	          { "width", 0 },	
+	          { "zIndex", 0 } } }, // unused
   },
   {
       "descriptorBase",
@@ -777,6 +777,21 @@ parser_syntax_table = {
         ELT_CACHE,
         {"body", "context", "switch"},
         { {"id", ATTR_ID}, {"refer", ATTR_OPT_IDREF} } },
+  },
+  {	
+      "switchPort",	
+      { ParserState::pushSwitchPort,	
+        nullptr,	
+        ELT_CACHE,	
+        { "switch" },	
+        { { "id", ATTR_ID } } },	
+  },
+  { "mapping",	
+	    { ParserState::pushMapping,	
+	      nullptr,	
+	      ELT_CACHE,	
+	      { "switchPort" },	
+	      { { "component", ATTR_IDREF }, { "interface", ATTR_OPT_IDREF } } } 
   },
   {
       "switchPort",	
@@ -2911,7 +2926,7 @@ borderColor='%s'}",
                         tests_map.insert (	
                             std::make_pair (p.first, p.second));	
                     }
-                     switch (type)
+                  switch (type)
                     {
                     case Predicate::FALSUM:
                     case Predicate::VERUM:
