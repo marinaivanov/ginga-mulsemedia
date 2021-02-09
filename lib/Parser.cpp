@@ -793,21 +793,6 @@ parser_syntax_table = {
 	      { "switchPort" },	
 	      { { "component", ATTR_IDREF }, { "interface", ATTR_OPT_IDREF } } } 
   },
-  {
-      "switchPort",	
-      { ParserState::pushSwitchPort,	
-        nullptr,	
-        ELT_CACHE,	
-        { "switch" },	
-        { { "id", ATTR_ID } } },	
-  },
-  { "mapping",	
-	    { ParserState::pushMapping,	
-	      nullptr,	
-	      ELT_CACHE,	
-	      { "switchPort" },	
-	      { { "component", ATTR_IDREF }, { "interface", ATTR_OPT_IDREF } } } 
-  },
   {      "bindRule",
       {ParserState::pushBindRule,
         nullptr,
@@ -3919,7 +3904,7 @@ ParserState::popContext (ParserState *st, ParserElt *elt)
 
     }
 
- // st->objStackPop ();
+  st->objStackPop ();
   return true;
 }
 
@@ -4071,7 +4056,9 @@ ParserState::popSwitch (ParserState *st, unused (ParserElt *elt))
   Switch *swtch;
   list<pair<ParserElt *, Object *> > *rules;
   list<string> *switchPorts;
+  
   swtch = cast (Switch *, st->objStackPeek ());
+
   g_assert_nonnull (swtch);
 
   // Resolve bind-rule and default-component  references.
