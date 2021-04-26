@@ -102,7 +102,7 @@ Media::sendKey (const string &key,const string &user, bool press)
   for (auto evt : _events)
   {
 
-     if (evt->getType () != Event::VOICE_RECOGNITION)
+     if ((evt->getType () != Event::VOICE_RECOGNITION) && (evt->getType () != Event::FACE_RECOGNITION))
      {
         continue;
      }
@@ -131,7 +131,7 @@ Media::sendKey (const string &key,const string &user, bool press)
     _doc->evalAction (evt, press ? Event::START : Event::STOP);
 }
 
-void Media::sendViewed(const string &user)
+void Media::sendViewed(Event::Transition tr, const string &user)
 {
 	list<Event *> buf;
 
@@ -155,8 +155,7 @@ void Media::sendViewed(const string &user)
 
 	for (Event *evt : buf)
 	{
-	   _doc->evalAction (evt, Event::START);
-	   _doc->evalAction (evt, Event::STOP);
+	   _doc->evalAction (evt, tr);
 	}
 
 }
@@ -397,6 +396,8 @@ Media::beforeTransition (Event *evt, Event::Transition transition)
       break;
 
     case Event::VOICE_RECOGNITION:
+    case Event::FACE_RECOGNITION:
+    case Event::GESTURE_RECOGNITION:
       break;
 
     case Event::EYE_GAZE:
@@ -584,7 +585,9 @@ Media::afterTransition (Event *evt, Event::Transition transition)
         break;
       }
 
-      case Event::VOICE_RECOGNITION:
+    case Event::VOICE_RECOGNITION: 
+    case Event::FACE_RECOGNITION: 
+    case Event::GESTURE_RECOGNITION:
       {
           string key, user;
           evt->getParameter ("key", &key);
@@ -603,24 +606,28 @@ Media::afterTransition (Event *evt, Event::Transition transition)
 
           break;
       }
-      case Event::EYE_GAZE:
-	  {
-      string key, user;
-      evt->getParameter ("key", &key);
-      evt->getParameter ("user", &user);
-      switch (transition)
-      {
-        case Event::START:
-              TRACE ("start eye gaze %s", evt->getFullId ().c_str ());
-              break;
-            case Event::STOP:
-              TRACE ("stop eye gaze %s", evt->getFullId ().c_str ());
-              break;
-            default:
-              g_assert_not_reached ();
+    
+    case Event::EYE_GAZE:
+	    {
+        string key, user;
+        evt->getParameter ("key", &key);
+        evt->getParameter ("user", &user);
+        switch (transition)
+        {
+          case Event::START:
+            TRACE ("start eye gaze %s", evt->getFullId ().c_str ());
+            break;
+          case Event::STOP:
+            TRACE ("stop eye gaze %s", evt->getFullId ().c_str ());
+            break;
+          case Event::ABORT:
+            TRACE ("abort eye gaze %s", evt->getFullId ().c_str ());
+            break;
+          default:
+            g_assert_not_reached ();
+        }
+        break;
       }
-      break;
-	  }
 
     default:
       g_assert_not_reached ();

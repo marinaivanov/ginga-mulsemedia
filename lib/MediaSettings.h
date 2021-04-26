@@ -41,6 +41,7 @@ public:
   // MediaSettings:
   void updateCurrentFocus (const string &);
   void scheduleFocusUpdate (const string &);
+  map<string, string> getProperties();
 
 private:
   string _nextFocus;  // next focus index

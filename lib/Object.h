@@ -43,9 +43,9 @@ public:
   virtual string getObjectTypeAsString () = 0;
   virtual string toString ();
 
-  const list<string> *getAliases ();
+  const list<pair<string, Composition *> > *getAliases ();
   bool hasAlias (const string &);
-  void addAlias (const string &);
+  void addAlias (const string &, Composition * = nullptr);
 
   const set<Event *> *getEvents ();
 
@@ -66,8 +66,17 @@ public:
   void addPreparationEvent (const string &, Time, Time);
   
 
+  Event *getInteractionEvent (Event::Type, const string &, const string &);
+  void addInteractionEvent (Event::Type, const string &, const string &);
+
   Event *getVoiceRecognitionEvent (const string &, const string &);
   void addVoiceRecognitionEvent (const string &, const string &);
+
+  Event *getFaceRecognitionEvent (const string &, const string &);
+  void addFaceRecognitionEvent (const string &, const string &);
+
+  Event *getGestureRecognitionEvent (const string &, const string &);
+  void addGestureRecognitionEvent (const string &, const string &);
 
   Event *getEyeGazeEvent (const string &, const string &);
   void addEyeGazeEvent (const string &, const string &);
@@ -86,7 +95,7 @@ public:
 
   virtual void sendKey (const string &, bool);
   virtual void sendKey (const string &, const string &, bool);
-  virtual void sendViewed (const string &);
+  virtual void sendViewed (Event::Transition, const string &);
   virtual void sendTick (Time, Time, Time);
 
   Time getTime ();
@@ -125,15 +134,15 @@ public:
 
 protected:
   bool _isPreparing;
-  string _id;                         // id
-  Document *_doc;                     // parent document
-  Composition *_parent;               // parent object
-  list<string> _aliases;              // aliases
-  Time _time;                         // playback time
-  map<string, string> _properties;    // property map
-  Event *_lambda;                     // lambda event
-  set<Event *> _events;               // all events
-  list<pair<Action, Time> > _delayed; // delayed actions
+  string _id;                                  // id
+  Document *_doc;                              // parent document
+  Composition *_parent;                        // parent object
+  list<pair<string, Composition *> > _aliases; // aliases
+  Time _time;                                  // playback time
+  map<string, string> _properties;             // property map
+  Event *_lambda;                              // lambda event
+  set<Event *> _events;                        // all events
+  list<pair<Action, Time> > _delayed;          // delayed actions
 
   virtual void doStart ();
   virtual void doStop ();

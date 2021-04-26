@@ -3,13 +3,12 @@
 #define VRECOG_H
 
 #include "InteractionModule.h"
-extern "C" {
-	#include "../lib/mqtt/src/mqtt.h"
-}
 #include "../lib/nlohmann/json.hpp"
 #include "../lib/InteractionManager.h"
 using json = nlohmann::json;
 using std::string;
+
+
 
 class VoiceRecognition  : public InteractionModule
 {

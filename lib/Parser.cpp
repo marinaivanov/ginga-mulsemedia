@@ -159,7 +159,7 @@ typedef struct ParserConnRole
   string duration;              ///< Role duration (if action).
   string delay;                 ///< Role delay.
   string key;                   ///< Role key (if selection).
-  string user;                  ///< Role user (if voice_recognition).
+  string user;                  ///< Role user (if voice_recognition, face_recognition, gesture_recognition).
   string value;                 ///< Role value (if attribution).
 } ParserConnRole;
 
@@ -212,6 +212,10 @@ public:
   static bool popNcl (ParserState *, ParserElt *);
   static bool pushRegion (ParserState *, ParserElt *);
   static bool popRegion (ParserState *, ParserElt *);
+  static bool pushUserAgent (ParserState *, ParserElt *);
+  static bool popUserAgent (ParserState *, ParserElt *);
+  static bool pushUserProfile (ParserState *, ParserElt *);
+  static bool popUserProfile (ParserState *, ParserElt *);
   static bool pushDescriptorParam (ParserState *, ParserElt *);
   static bool pushCausalConnector (ParserState *, ParserElt *);
   static bool popCausalConnector (ParserState *, ParserElt *);
@@ -228,6 +232,8 @@ public:
   static bool pushPort (ParserState *, ParserElt *);
   static bool pushSwitch (ParserState *, ParserElt *);
   static bool popSwitch (ParserState *, ParserElt *);
+  static bool pushSwitchPort (ParserState *, ParserElt *);	
+	static bool pushMapping (ParserState *, ParserElt *);
   static bool pushBindRule (ParserState *, ParserElt *);
   static bool pushMedia (ParserState *, ParserElt *);
   static bool popMedia (ParserState *, ParserElt *);
@@ -244,7 +250,7 @@ private:
   UserData _udata;     ///< Attached user data.
   set<string> _unique; ///< Unique attributes seen so far.
 
-  TemporalGraph *_htg;  ///< The resulting #TemporalGraph
+//  TemporalGraph *_htg;  ///< The resulting #TemporalGraph
   PresentationOrchestrator *_presOrch; ///< Element that controls the multimedia presentation
 
   ParserState::Error _error; ///< Last error code.
@@ -319,7 +325,7 @@ private:
 
   // Reference solving.
   bool resolveComponent (Composition *, ParserElt *, Object **);
-  bool resolveInterface (Context *, ParserElt *, Event **);
+  bool resolveInterface (Composition *, ParserElt *, Event **);
   string resolveParameter (const string &, const map<string, string> *,
                            const map<string, string> *,
                            const map<string, string> *);
@@ -434,7 +440,8 @@ typedef enum {
   }
 
 /// NCL syntax table (grammar).
-static map<string, ParserSyntaxElt> parser_syntax_table = {
+static map<string, ParserSyntaxElt> 
+parser_syntax_table = {
   {
       "ncl",                     // element name
       {ParserState::pushNcl,    // push function
@@ -466,15 +473,15 @@ static map<string, ParserSyntaxElt> parser_syntax_table = {
         ParserState::popRegion,
         ELT_CACHE,
         {"region", "regionBase"},
-        { {"id", ATTR_ID},
-          {"left", 0},
-          {"right", 0},
-          {"top", 0},
-          {"bottom", 0},
-          {"height", 0},
-          {"width", 0},
-          {"zIndex", 0},
-          {"title", 0} } }, // unused
+        {  { "id", ATTR_ID },	
+	          { "title", 0 },	
+	          { "left", 0 },	
+	          { "right", 0 },	
+	          { "top", 0 },	
+	          { "bottom", 0 },	
+	          { "height", 0 },	
+	          { "width", 0 },	
+	          { "zIndex", 0 } } }, // unused
   },
   {
       "descriptorBase",
@@ -524,6 +531,39 @@ static map<string, ParserSyntaxElt> parser_syntax_table = {
         {"descriptor"},
         { {"name", ATTR_REQUIRED_NONEMPTY_NAME},
           {"value", ATTR_REQUIRED} } },
+  },
+  {
+      "userBase",
+      {nullptr,
+        nullptr,
+        ELT_CACHE,
+        {"head"},
+        { {"id", ATTR_OPT_ID} } },   // unused
+  },
+  {
+      "userAgent",
+//      {ParserState::pushUserAgent,
+//       ParserState::popUserAgent,
+      {nullptr,
+       nullptr,
+        ELT_CACHE,
+        {"userBase"},
+        { {"id", ATTR_ID},   
+          {"src", 0},
+          {"type", 0},
+          {"profile", ATTR_OPT_IDREF} } }, // unused
+  },
+  {
+      "userProfile",
+      {ParserState::pushUserProfile,
+        ParserState::popUserProfile,
+        ELT_CACHE,
+        {"userBase"},
+        { {"id", ATTR_ID},
+          {"min", 0},
+          {"max", 0},
+          {"type", 0},
+          {"src", 0} } }, // unused
   },
   {
       "connectorBase",
@@ -738,8 +778,22 @@ static map<string, ParserSyntaxElt> parser_syntax_table = {
         {"body", "context", "switch"},
         { {"id", ATTR_ID}, {"refer", ATTR_OPT_IDREF} } },
   },
-  {
-      "bindRule",
+  {	
+      "switchPort",	
+      { ParserState::pushSwitchPort,	
+        nullptr,	
+        ELT_CACHE,	
+        { "switch" },	
+        { { "id", ATTR_ID } } },	
+  },
+  { "mapping",	
+	    { ParserState::pushMapping,	
+	      nullptr,	
+	      ELT_CACHE,	
+	      { "switchPort" },	
+	      { { "component", ATTR_IDREF }, { "interface", ATTR_OPT_IDREF } } } 
+  },
+  {      "bindRule",
       {ParserState::pushBindRule,
         nullptr,
         ELT_CACHE,
@@ -765,6 +819,7 @@ static map<string, ParserSyntaxElt> parser_syntax_table = {
           {"type", 0},
           {"descriptor", ATTR_OPT_IDREF},
           {"refer", ATTR_OPT_IDREF},
+          {"user", ATTR_OPT_IDREF},
           {"instance", 0} } }, // unused
   },
   {
@@ -854,17 +909,19 @@ static map<string, pair<Event::Type, Event::Transition> >
       {"onEnd", {Event::PRESENTATION, Event::STOP} },
       {"onAbort", {Event::PRESENTATION, Event::ABORT} },
       {"onPause", {Event::PRESENTATION, Event::PAUSE} },
-      {"onResumes", {Event::PRESENTATION, Event::RESUME} },
+      {"onResume", {Event::PRESENTATION, Event::RESUME} },
       {"onBeginAttribution", {Event::ATTRIBUTION, Event::START} },
       {"onEndAttribution", {Event::ATTRIBUTION, Event::STOP} },
       {"onSelection", {Event::SELECTION, Event::START} },
       {"onBeginSelection", {Event::SELECTION, Event::START} },
       {"onEndSelection", {Event::SELECTION, Event::STOP} },
-
-	  {"onVoiceRecognition", {Event::VOICE_RECOGNITION, Event::STOP} }, //Added to represent voice interactions
-	  {"onEyeGaze", {Event::EYE_GAZE, Event::STOP} }, //Added to represent eye interactions
-
-	  {"onBeginPreparation", {Event::PREPARATION, Event::START} }, // conditions
+	    {"onVoiceRecognition", {Event::VOICE_RECOGNITION, Event::STOP} }, //Added to represent voice interactions
+	    {"onBeginEyeGaze", {Event::EYE_GAZE, Event::START} }, //Added to represent eye interactions
+	    {"onEndEyeGaze", {Event::EYE_GAZE, Event::STOP} }, //Added to represent eye interactions
+	    {"onAbortEyeGaze", {Event::EYE_GAZE, Event::ABORT} }, //Added to represent eye interactions
+	    {"onFaceRecognition", {Event::FACE_RECOGNITION, Event::STOP} }, //Added to represent Face interactions
+	    {"onGestureRecognition", {Event::GESTURE_RECOGNITION, Event::STOP} }, //Added to represent Gesture interactions
+	    {"onBeginPreparation", {Event::PREPARATION, Event::START} }, // conditions
       {"onEndPreparation", {Event::PREPARATION, Event::STOP} },
       {"onAbortPreparation", {Event::PREPARATION, Event::ABORT} },
       {"onPausePreparation", {Event::PREPARATION, Event::PAUSE} },
@@ -905,6 +962,8 @@ static map<string, Event::Type> parser_syntax_event_type_table = {
   {"preparation", Event::PREPARATION},
   {"voice_recognition", Event::VOICE_RECOGNITION},
   {"eye_gaze", Event::EYE_GAZE},
+  {"face_recognition", Event::FACE_RECOGNITION},
+  {"gesture_recognition", Event::GESTURE_RECOGNITION},
 };
 
 /// Known transitions.
@@ -1692,7 +1751,7 @@ ParserState::resolveComponent (Composition *scope, ParserElt *elt,
  * @return \c true if successful, or \c false otherwise.
  */
 bool
-ParserState::resolveInterface (Context *ctx, ParserElt *elt, Event **evt)
+ParserState::resolveInterface (Composition *ctx, ParserElt *elt, Event **evt)
 {
   string comp;
   string iface;
@@ -1766,7 +1825,11 @@ ParserState::resolveInterface (Context *ctx, ParserElt *elt, Event **evt)
     }
   else if (instanceof (Switch *, obj))
     {
-      goto fail; // not accessible by external elements
+       result	
+	          = obj->getPresentationEvent (iface); // A switchPort is resolved	
+	                                               // as a PresentationEvent.	
+	      if (unlikely (result == nullptr))	
+	        goto fail;
     }
   else
     {
@@ -1819,7 +1882,7 @@ ParserState::resolveParameter (const string &ref,
       if (it_link != linkParams->end ())
         result = it_link->second;
       else
-        return ref; // unknown reference
+        return ""; // unknown reference
     }
 
   if (result[0] != '$')
@@ -2153,9 +2216,8 @@ ParserState::processNode (xmlNode *node)
   // Allocate and initialize element wrapper.
   elt = new ParserElt (node);
   for (auto it : attrs)
-  {
-    g_assert (elt->setAttribute (it.first, it.second));
-  }
+      g_assert (elt->setAttribute (it.first, it.second));
+  
   // Initialize flags.
   cached = false;
   status = true;
@@ -2209,7 +2271,7 @@ ParserState::ParserState (int width, int height)
 {
   _doc = nullptr;
   _xml = nullptr;
-  _htg = nullptr;
+  //_htg = nullptr;
   _presOrch = nullptr;
   g_assert_cmpint (width, >, 0);
   g_assert_cmpint (height, >, 0);
@@ -2258,7 +2320,7 @@ ParserState::process (xmlDoc *xml)
   g_assert_nonnull (xml);
   _xml = xml;
   _doc = new Document ();
-  _htg = new TemporalGraph ();
+ // _htg = new TemporalGraph ();
   _presOrch = new PresentationOrchestrator ();
 
   root = xmlDocGetRootElement (xml);
@@ -2267,9 +2329,9 @@ ParserState::process (xmlDoc *xml)
   if (unlikely (!this->processNode (root)))
     {
       delete _doc;
-      delete _htg;
+   //   delete _htg;
       _doc = nullptr;
-      _htg = nullptr;
+   //   _htg = nullptr;
       _presOrch = nullptr;
       return nullptr;
     }
@@ -2297,7 +2359,7 @@ ParserState::pushNcl (ParserState *st, ParserElt *elt)
 
   if (elt->getAttribute ("id", &id))
     root->addAlias (id);
-
+  
   st->objStackPush (root);
   return true;
 }
@@ -2318,6 +2380,8 @@ ParserState::popNcl (ParserState *st, unused (ParserElt *elt))
   list<ParserElt *> media_list;
   list<ParserElt *> switch_list;
   list<ParserElt *> link_list;
+  list<ParserElt *> userAgent_list;
+  list<ParserElt *> userProfile_list;
 
   // Resolve descriptor references to region/transition.
   // (I.e., move region/transition attributes to associated descriptor.)
@@ -2642,8 +2706,7 @@ borderColor='%s'}",
                 {
                   if (label == bind->role)
                     {
-
-                	  found = true;
+                	    found = true;
                       break;
                     }
                 }
@@ -2758,8 +2821,10 @@ borderColor='%s'}",
                     g_assert_nonnull (act.event);
                     break;
                   }
+                  case Event::FACE_RECOGNITION:
+                  case Event::GESTURE_RECOGNITION:
                   case Event::VOICE_RECOGNITION:
-                    {
+                  {
                         act.value = st->resolveParameter (
                             role->key, &bind->params, params, &ghosts_map);
 
@@ -2769,34 +2834,35 @@ borderColor='%s'}",
                 		for (auto & c: act.owner) c = toupper(c);
                 		for (auto & c: act.value) c = toupper(c);
 
-
                         Key oneKey;
                 		oneKey.key = act.value;
                 		oneKey.user = act.owner;
 
                 		(st->getDoc())->addKeyList (role->eventType, oneKey);
 
-                		obj->addVoiceRecognitionEvent (act.value, act.owner);
+                		obj->addInteractionEvent (role->eventType,act.value, act.owner);
 
-                		act.event = obj->getVoiceRecognitionEvent (act.value, act.owner);
+                		act.event = obj->getInteractionEvent (role->eventType, act.value, act.owner);
 
                 		g_assert_nonnull (act.event);
 
                 		act.event->setParameter ("key", act.value);
                 		act.event->setParameter ("user", act.owner);
                 		break;
-                    }
-                  	case Event::EYE_GAZE:
+                  }
+                  case Event::EYE_GAZE:
                      {
                     	 //Pegar os componentes que participa no onGaze e adicionar numa lista no documento
-                    	 // Lista de media a serem vigiadas
-                    	 act.value = bind->component;
+                    	 // Lista de media a serem vigiadas                      
+                       act.value = st->resolveParameter (
+                            role->key, &bind->params, params, &ghosts_map);
                     	 act.owner = st->resolveParameter (
                              role->user, &bind->params, params, &ghosts_map);
 
                     	 for (auto & c: act.owner) c = toupper(c);
 
                     	 Key oneKey;
+                       oneKey.component = bind->component;
                     	 oneKey.key = act.value;
                     	 oneKey.user = act.owner;
 
@@ -2829,6 +2895,22 @@ borderColor='%s'}",
               if (role->predicate != nullptr)
                 {
                   Predicate::Type type = role->predicate->getType ();
+                  // Find variables from bindParam of another binds.	
+                  // Necessary to take values (name and value) of bindParam	
+                  // from binds used as test.	
+                  // Ex: When onSelection is processed, values from	
+                  // bindParam are taked.	
+                  // <bind component="m1" role="onSelection"/>	
+                  // <bind component="mediaSettings" interface="if"	
+                  // role="propertyTest">	
+                  //   <bindParam name="val" value="x"/>	
+                  // </bind>	
+                  for (auto bind : tests_buf)	
+                    {	
+                      for (auto &p : bind->params)	
+                        tests_map.insert (	
+                            std::make_pair (p.first, p.second));	
+                    }
                   switch (type)
                     {
                     case Predicate::FALSUM:
@@ -2855,10 +2937,51 @@ borderColor='%s'}",
                 actions.push_back (act);
             }
           ctx->addLink (conditions, actions);
-          st->_htg->addRelations(conditions, actions);
+       //   st->_htg->addRelations(conditions, actions);
         }
     }
-  st->_presOrch->createPresentationPlan(st->_htg);
+  if (st->eltCacheIndexByTag ({"userAgent"}, &userAgent_list) > 0)
+  {
+//printf("\n Tem userAgents!!!!!!!!!!!!!!!!**********\n");
+   for (auto userAgent_elt : userAgent_list)
+        {
+          user _userAgent;
+          g_assert (userAgent_elt->getAttribute ("id", &_userAgent.id));
+          g_assert (userAgent_elt->getAttribute ("profile", &_userAgent.profile));
+          userAgent_elt->getAttribute ("src", &_userAgent.src);
+          userAgent_elt->getAttribute ("type", &_userAgent.type);
+
+          st->_doc->addUser(_userAgent);
+        
+        }
+  }
+  else
+  {
+//printf("\n não tem userAgents!!!!!!!!!!!!!!!!**********\n");
+  }
+  if (st->eltCacheIndexByTag ({"userProfile"}, &userProfile_list) > 0)
+  {
+//    printf("\n Tem Profiles!!!!!!!!!!!!!!!!**********\n");
+    for (auto userProfile_elt : userProfile_list)
+        {
+          profile _userProfile;
+          g_assert (userProfile_elt->getAttribute ("id", &_userProfile.id));
+          userProfile_elt->getAttribute ("src", &_userProfile.src);
+          userProfile_elt->getAttribute ("type", &_userProfile.type);
+          userProfile_elt->getAttribute ("min", &_userProfile.min);
+          userProfile_elt->getAttribute ("max", &_userProfile.max);
+
+          st->_doc->addProfile(_userProfile);
+
+        }
+  }
+  else
+  {
+//printf("\n não tem Profiles!!!!!!!!!!!!!!!!**********\n");
+  }
+  
+
+//  st->_presOrch->createPresentationPlan(st->_htg);
   g_assert_nonnull (st->objStackPop ());
   
   return true;
@@ -2967,6 +3090,102 @@ ParserState::pushDescriptorParam (ParserState *st, ParserElt *elt)
   g_assert (st->eltCacheIndexParent (elt->getNode (), &parent_elt));
   parent_elt->setAttribute (name, value);
 
+  return true;
+}
+
+
+/**
+ * @brief Starts the processing of \<UserAgent\> element.
+ *
+ * This function uses the initial user features stored in #ParserState
+ * to convert into absolute values any relative values used in \<UserAgent\>
+ * attributes.
+ *
+ * @fn ParserState::pushUserAgent
+ * @param st #ParserState.
+ * @param elt Element wrapper.
+ * @return \c true if successful, or \c false otherwise.
+ */
+bool
+ParserState::pushUserAgent(ParserState *st, ParserElt *elt)
+{
+
+  /*
+  static int last_zorder = 0;
+  xmlNode *parent_node;
+  Rect screen;
+  Rect parent;
+  Rect rect;
+  string str;
+
+  parent_node = elt->getParentNode ();
+  g_assert_nonnull (parent_node);
+
+  screen = st->_rectStack.front ();
+  rect = parent = st->rectStackPeek ();
+  if (elt->getAttribute ("left", &str))
+    {
+      rect.x += ginga::parse_percent (str, parent.width, 0, G_MAXINT);
+    }
+  if (elt->getAttribute ("top", &str))
+    {
+      rect.y += ginga::parse_percent (str, parent.height, 0, G_MAXINT);
+    }
+  if (elt->getAttribute ("width", &str))
+    {
+      rect.width = ginga::parse_percent (str, parent.width, 0, G_MAXINT);
+    }
+  if (elt->getAttribute ("height", &str))
+    {
+      rect.height = ginga::parse_percent (str, parent.height, 0, G_MAXINT);
+    }
+  if (elt->getAttribute ("right", &str))
+    {
+      rect.x += parent.width - rect.width
+                - ginga::parse_percent (str, parent.width, 0, G_MAXINT);
+    }
+  if (elt->getAttribute ("bottom", &str))
+    {
+      rect.y += parent.height - rect.height
+                - ginga::parse_percent (str, parent.height, 0, G_MAXINT);
+    }
+
+  // Update region position to absolute values.
+  st->rectStackPush (rect);
+  double left = ((double) rect.x / screen.width) * 100.;
+  double top = ((double) rect.y / screen.height) * 100.;
+  double width = ((double) rect.width / screen.width) * 100.;
+  double height = ((double) rect.height / screen.height) * 100.;
+
+  elt->setAttribute ("zOrder", xstrbuild ("%d", last_zorder++));
+  elt->setAttribute ("left", xstrbuild ("%g%%", left));
+  elt->setAttribute ("top", xstrbuild ("%g%%", top));
+  elt->setAttribute ("width", xstrbuild ("%g%%", width));
+  elt->setAttribute ("height", xstrbuild ("%g%%", height));
+*/
+  return true;
+}
+
+/**
+ * @brief Ends the processing of \<region\> element.
+ * @param st #ParserState.
+ * @param elt Element wrapper.
+ * @return \c true if successful, or \c false otherwise.
+ */
+bool
+ParserState::popUserAgent (ParserState *st, unused (ParserElt *elt))
+{
+  //st->rectStackPop ();
+  return true;
+}
+bool ParserState::pushUserProfile (ParserState *st, unused (ParserElt *elt))
+{
+  //st->rectStackPop ();
+  return true;
+}
+bool ParserState::popUserProfile (ParserState *st, unused (ParserElt *elt))
+{
+  //st->rectStackPop ();
   return true;
 }
 
@@ -3163,10 +3382,12 @@ ParserState::pushSimpleCondition (ParserState *st, ParserElt *elt)
   if (!role.condition)
     elt->getAttribute ("delay", &role.delay);
 
-  if ((role.eventType == Event::SELECTION) || (role.eventType == Event::VOICE_RECOGNITION))
+  if ((role.eventType == Event::SELECTION) || (role.eventType == Event::VOICE_RECOGNITION)||
+      (role.eventType == Event::FACE_RECOGNITION)||(role.eventType == Event::GESTURE_RECOGNITION))
     elt->getAttribute ("key", &role.key);
 
-  if ((role.eventType == Event::VOICE_RECOGNITION)||(role.eventType == Event::EYE_GAZE))
+  if ((role.eventType == Event::VOICE_RECOGNITION)||(role.eventType == Event::EYE_GAZE)||
+      (role.eventType == Event::FACE_RECOGNITION)||(role.eventType == Event::GESTURE_RECOGNITION))
     elt->getAttribute ("user", &role.user);
 
   if (unlikely (!role.condition && role.eventType == Event::ATTRIBUTION
@@ -3178,7 +3399,10 @@ ParserState::pushSimpleCondition (ParserState *st, ParserElt *elt)
   //Add the event of interaction in a list to start the Interaction manager
   switch (role.eventType)
   {
-  	  case Event::VOICE_RECOGNITION:
+   
+  	case Event::FACE_RECOGNITION: 
+    case Event::GESTURE_RECOGNITION:
+    case Event::VOICE_RECOGNITION:
 	  {
 		  (st->getDoc())->addInteractions (role.eventType, true);
 	   	  break;
@@ -3670,12 +3894,12 @@ ParserState::popContext (ParserState *st, ParserElt *elt)
       ctx->addPort (evt);
       if (elt->getTag () == "body")
       {
-        Vertex* v = st->_htg->findVertex (evt->getObject()->getId(), Event::START, Event::PRESENTATION);
-        if (v != NULL)
-        {
-          Edge* e = new Edge (v);
-          st->_htg->start_vertex->insertEdge(e);
-        }
+//        Vertex* v = st->_htg->findVertex (evt->getObject()->getId(), Event::START, Event::PRESENTATION);
+//        if (v != NULL)
+//        {
+//          Edge* e = new Edge (v);
+  //        st->_htg->start_vertex->insertEdge(e);
+  //      }
       }
 
     }
@@ -3742,11 +3966,80 @@ ParserState::pushSwitch (ParserState *st, ParserElt *elt)
   UDATA_SET (elt, "rules", (new list<pair<ParserElt *, Object *> > ()),
              rulesCleanup);
 
+  // Create switchport list.	
+	  UDATA_SET (elt, "switchPorts", new list<string> (), portsCleanup);	
+	
   // Push context onto stack.
   st->objStackPush (swtch);
 
   return true;
 }
+
+/// Cleans up the mapping list cache attached to a switchPort #ParserElt.	
+	static void	
+	mappingsCleanup (void *ptr)	
+	{	
+	  delete (list<const ParserElt *> *) ptr;	
+	}	
+		
+	/**	
+	 * @brief Starts the processing of \<switchPort\>.	
+	 *	
+	 * This function parsers \p elt and pushes it as a \<switchPort\> on the	
+	 * object	
+	 * stack.	
+	 *	
+	 * @fn ParserState::pushSwitchPort	
+	 * @param st	
+	 * @param elt	
+	 * @return	
+	 */	
+	bool	
+	ParserState::pushSwitchPort (ParserState *st, ParserElt *elt)	
+	{	
+	  string id;	
+	  ParserElt *parent_elt;	
+	  list<string> *switchPorts;	
+		
+	  g_assert (elt->getAttribute ("id", &id));	
+	  g_assert (st->eltCacheIndexParent (elt->getNode (), &parent_elt));	
+	  UDATA_GET (parent_elt, "switchPorts", &switchPorts);	
+	  UDATA_SET (elt, "mappings", new list<const ParserElt *> (),	
+	             mappingsCleanup);	
+	  switchPorts->push_back (id);	
+		
+	  return true;	
+	}	
+		
+	/**	
+	 * @brief Starts the processing of \<mapping\>.	
+	 *	
+	 * This function parsers \p elt and pushes it component/interface attributes	
+	 * in	
+	 * the mappings list cache in the \<switchPort\>.	
+	 *	
+	 * @fn ParserState::pushSwitchPort	
+	 * @param st	
+	 * @param elt	
+	 * @return	
+	 */	
+	bool	
+	ParserState::pushMapping (ParserState *st, ParserElt *elt)	
+	{	
+	  list<ParserElt *> *mappings;	
+	  string component, interface;	
+	  ParserElt *parent_elt;	
+		
+	  g_assert (elt->getAttribute ("component", &component));	
+	  elt->getAttribute ("interface", &interface);	
+		
+	  g_assert (st->eltCacheIndexParent (elt->getNode (), &parent_elt));	
+	  UDATA_GET (parent_elt, "mappings", &mappings);	
+		
+	  mappings->push_back (elt);	
+		
+	  return true;	
+	}
 
 /**
  * @brief Ends the processing of \<switch\> element.
@@ -3762,8 +4055,10 @@ ParserState::popSwitch (ParserState *st, unused (ParserElt *elt))
 {
   Switch *swtch;
   list<pair<ParserElt *, Object *> > *rules;
-
+  list<string> *switchPorts;
+  
   swtch = cast (Switch *, st->objStackPeek ());
+
   g_assert_nonnull (swtch);
 
   // Resolve bind-rule and default-component  references.
@@ -3783,6 +4078,35 @@ ParserState::popSwitch (ParserState *st, unused (ParserElt *elt))
       it.second = obj;
     }
 
+   // Resolve switchPort references (each switchPort is added as a new	
+	  // PresentationEvent, which will be handled internally by the switch).	
+	  UDATA_GET (elt, "switchPorts", &switchPorts);	
+	  for (auto switchPort_id : *switchPorts)	
+	    {	
+	      ParserElt *switchPort_elt;	
+	      list<ParserElt *> *mappings;	
+		
+	      g_assert (st->eltCacheIndexById (switchPort_id, &switchPort_elt,	
+	                                       { "switchPort" }));	
+	      UDATA_GET (switchPort_elt, "mappings", &mappings);	
+		
+	      list<Event *> mapping_evts;	
+	      for (auto &mapping_elt : *mappings)	
+	        {	
+	          Event *evt;	
+	          string comp, interf;	
+	          mapping_elt->getAttribute ("component", &comp);	
+	          mapping_elt->getAttribute ("interface", &interf);	
+		
+	          if (unlikely (!st->resolveInterface (swtch, mapping_elt, &evt)))	
+	            return false;	
+		
+	          mapping_evts.push_back (evt);	
+	        }	
+		
+	      swtch->addSwitchPort (switchPort_id, mapping_evts);	
+	    }	
+	
   st->objStackPop ();
   return true;
 }
@@ -3840,43 +4164,109 @@ ParserState::pushMedia (ParserState *st, ParserElt *elt)
   string type;
   string refer;
   string src;
+  bool hasType;	
+  bool hasRefer;	
+  bool hasSrc;
 
   g_assert (elt->getAttribute ("id", &id));
-  if (elt->getAttribute ("type", &type))
-    {
-      if (unlikely (elt->getAttribute ("refer", &refer)))
-        {
-          return st->errEltMutuallyExclAttributes (elt->getNode (), "type",
-                                                   "refer");
-        }
+
+  hasType = elt->getAttribute ("type", &type);	
+  hasRefer = elt->getAttribute ("refer", &refer);	
+  hasSrc = elt->getAttribute ("src", &src);	
+  
+  if (hasType && hasRefer)	
+    return st->errEltMutuallyExclAttributes (elt->getNode (), "type",	
+                                              "refer");	
+  if (hasSrc && hasRefer)	
+    return st->errEltMutuallyExclAttributes (elt->getNode (), "src",	
+                                              "refer");	
+  
+  // case is an refer to an Media	
+  if (hasRefer)	
+    {	
+      // if referred Media not existing Media yet	
+      media = cast (Media *, st->_doc->getObjectByIdOrAlias (refer));	
+      if (media == nullptr)	
+        {	
+          // try if is an multiple refer, if not create Media	
+          if (!st->referMapIndex (refer, &media))	
+            {	
+              // when Parser find the reffered Media	
+              // (a) if an Media, the Parser will set uri, type and parent	
+              // (b) if an MediaSettings, the Parser will replace	
+              media = new Media (refer);	
+            }	
+  
+          st->referMapAdd (refer, media);	
+        }	
+      // if is multiple refer to a not existing Media yet	
+      // save refer as alias	
+      parent = cast (Composition *, st->objStackPeek ());	
+      g_assert_nonnull (parent);	
+      media->addAlias (id, parent);	
+      st->referMapAdd (id, media);	
+    }	
+  // case is a new Media	
+  else	
+    {	
+      // case is an MediaSettings
       if (type == "application/x-ginga-settings")
         {
-          media = st->_doc->getSettings ();
-          g_assert_nonnull (media);
-          media->addAlias (id);
-          goto done;
+          Media *tmpMedia = nullptr;	
+  
+          // there is only one MediaSettings	
+          media = st->_doc->getSettings ();	
+  
+          // if there are refers to this MediaSettings, those refers	
+          // are using a tmp Media, which should be this MediaSettings	
+          st->referMapIndex (id, &tmpMedia);	
+          if (tmpMedia)	
+            {	
+              auto it = st->_referMap.begin ();	
+              while ((*it).second == tmpMedia)	
+                {	
+                  st->_referMap[(*it).first] = media;	
+                  media->addAlias ((*it).first);	
+                  it++;	
+                }	
+              if (it != st->_referMap.begin ())	
+                delete tmpMedia;	
+            }	
+  
+          gchar *scheme = g_uri_parse_scheme (src.c_str  ());	
+          if (g_strcmp0 (scheme, "streambuf") == 0)	
+            {	
+              string filename = src.substr (12);	
+              src = string ("file:/tmp/") + filename + ".mp4";	
+            }	
+          g_free (scheme);	
+          // xmlFree (s);	
+  
+          // add this Media as refer to MediaSettings	
+          parent = cast (Composition *, st->objStackPeek ());	
+          g_assert_nonnull (parent);	
+          media->addAlias (id, parent);	
+          st->referMapAdd (id, media);
         }
-    }
-
-  if (elt->getAttribute ("refer", &refer))
+        // case os other Media type	
+    else
     {
-      if (unlikely (elt->getAttribute ("src", &src)))
-        {
-          return st->errEltMutuallyExclAttributes (elt->getNode (), "src",
-                                                   "refer");
-        }
-
-      media = cast (Media *, st->_doc->getObjectByIdOrAlias (refer));
-      if (media != nullptr)
-        goto almost_done;
-    }
-  else
-    {
-      elt->getAttribute ("src", &src);
+      if (type == "application/x-ginga-user-settings")
+      { 
+        printf("\n Tem user setting!!!!!!!!!!!!!!!!**********\n");
+        string _idUser;
+        g_assert (elt->getAttribute ("user", &_idUser));
+       
+        media = st->_doc->addUserSetting(_idUser);
+        g_assert_nonnull (media);
+        media->addAlias (id);
+      }
+      // case src filled
       if (src != "")
         {
           // Makes uri based in the main document uri
-          xmlChar *s = xmlBuildURI (toXmlChar (src), toXmlChar (st->getURI ()));
+          xmlChar *s = xmlBuildURI (toXmlChar (src),	
+                                        toXmlChar (st->getURI ()));	
           src = toCPPString (s);
           // If fails makes the uri based in the current dir
           if (!xpathisuri (src) && !xpathisabs (src))
@@ -3885,35 +4275,23 @@ ParserState::pushMedia (ParserState *st, ParserElt *elt)
             }
           xmlFree (s);
         }
-
-      if (st->referMapIndex (id, &media))
+      // create Media if not found refer that created the referred Media
+      if (!st->referMapIndex (id, &media))
         {
-          media->setProperty ("uri", src);
-          goto done;
+              media = new Media (id);	
         }
+      // create new Media src filled or empty (timer)	
+      media->setProperty ("uri", src);
+      media->setProperty ("type", type);
+      parent = cast (Composition *, st->objStackPeek ());
+      g_assert_nonnull (parent);
+      parent->addChild (media);
     }
+  }
 
-  media = new Media (id);
-  media->setProperty ("uri", src);
-  media->setProperty ("type", type);
-
-  parent = cast (Composition *, st->objStackPeek ());
-  g_assert_nonnull (parent);
-  parent->addChild (media);
-
-almost_done:
-  if (refer != "")
-    {
-      media->addAlias (id);
-      media->addAlias (refer);
-      st->referMapAdd (refer, media);
-      g_assert (st->referMapAdd (id, media));
-    }
-
-done:
   Vertex* v = new Vertex (media->getId(), Event::START, Event::PRESENTATION, media, "media");
-  st->_htg->insertVertex(v);
-  st->_htg->createVerticesByMedia (media->getId(), Event::START, Event::PRESENTATION, media);
+//  st->_htg->insertVertex(v);
+ // st->_htg->createVerticesByMedia (media->getId(), Event::START, Event::PRESENTATION, media);
   st->objStackPush (media);
   return true;
 }
@@ -3995,22 +4373,22 @@ ParserState::pushArea (ParserState *st, ParserElt *elt)
       media->addPreparationEvent (id, begin, end);
      
       Vertex* v = new Vertex (id, Event::START, Event::PRESENTATION, media, "area");
-      st->_htg->insertVertex (v);
-      Vertex* vSource = st->_htg->findVertex(media->getId(), Event::START, Event::PRESENTATION);
-      g_assert_nonnull (vSource);
+  //    st->_htg->insertVertex (v);
+ //     Vertex* vSource = st->_htg->findVertex(media->getId(), Event::START, Event::PRESENTATION);
+  //    g_assert_nonnull (vSource);
       if (begin > 0)
         {
-          st->_htg->createEdge (vSource,v,"Duration",strB);
+ //         st->_htg->createEdge (vSource,v,"Duration",strB);
         }
       else
         {
-          st->_htg->createEdge (vSource, v);
+   //       st->_htg->createEdge (vSource, v);
         }
       if(end != GINGA_TIME_NONE)
         {
           Vertex* v_stop = new Vertex (id, Event::STOP, Event::PRESENTATION, media, "area"); 
-          st->_htg->insertVertex (v_stop);
-          st->_htg->createEdge (vSource,v_stop,"Duration", strE);
+   //       st->_htg->insertVertex (v_stop);
+  //        st->_htg->createEdge (vSource,v_stop,"Duration", strE);
         }
     }
 
@@ -4038,7 +4416,8 @@ ParserState::pushProperty (ParserState *st, ParserElt *elt)
     value = "";
 
   obj->addAttributionEvent (name);
-  obj->setProperty (name, value);
+  if (value != "")	
+   obj->setProperty (name, value);
   return true;
 }
 
@@ -4131,11 +4510,7 @@ ParserState::pushBind (ParserState *st, ParserElt *elt)
   UDATA_GET (parent_elt, "binds", &binds);
   binds->push_back (bind);
   UDATA_SET (elt, "params", &binds->back ().params, nullptr);
-
-  auto it = parser_syntax_reserved_role_table.find (bind.role);
-  if (it == parser_syntax_reserved_role_table.end ())
-    return false;
-  
+ 
   return true;
 }
 

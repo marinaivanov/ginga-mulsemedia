@@ -101,10 +101,9 @@ Object::toString ()
   auto it = _aliases.begin ();
   if (it != _aliases.end ())
     {
-      str += "  aliases: " + (*it).first;
+      str += "  aliases: " + *it;
       while (++it != _aliases.end ())
-        str += ", " + (*it).first + "(at Composition "
-               + xstrbuild ("%p", (*it).second) + ")";
+        str += ", " + *it;
       str += "\n";
     }
 
@@ -123,19 +122,13 @@ Object::toString ()
     switch (evt->getType ())
       {
       case Event::PRESENTATION:
-        pres.push_back (evt->getId () + " ("
-                        + Event::getEventStateAsString (evt->getState ())
-                        + ')');
+        pres.push_back (evt->getId ());
         break;
       case Event::ATTRIBUTION:
-        attr.push_back (evt->getId () + " ("
-                        + Event::getEventStateAsString (evt->getState ())
-                        + ')');
+        attr.push_back (evt->getId ());
         break;
       case Event::SELECTION:
-        sel.push_back (evt->getId () + " ("
-                       + Event::getEventStateAsString (evt->getState ())
-                       + ')');
+        sel.push_back (evt->getId ());
         break;
       case Event::VOICE_RECOGNITION:
       case Event::FACE_RECOGNITION:
@@ -177,7 +170,7 @@ Object::toString ()
   return str;
 }
 
-const list<pair<string, Composition *> > *
+const list<string> *
 Object::getAliases ()
 {
   return &_aliases;
@@ -187,7 +180,7 @@ bool
 Object::hasAlias (const string &alias)
 {
   for (auto curr : _aliases)
-    if (curr.first == alias)
+    if (curr == alias)
       return true;
   return false;
 }
@@ -261,7 +254,6 @@ void
 Object::addPresentationEvent (const string &id, Time begin, Time end)
 {
   Event *evt;
-
   if (this->getPresentationEvent (id))
     return;
 
@@ -481,15 +473,14 @@ Object::addDelayedAction (Event *event, Event::Transition transition,
                           const string &value, Time delay)
 {
   Action act;
-
+  
   act.event = event;
   act.transition = transition;
   act.value = value;
   _delayed.push_back (std::make_pair (act, _time + delay));
 }
 
-void
-Object::sendKey (unused (const string &key), unused (bool press))
+void Object::sendKey (unused (const string &key), unused (bool press))
 {
 }
 
@@ -567,4 +558,3 @@ Object::doStop ()
 }
 
 GINGA_NAMESPACE_END
-

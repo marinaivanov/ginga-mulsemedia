@@ -24,10 +24,27 @@ GINGA_NAMESPACE_BEGIN
 
 typedef struct
 {
+  string component;           ///< id component.
   string key;                 ///< Value key.
   string user;                ///< Owner Action.
   string delay;               ///< Delay.
 } Key;
+
+typedef struct
+{
+  string id;           ///< id user.
+  string profile;      ///< id profile.
+  string src;          ///< file with private properties.
+  string type;         ///< type file.
+} user;
+typedef struct
+{
+  string id;       ///< id user.
+  string min;      ///< minimum value of users.
+  string max;      ///< maximum value of users.
+  string src;      ///< file with private properties.
+  string type;     ///< type file.
+} profile;
 
 
 
@@ -58,6 +75,10 @@ public:
   const set<Context *> *getContexts ();
   const set<Switch *> *getSwitches ();
 
+  map<string,user> getUsers();
+  map<string,profile> getProfiles ();
+  map<string, MediaSettings *> getuserSettings ();
+
   int evalAction (Event *, Event::Transition, const string &value = "");
   int evalAction (Action);
   bool evalPredicate (Predicate *);
@@ -73,6 +94,10 @@ public:
   bool checkInteractions (Event::Type intEvent);
   void addKeyList (Event::Type intEvent, Key key);
 
+  bool addUser (user _user);
+  bool addProfile (profile _profile);
+  MediaSettings * addUserSetting (string idUser);
+
 
 private:
   set<Object *> _objects;             	///< Objects.
@@ -86,10 +111,11 @@ private:
   map<Event::Type,bool> _interactions;  ///< Used to signal which types of interaction events that happen in this document.
   //map<Event::Type, Key> _keyList; ///< Used to store keys that to be recognized by modules.
   map<Event::Type,list<Key>> _keyList;
+  map<string,user> _userList;  
+  map<string,profile> _profileList;
+  map<string, MediaSettings *> _userSettingsList;
 
 };
-
-
 
 GINGA_NAMESPACE_END
 

@@ -64,7 +64,10 @@ src+= mqtt/src/mqtt_pal.c
 src+= ../intMod/InteractionModule.cpp
 src+= ../intMod/VoiceRecognition.cpp
 src+= ../intMod/GazeRecognition.cpp
+src+= ../intMod/FacialExpressionRecognition.cpp
+#src+= ../intMod/HandPoseRecognition.cpp
 src+= InteractionManager.cpp
+src+= UserContextManager.cpp
 src+= aux-ginga.cpp
 src+= aux-gl.cpp
 

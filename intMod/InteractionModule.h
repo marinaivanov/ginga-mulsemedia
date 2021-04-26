@@ -5,8 +5,7 @@
 
 #include <string>
 #include "../lib/nlohmann/json.hpp"
-//#include "../lib/InteractionManager.h"
-
+#include "../lib/Event.h"
 
 using json = nlohmann::json;
 using std::string;
@@ -16,31 +15,20 @@ using std::string;
 class InteractionModule
 {
   public:
-	enum eventTransition
-	{
-		/**
-		 * @brief Voice Recognition event.
-		 *
-		 *Stands for the recognition of a  specific key (this case word), which is
-		 * directed to the object.
-		 */
-		onVoiceRecognition = 0,
-		onEyeGaze = 1,
-	};
 
     virtual void start()= 0;
     virtual void setUserKeyList(json)= 0;
     virtual void stop()= 0;
 
-    void setEvent(eventTransition valor);
-    eventTransition getEvent(void);
+    void setEvent(Event::Type valor);
+    Event::Type getEvent(void);
     std::string getId();
 
   protected:
     std::string id;
    // InteractionManager *intManager;
-    eventTransition event;
+   Event::Type event;
 
 };
-//GINGA_NAMESPACE_END
+
 #endif // INTERACTION_MODULE_H

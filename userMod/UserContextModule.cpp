@@ -1,8 +1,6 @@
 //#include <string>
-#include "InteractionModule.h"
+#include "UserContextModule.h"
 using std::string;
-
-//GINGA_NAMESPACE_BEGIN
 
 void InteractionModule::setEvent(Event::Type valor)
 {
@@ -17,4 +15,3 @@ std::string InteractionModule::getId()
 	return id;
 }
 
-//GINGA_NAMESPACE_END

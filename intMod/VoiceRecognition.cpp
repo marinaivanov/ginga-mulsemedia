@@ -1,18 +1,19 @@
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
 extern "C" {
   #include "../lib/mqtt/include/posix_sockets.h"
+  #include "../lib/mqtt/src/mqtt.h"
 }
+//#include "InteractionModule.h"
 #include "VoiceRecognition.h"
-#include "InteractionModule.h"
 
 #include <iostream>
 #include <iomanip>
 
-
-using namespace std;
 using json = nlohmann::json;
 
 using std::vector;
@@ -21,22 +22,24 @@ using std::cout;
 using std::endl;
 using std::setw;
 
-char * ADDRESS = {"localhost"};
+
+char *ADDRESS = {"localhost"};
 //char * ADDRESS = {"broker.mqttdashboard.com"};
-char * PORTA = {"1883"};
-char * CLIENT = {"voz"};
-//char * TOPIC = {"topic/voice_recog"};
-char * TOPIC = {"voice_recog"};
+char *PORTA = {"1883"};
+char *CLIENT = {"voz"};
+ //char * TOPIC = {"topic/voice_recog"};
+char *TOPIC = {"voice_recog"};
 int QOS = 1;
+
 
 
 json userKeyListShared;
 
 InteractionManager *intManagerShared;
-
+//extern int open_nb_socket(const char* addr, const char* port);
 void exit_VR(int status, int sockfd, pthread_t *client_daemon);
 void publish_callback(void** unused, struct mqtt_response_publish *published);
-void* client_refresher(void* client);
+void* client_refresher(void* d);
 
 void VoiceRecognition::setUserKeyList(json userKeyList){
     _userKeyList = userKeyList;
@@ -134,8 +137,8 @@ void VoiceRecognition::start()
              for (auto & c: keyDoc) c = toupper(c);
              if (key.compare(keyDoc) == 0)
         	 {
-           // 	 printf("**************Notify**********");
-            	intManagerShared->notifyInteraction(InteractionModule::eventTransition::onVoiceRecognition, user, key);
+           // 	 printf("**************Notify********** voice");
+            	intManagerShared->notifyInteraction(Event::VOICE_RECOGNITION, Event::STOP, user, key);
                 break;
              }
           }
@@ -183,7 +186,7 @@ void VoiceRecognition::start()
     while(1)
     {
     	mqtt_sync((struct mqtt_client*) &client);
-        usleep(100000U);
+        usleep(10000U);
     }
     return NULL;
  }

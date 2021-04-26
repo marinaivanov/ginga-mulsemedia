@@ -5,6 +5,10 @@
 #include "InteractionManager.h"
 #include "../intMod/VoiceRecognition.h"
 #include "../intMod/GazeRecognition.h"
+#include "../intMod/FacialExpressionRecognition.h"
+#include "aux-glib.h"
+#include <cairo.h>
+#include <gtk/gtk.h>
 
 using std::vector;
 using std::string;
@@ -19,6 +23,21 @@ InteractionManager::InteractionManager (Ginga *ginga)
 	this->ginga = ginga;
 }
 
+int userAuthorization(std::string msg)
+{
+	GtkWidget *dialog;
+    gint response;
+ 
+    dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL,GTK_MESSAGE_INFO,GTK_BUTTONS_YES_NO, msg.c_str());
+	//gtk_message_dialog_set_markup (GTK_MESSAGE_DIALOG (dialog),markup);
+    response = gtk_dialog_run (GTK_DIALOG (dialog));
+    gtk_widget_destroy (dialog);
+    if (response == GTK_RESPONSE_YES)
+ 		return 1;
+    else
+		return 0;
+}
+
 void InteractionManager::start()
 {
 	map<Event::Type,bool> interactions = (((Formatter *)ginga)->getDocument())->getInteractions();
@@ -31,11 +50,14 @@ void InteractionManager::start()
 			switch (it->first)
 			{
 				case Event::VOICE_RECOGNITION:
-				{
-					InteractionModule * umExtModule =  new VoiceRecognition(this);
-					ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umExtModule));
-
-					break;
+				{	
+					if (userAuthorization("Permite habilitar seu microfone?\n"))
+					{
+						printf("\n yes:\n ");
+						InteractionModule * umExtModule =  new VoiceRecognition(this);
+						ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umExtModule));
+					}
+ 					break;
 				}
 				case Event::EYE_GAZE:
 				{
@@ -48,22 +70,29 @@ void InteractionManager::start()
 						InteractionModule * umEyeGaze =  new GazeRecognition(this);
 						ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umEyeGaze));
 					}
-
-					//Para cada media chamar o metodo ((Formatter *)ginga)->getDocument())->getObjectbyId(idMedia)
-					//pegar as propriedades da media -> getProperty(Left), top, width, height.
-					//Construir um json com tais parâmnetros e com id da media
+					break;
 				}
+				case Event::FACE_RECOGNITION:
+				{
+					if (userAuthorization("Permite habilitar sua camera?\n"))
+					{
+						InteractionModule * umExtModule =  new FacialExpressionRecognition(this);
+						ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umExtModule));
+					}
+					break;
+				}
+
 
 			}
 		}
 	}
 }
 
-bool InteractionManager::notifyInteraction(InteractionModule::eventTransition ev, std::string &user, std::string &key)
-{
+bool InteractionManager::notifyInteraction(Event::Type ev, Event::Transition tran, std::string &user, std::string &key)
+{   printf("\nUser: %s e Key: %s", user.c_str(),key.c_str());
 	switch (ev)
 	{
-		case InteractionModule::eventTransition::onVoiceRecognition:
+		case Event::VOICE_RECOGNITION:
 		{
 			if (!(ginga->sendKey (std::string(key),std::string(user),true)))
 				return false;
@@ -71,9 +100,18 @@ bool InteractionManager::notifyInteraction(InteractionModule::eventTransition ev
 				return false;
 	        return true;
 		}
-		case InteractionModule::eventTransition::onEyeGaze:
+		case Event::EYE_GAZE:
 		{
-			if (!(ginga->sendViewed (user,key)))
+			if (!(((Formatter *)ginga)->sendViewed (tran, user, key)))
+				return false;
+	        return true;
+		}
+		case Event::FACE_RECOGNITION:
+		{
+			//printf("\nUser: %s e Key: %s", user.c_str(),key.c_str());
+			if (!(ginga->sendKey (std::string(key),std::string(user),true)))
+				return false;
+	        if (!(ginga->sendKey (std::string(key), std::string(user),false)))
 				return false;
 	        return true;
 		}
@@ -116,13 +154,16 @@ void InteractionManager::setUserKeyListModules()
 	map<Event::Type,list<Key>> keyList = (((Formatter *)ginga)->getDocument())->getKeyList();
 
 
-	map<Event::Type,map<string, list<string>>> keyListUser;
+//	map<Event::Type,map<string, list<string>>> keyListUser;
 
+	map<Event::Type,map<string, list<Key>>> keyListUser;
+ 
 	for (auto it1=keyList.begin(); it1!=keyList.end(); ++it1)
 	{
 		for (auto it2=it1->second.begin(); it2!=it1->second.end(); ++it2)
 		{
-			keyListUser[it1->first][it2->user].push_back(it2->key);
+//			keyListUser[it1->first][it2->user].push_back(it2->key);
+			keyListUser[it1->first][it2->user].push_back(*it2);
 		}
 	}
 
@@ -132,7 +173,8 @@ void InteractionManager::setUserKeyListModules()
 		{
 			switch (it1->first)
 			{
-
+                case Event::FACE_RECOGNITION:
+                case Event::GESTURE_RECOGNITION:
 				case Event::VOICE_RECOGNITION:
 				{
 					json userKeyList_voice={};
@@ -140,7 +182,8 @@ void InteractionManager::setUserKeyListModules()
 					json keys={};
 					for (auto it3=it2->second.begin(); it3!=it2->second.end(); ++it3)
 					{
-						keys+=(*it3);
+//						keys+=(*it3);
+						keys+=(it3->key);
 					}
 
 					userKeyList_voice.push_back({{"user",it2->first}, {"key",keys}});
@@ -167,20 +210,22 @@ void InteractionManager::setUserKeyListModules()
 
 					for (auto it3=it2->second.begin(); it3!=it2->second.end(); ++it3)
 					{
-
-						md = (((Formatter *)ginga)->getDocument())->getObjectById(it3->c_str());
+//						md = (((Formatter *)ginga)->getDocument())->getObjectById(it3->c_str());
+						md = (((Formatter *)ginga)->getDocument())->getObjectById(it3->component);
 
 						string left = md->getProperty("left");
 						string top = md->getProperty("top");
 						string width = md->getProperty("width");
 						string height = md->getProperty("height");
+
 						json media;
-						media.emplace("id",it3->c_str());
+						
+						media.emplace("id",it3->component);
 						media.emplace("left",left.c_str());
 						media.emplace("top",top.c_str());
 						media.emplace("width",width.c_str());
 						media.emplace("height",height.c_str());
-
+					
 						keys+=(media);
 
 					}

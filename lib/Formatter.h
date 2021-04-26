@@ -23,6 +23,7 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #include "Document.h"
 #include "InteractionManager.h"
+#include "UserContextManager.h"
 
 
 GINGA_NAMESPACE_BEGIN
@@ -49,7 +50,8 @@ public:
   void redraw (cairo_t *);
 
   bool sendKey (const std::string &, const std::string &, bool);
-  bool sendViewed(const std::string &, const std::string &);
+  bool sendViewed(Event::Transition, const std::string &, const std::string &);
+  //bool sendViewed(int, const std::string &, const std::string &);
 
   bool sendKey (const std::string &, bool);
   bool sendTick (uint64_t, uint64_t, uint64_t);
@@ -109,6 +111,9 @@ private:
 
   /// @brief Interaction Manager.
   InteractionManager *_intManager;
+
+  /// @brief User Context Manager.
+  UserContextManager *_userManager;
 };
 
 GINGA_NAMESPACE_END
