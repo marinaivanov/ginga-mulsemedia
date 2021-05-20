@@ -38,10 +38,65 @@ int userAuthorization(std::string msg)
 		return 0;
 }
 
+void InteractionManager::createProfileLinks()
+{
+/*
+	map<Event::Type,bool> interactions = (((Formatter *)ginga)->getDocument())->getInteractions();
+	createProfileLinks();
+	int cont = 0;
+	for (auto it=interactions.begin(); it!=interactions.end(); ++it)
+*/
+	map<string,user> usrs = ((Formatter *)ginga)->getDocument()->getUsers();
+
+	for (auto obj : *((Formatter *)ginga)->getDocument()->getObjects())
+		for (auto evt : *obj->getEvents())
+		{
+		    //adiconar um evt para cada usuário por perfil
+			//printf("\n **********Dono do evento : %s\n", evt->getOwner().c_str());
+			for (auto usr=usrs.begin(); usr!=usrs.end(); ++usr)
+			{
+				string perfil;
+		
+				if ((usr->second.profile.compare(evt->getOwner().c_str())==0))
+				{
+					string Key;
+					evt->getParameter("key",&Key);
+				//	obj->addInteractionEvent (role->eventType,act.value, act.owner);
+					obj->addInteractionEvent (evt->getType(),Key.c_str(), usr->second.id.c_str());
+
+					printf("\n!!!!!!!!ADICIONAR EVENTO %s\n", usr->second.profile.c_str());
+
+
+					printf("\n!!!!!!!!Dados  EVENTO key:  %s\n", Key.c_str());
+					
+				}
+
+	    		printf("\n **********Usuario: %s profile: %s\n", usr->second.id.c_str(),usr->second.profile.c_str());
+			}
+		}
+	//if (usrs.empty())
+	 //  printf("Lista Vaia de ususarios!!!!!!!!!!!!!!");
+
+		
+		
+		
+
+}
+
+
 void InteractionManager::start()
 {
-	map<Event::Type,bool> interactions = (((Formatter *)ginga)->getDocument())->getInteractions();
 
+   _userManager = new UserContextManager(ginga); 
+   _userManager->start();
+
+   createProfileLinks();
+
+
+	map<Event::Type,bool> interactions = (((Formatter *)ginga)->getDocument())->getInteractions();
+	
+	
+	
 	int cont = 0;
 	for (auto it=interactions.begin(); it!=interactions.end(); ++it)
 	{
@@ -53,7 +108,6 @@ void InteractionManager::start()
 				{	
 					if (userAuthorization("Permite habilitar seu microfone?\n"))
 					{
-						printf("\n yes:\n ");
 						InteractionModule * umExtModule =  new VoiceRecognition(this);
 						ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umExtModule));
 					}

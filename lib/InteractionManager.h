@@ -8,6 +8,7 @@
 #include <list>
 #include <string>
 #include "../intMod/InteractionModule.h"
+#include "UserContextManager.h"
 
 GINGA_NAMESPACE_BEGIN
 class InteractionManager
@@ -21,6 +22,7 @@ class InteractionManager
 //	    bool notifyInteraction(InteractionModule::eventTransition, std::string &user, std::string &key);
 	    bool notifyInteraction(Event::Type, Event::Transition, std::string &user, std::string &key);
 
+		void createProfileLinks();
 		void setUserKeyListModules();
 	    void startInteractionModule(std::string mod);
 	    void setUserkeyListInteractionModule(std::string mod, json _userKey);
@@ -34,7 +36,8 @@ class InteractionManager
 
 		Ginga *ginga;
 		std::map<std::string,InteractionModule *> ExtModules;
-
+  	/// @brief User Context Manager.
+  	UserContextManager *_userManager = NULL;
 };
 
 GINGA_NAMESPACE_END

@@ -819,7 +819,7 @@ parser_syntax_table = {
           {"type", 0},
           {"descriptor", ATTR_OPT_IDREF},
           {"refer", ATTR_OPT_IDREF},
-          {"user", ATTR_OPT_IDREF},
+          {"user", 0},
           {"instance", 0} } }, // unused
   },
   {
@@ -2831,10 +2831,10 @@ borderColor='%s'}",
                         act.owner = st->resolveParameter (
                             role->user, &bind->params, params, &ghosts_map);
 
-                		for (auto & c: act.owner) c = toupper(c);
-                		for (auto & c: act.value) c = toupper(c);
+                		//for (auto & c: act.owner) c = toupper(c);
+                		//for (auto & c: act.value) c = toupper(c);
 
-                        Key oneKey;
+                    Key oneKey;
                 		oneKey.key = act.value;
                 		oneKey.user = act.owner;
 
@@ -2961,7 +2961,8 @@ borderColor='%s'}",
   }
   if (st->eltCacheIndexByTag ({"userProfile"}, &userProfile_list) > 0)
   {
-//    printf("\n Tem Profiles!!!!!!!!!!!!!!!!**********\n");
+    printf("\n Tem Profiles!!!!!!!!!!!!!!!!**********\n");
+    printf("\n\n\n Caminho principal no parser : %s", (st->getURI()).c_str());
     for (auto userProfile_elt : userProfile_list)
         {
           profile _userProfile;

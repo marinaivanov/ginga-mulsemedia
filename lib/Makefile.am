@@ -68,6 +68,7 @@ src+= ../intMod/FacialExpressionRecognition.cpp
 #src+= ../intMod/HandPoseRecognition.cpp
 src+= InteractionManager.cpp
 src+= UserContextManager.cpp
+src+= ../loadUDMod/ParserUserDescription.cpp
 src+= aux-ginga.cpp
 src+= aux-gl.cpp
 

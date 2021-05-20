@@ -186,10 +186,8 @@ Formatter::start (const string &file, string *errmsg)
   _intManager->setUserKeyListModules();
   _intManager->startModules();
 
-  _userManager = new UserContextManager(this);
-  _userManager->start();
 
-
+   					
   return true;
 }
 

@@ -102,28 +102,28 @@ Media::sendKey (const string &key,const string &user, bool press)
   for (auto evt : _events)
   {
 
-     if ((evt->getType () != Event::VOICE_RECOGNITION) && (evt->getType () != Event::FACE_RECOGNITION))
-     {
-        continue;
-     }
+    if ((evt->getType () != Event::VOICE_RECOGNITION) && (evt->getType () != Event::FACE_RECOGNITION))
+    {
+      continue;
+    }
 
-     expected = "";
-     parUser = "";
+    expected = "";
+    parUser = "";
 
-     evt->getParameter ("key", &expected);
-     evt->getParameter ("user", &parUser);
+    evt->getParameter ("key", &expected);
+    evt->getParameter ("user", &parUser);
 
-     bool noParam = expected == "";
+    bool noParam = expected == "";
 
-     bool paramKeyNoUser = (expected != "") && (key == expected) && (parUser == "");
+    bool paramKeyNoUser = (expected != "") && (key == expected) && (parUser == "");
 
-     bool paramKeyUser = (expected != "") && (parUser != "") && (key == expected) && (parUser == user);
+    bool paramKeyUser = (expected != "") && (parUser != "") && (key == expected) && ((parUser == user));
 
-     if (!(noParam || paramKeyNoUser || paramKeyUser))
-     {
+    if (!(noParam || paramKeyNoUser || paramKeyUser))
+    {
    	  continue;
-     }
-     buf.push_back (evt);
+    }
+    buf.push_back (evt);
   }
 
   // Run collected events.
