@@ -162,21 +162,21 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
 
         if (!startRegions.empty())
         {
-            cout << "Notified media START: " << startRegions << endl;
+            cout << "notified media START: " << startRegions << endl;
             sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::START, user, startRegions);
             startRegions = "";
         }
 
         if (!stopRegions.empty())
         {
-            cout << "Notified media STOP: " << stopRegions << endl;
+            cout << "notified media STOP: " << stopRegions << endl;
             sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::STOP, user, stopRegions);
             stopRegions = "";
         }
 
         if (!abortRegions.empty())
         {
-            cout << "Notified media ABORT: " << abortRegions << endl;
+            cout << "notified media ABORT: " << abortRegions << endl;
             sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::ABORT, user, abortRegions);
             abortRegions = "";
         }
@@ -216,8 +216,8 @@ void* eyeTrackingStart(void* data)
     assert( result == TOBII_ERROR_NO_ERROR );
     if(*url == '\0')
     {
-        printf("Error: No device found\n");
-        //return 1;
+        cout << "error: no eye-tracker device found." << endl;
+        return NULL;
     }
 
     // Connect to the first tracker found
@@ -264,7 +264,7 @@ void setGazeConfigurations()
     if(configFile.good())
     {
         configFile >> jsonObj;
-        cout << "Configuration file 'interaction-config.json' successfully read." << endl;
+        cout << "configuration file 'interaction-config.json' successfully read." << endl;
 
         if (jsonObj["eyeGaze"]["duration"].is_number())
         {
@@ -272,7 +272,7 @@ void setGazeConfigurations()
         }
         else
         {
-            cout << "The informed duration is not a number. Thus, the default duration of 1 second will be used." << endl;
+            cout << "error: the informed duration is not a number. Thus, the default duration of 1 second will be used." << endl;
         }
 
         if (jsonObj["eyeGaze"]["constant"].is_number())
@@ -285,17 +285,17 @@ void setGazeConfigurations()
             }
             else
             {
-                cout << "The informed constant is not valid: must be between 0 and 1. Thus, the default constant of 0.33 will be used." << endl;
+                cout << "error: the informed constant is not valid: must be between 0 and 1. Thus, the default constant of 0.33 will be used." << endl;
             }
         }
         else
         {
-            cout << "The informed constant is not a number. Thus, the default constant of 0.33 will be used." << endl;
+            cout << "error: the informed constant is not a number. Thus, the default constant of 0.33 will be used." << endl;
         }
     }
     else
     {
-        cout << "The configuration file 'interaction-config.json' could not be found in XXXXXXX. Thus, the default configuration will be used." << endl;
+        cout << "error: the configuration file 'interaction-config.json' could not be found in XXXXXXX. Thus, the default configuration will be used." << endl;
     }
 
     configFile.close();
@@ -328,7 +328,7 @@ void GazeRecognition::start()
         pthread_t pDaemon;
         if (pthread_create(&pDaemon, NULL, eyeTrackingStart, NULL))
         {
-            printf("Error: failure to create a pthread client daemon");
+            cout << "error: failure to create a pthread client daemon." << endl;
         }
     }
 }
