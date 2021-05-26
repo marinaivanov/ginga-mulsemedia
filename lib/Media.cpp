@@ -106,7 +106,6 @@ Media::sendKey (const string &key,const string &user, bool press)
     {
       continue;
     }
-
     expected = "";
     parUser = "";
 
@@ -128,7 +127,11 @@ Media::sendKey (const string &key,const string &user, bool press)
 
   // Run collected events.
   for (Event *evt : buf)
+  {
     _doc->evalAction (evt, press ? Event::START : Event::STOP);
+  
+  }
+
 }
 
 void Media::sendViewed(Event::Transition tr, const string &user)

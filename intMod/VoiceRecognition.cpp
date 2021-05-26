@@ -102,7 +102,7 @@ void VoiceRecognition::start()
 	message[published->application_message_size] = '\0';
 
     std::string msg = (const char*) message;
-  //  printf("Mansagem no topico: %s\n", msg.c_str());
+   // printf("\nMansagem no topico: %s\n", msg.c_str());
 
     TRACE ("---> Mesagem capturada! do MQTT");
 
@@ -119,14 +119,19 @@ void VoiceRecognition::start()
     printf("User: %s Key: %s\n", user.c_str(),key.c_str());
 */
 
-    //std::cout << std::setw(4) << userKeyListShared << "\n";
+ //   std::cout << std::setw(4) << userKeyListShared << "\n";
 
-
+//std::cout << std::setw(4) << userKeyListShared;
     for (auto& itUser : userKeyListShared)
     {
-   //	printf("\nUser:\n");
-  //  	std::cout << std::setw(4) << itUser["user"] << "\n";
+   	    //printf("\nUser:\n");
+    	//std::cout << std::setw(4) << itUser["user"] << "\n";
+
     	std::string userDoc = (string)itUser["user"];
+        
+//printf("\nvoice: UserDOc: %s",userDoc.c_str());
+//printf("\nvoice: User: %s",user.c_str());
+
         for (auto & c: userDoc) c = toupper(c);
         if (user.compare(userDoc) == 0)
        {
@@ -137,7 +142,7 @@ void VoiceRecognition::start()
              for (auto & c: keyDoc) c = toupper(c);
              if (key.compare(keyDoc) == 0)
         	 {
-           // 	 printf("**************Notify********** voice");
+            	 printf("**************Notify********** voice");
             	intManagerShared->notifyInteraction(Event::VOICE_RECOGNITION, Event::STOP, user, key);
                 break;
              }

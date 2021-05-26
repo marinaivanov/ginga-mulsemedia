@@ -2,7 +2,9 @@
 
 #ifndef INTERACTION_MANAGER_H
 #define INTERACTION_MANAGER_H
-
+#include "Composition.h"
+#include "Context.h"
+#include "aux-ginga.h"
 #include "ginga.h"
 #include "Event.h"
 #include <list>

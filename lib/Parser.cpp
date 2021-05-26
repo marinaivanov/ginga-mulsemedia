@@ -2804,6 +2804,7 @@ borderColor='%s'}",
                       }
                     act.value = st->resolveParameter (
                         role->key, &bind->params, params, &ghosts_map);
+
                     obj->addSelectionEvent (act.value);
                     act.event = obj->getSelectionEvent (act.value);
                     g_assert_nonnull (act.event);
@@ -2825,14 +2826,14 @@ borderColor='%s'}",
                   case Event::GESTURE_RECOGNITION:
                   case Event::VOICE_RECOGNITION:
                   {
-                        act.value = st->resolveParameter (
-                            role->key, &bind->params, params, &ghosts_map);
+                    act.value = st->resolveParameter (
+                        role->key, &bind->params, params, &ghosts_map);
 
-                        act.owner = st->resolveParameter (
-                            role->user, &bind->params, params, &ghosts_map);
+                    act.owner = st->resolveParameter (
+                        role->user, &bind->params, params, &ghosts_map);
 
-                		//for (auto & c: act.owner) c = toupper(c);
-                		//for (auto & c: act.value) c = toupper(c);
+                		for (auto & c: act.owner) c = toupper(c);
+                		for (auto & c: act.value) c = toupper(c);
 
                     Key oneKey;
                 		oneKey.key = act.value;
