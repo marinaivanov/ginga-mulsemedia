@@ -393,6 +393,8 @@ Formatter::sendKey (const string &key, const string &user,bool press)
   {
     if (obj->getObjectTypeAsString().compare("MediaSettings")!=0)
     {
+
+//printf("\n User no sendKey do ginga: %s\n", user.c_str());
       obj->sendKey (key, user,  press);
     }
   }

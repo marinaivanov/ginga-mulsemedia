@@ -333,7 +333,7 @@ Player::setProperty (const string &name, const string &value)
   _value = value;
 
   code = Player::getPlayerProperty (name, &defval);
-  if (code == Player::PROP_UNKNOWN)
+  if (code == Player::PROP_UNKNOWN && this->getProperty("type") != "application/x-ginga-NCLua")
     goto done;
   
 

@@ -100,9 +100,18 @@ printf("\n****************Dono Evento*****: %s\n",evt->getOwner().c_str());
 							if ((usr->second.profile.compare(cond.owner.c_str())==0))
 							{
 								list<Action> conditions;
-          						list<Action> actions;
+          						list<Action> actions = link.second;
 								conditions.push_back(condition);
-								actions = link.second;
+								/*
+                  					for (auto act : link.second)
+									{
+										if ((usr->second.profile.compare(act.value.c_str())==0))							
+										{
+											act.value = usr->second.id.c_str();
+										}
+										actions.push_back(act);
+									}
+								*/
 								_ctx->addLink(conditions, actions);
 							}
 						}
