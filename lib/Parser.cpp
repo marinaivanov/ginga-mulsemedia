@@ -208,7 +208,7 @@ public:
   ParserState (int, int);
   ~ParserState ();
   ParserState::Error getError (string *);
-  Document *process (xmlDoc *);
+  Document *process (xmlDoc *, bool);
 
   // push & pop
   static bool pushNcl (ParserState *, ParserElt *);
@@ -2301,7 +2301,7 @@ ParserState::getError (string *message)
  * @return The resulting #Document if successful, or null otherwise.
  */
 Document *
-ParserState::process (xmlDoc *xml)
+ParserState::process (xmlDoc *xml, bool preparation)
 {
   xmlNode *root;
   
@@ -2310,7 +2310,7 @@ ParserState::process (xmlDoc *xml)
   _doc = new Document ();
   _htg = new TemporalGraph ();
   _presOrch = new PresentationOrchestrator ();
-  //_presOrch->preparationEnabled = true//preparation;
+  _presOrch->preparationEnabled = preparation;
   root = xmlDocGetRootElement (xml);
   g_assert_nonnull (root);
 
@@ -4394,12 +4394,12 @@ ParserState::pushBind (ParserState *st, ParserElt *elt)
 
 /// Helper function used by Parser::parseBuffer() and Parser::parseFile().
 static Document *
-process (xmlDoc *xml, int width, int height, string *errmsg)
+process (xmlDoc *xml, int width, int height, string *errmsg, bool preparation)
 {
   ParserState st (width, height);
   Document *doc;
 
-  doc = st.process (xml);
+  doc = st.process (xml,preparation);
   if (unlikely (doc == nullptr))
     {
       g_assert (st.getError (errmsg) != ParserState::ERROR_NONE);
@@ -4421,7 +4421,7 @@ process (xmlDoc *xml, int width, int height, string *errmsg)
  */
 Document *
 Parser::parseBuffer (const void *buf, size_t size, int width, int height,
-                     string *errmsg)
+                     string *errmsg, bool preparation)
 {
   xmlDoc *xml;
   Document *doc;
@@ -4434,7 +4434,7 @@ Parser::parseBuffer (const void *buf, size_t size, int width, int height,
       return nullptr;
     }
 
-  doc = process (xml, width, height, errmsg);
+  doc = process (xml, width, height, errmsg, preparation);
   xmlFreeDoc (xml);
   return doc;
 }
@@ -4450,7 +4450,7 @@ Parser::parseBuffer (const void *buf, size_t size, int width, int height,
  */
 Document *
 Parser::parseFile (const string &path, int width, int height,
-                   string *errmsg)
+                   string *errmsg, bool preparation)
 {
   xmlDoc *xml;
   Document *doc;
@@ -4470,7 +4470,7 @@ Parser::parseFile (const string &path, int width, int height,
       return nullptr;
     }
 
-  doc = process (xml, width, height, errmsg);
+  doc = process (xml, width, height, errmsg, preparation);
   xmlFreeDoc (xml);
 
   return doc;

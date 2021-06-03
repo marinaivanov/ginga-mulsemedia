@@ -59,6 +59,7 @@ mime_table_index (const string &key, string *result)
 PresentationOrchestrator::PresentationOrchestrator ()
 {
     time = 0;
+    preparationEnabled = false;
 }
 /**
  * @brief Traverses the graph in depth

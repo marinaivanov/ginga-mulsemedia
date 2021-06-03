@@ -26,6 +26,7 @@ GINGA_NAMESPACE_BEGIN
 class Context;
 class Media;
 class Switch;
+class Effect;
 
 /**
  * @brief NCL document.
@@ -69,6 +70,7 @@ private:
   set<Media *> _medias;               ///< Media objects.
   set<Context *> _contexts;           ///< Context objects.
   set<Switch *> _switches;            ///< Switch objects.
+  set<Effect *> _effects;             ///< Effect objects.
   UserData _udata;                    ///< Attached user data.
   map<string, Device*> _deviceList;   ///< List of sensory devices used in the document
 };

@@ -26,8 +26,8 @@ GINGA_NAMESPACE_BEGIN
 class Parser
 {
 public:
-  static Document *parseBuffer (const void *, size_t, int, int, string *);
-  static Document *parseFile (const string &, int, int, string *);
+  static Document *parseBuffer (const void *, size_t, int, int, string *, bool);
+  static Document *parseFile (const string &, int, int, string *, bool);
   static map<string, Device*> *parseDeviceFile ();
 };
 

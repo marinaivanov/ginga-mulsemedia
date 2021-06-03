@@ -22,6 +22,8 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 #include "aux-ginga.h"
 
 #include "Document.h"
+#include "Device.h"
+#include "DeviceCalibration.h"
 
 GINGA_NAMESPACE_BEGIN
 
@@ -71,7 +73,12 @@ public:
   static void setOptionDebug (Formatter *, const string &, bool);
   static void setOptionExperimental (Formatter *, const string &, bool);
   static void setOptionOpenGL (Formatter *, const string &, bool);
+  static void setOptionPreparation (Formatter *, const string &, bool);
+  static void setOptionCalibration (Formatter *, const string &, bool);  
   static void setOptionSize (Formatter *, const string &, int);
+
+  //Sensory Device Calibration
+  DeviceCalibration* calibration;
 
 private:
   /// @brief Current state.

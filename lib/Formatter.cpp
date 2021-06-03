@@ -28,6 +28,10 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 #include "Parser.h"
 #include "PlayerText.h"
 
+#include "Device.h"
+
+#include <pwd.h>
+
 /**
  * @file Formatter.cpp
  * @brief The Formatter class.
@@ -46,6 +50,8 @@ static GingaOptions opts_defaults = {
   false, // debug
   false, // experimental
   false, // opengl
+  true,  // preparation 
+  false, // calibration mode
   "",    // background ("" == none)
 };
 
@@ -74,6 +80,8 @@ static map<string, GingaOptionData> opts_table = {
   OPTS_ENTRY (height, G_TYPE_INT, Size),
   OPTS_ENTRY (opengl, G_TYPE_BOOLEAN, OpenGL),
   OPTS_ENTRY (width, G_TYPE_INT, Size),
+  OPTS_ENTRY (preparation, G_TYPE_BOOLEAN, Preparation),
+  OPTS_ENTRY (calibration, G_TYPE_BOOLEAN, Calibration),
 };
 
 // Indexes option table.
@@ -145,7 +153,24 @@ Formatter::start (const string &file, string *errmsg)
 #endif
 
   if (_doc == nullptr)
-    _doc = Parser::parseFile (file, w, h, errmsg);
+  {
+    const char * path;
+    if(_opts.calibration)
+    {
+      calibration = new DeviceCalibration();
+      uid_t uid = getuid();
+      char * home_dir = getpwuid( uid )->pw_dir;
+
+      path = strcat(home_dir,"/gingaFiles/calibration/app-calibration.ncl");
+      _opts.preparation = FALSE;
+      _doc = Parser::parseFile (path, w, h, errmsg, false);
+    }
+    else
+    {
+      _doc = Parser::parseFile (file, w, h, errmsg, _opts.preparation);
+    }
+  }
+  
   if (unlikely (_doc == nullptr))
     return false;
 
@@ -196,6 +221,14 @@ Formatter::stop ()
   _doc = nullptr;
 
   _state = GINGA_STATE_STOPPED;
+  if (_opts.calibration)
+  {
+    if (calibration != nullptr)
+    {
+      calibration->calculatePrepationTime(EffectType::SCENT);
+      calibration->updateDeviceConfigFile(_deviceList);
+    }
+  }
   return true;
 }
 
@@ -454,12 +487,15 @@ Formatter::Formatter (const GingaOptions *opts) : Ginga (opts)
   _doc = nullptr;
   _docPath = "";
   _eos = false;
+  calibration = nullptr;
 
   // Initialize options.
   setOptionBackground (this, "background", _opts.background);
   setOptionDebug (this, "debug", _opts.debug);
   setOptionExperimental (this, "experimental", _opts.experimental);
   setOptionOpenGL (this, "opengl", _opts.opengl);
+  setOptionPreparation (this, "preparation", _opts.preparation);
+  setOptionCalibration (this, "calibration", _opts.calibration);
 }
 
 /**
@@ -574,6 +610,34 @@ Formatter::setOptionOpenGL (unused (Formatter *self), const string &name,
   if (unlikely (value))
     ERROR ("Not compiled with OpenGL support");
 #endif
+  TRACE ("%s:=%s", name.c_str (), strbool (value));
+}
+
+/**
+ * @brief Sets the automatic preparation option of the given Formatter.
+ * @param self Formatter.
+ * @param name Must be the string "preparation".
+ * @param value Preparation flag value.
+ */
+void
+Formatter::setOptionPreparation (unused (Formatter *self),
+                                  const string &name, bool value)
+{
+  g_assert (name == "preparation");
+  TRACE ("%s:=%s", name.c_str (), strbool (value));
+}
+
+/**
+ * @brief Sets the calibration option of the given Formatter.
+ * @param self Formatter.
+ * @param name Must be the string "calibration".
+ * @param value Calibration flag value.
+ */
+void
+Formatter::setOptionCalibration (unused (Formatter *self),
+                                  const string &name, bool value)
+{
+  g_assert (name == "calibration");
   TRACE ("%s:=%s", name.c_str (), strbool (value));
 }
 

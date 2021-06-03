@@ -23,6 +23,7 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 #include "MediaSettings.h"
 #include "Object.h"
 #include "Switch.h"
+#include "Effect.h"
 
 GINGA_NAMESPACE_BEGIN
 
@@ -144,6 +145,12 @@ Document::addObject (Object *obj)
       Switch *swtch = cast (Switch *, obj);
       g_assert_nonnull (swtch);
       _switches.insert (swtch);
+    }
+  else if (instanceof (Effect *, obj))
+    {
+      Effect *effect = cast (Effect *, obj);
+      g_assert_nonnull (effect);
+      _effects.insert (effect);
     }
   else
     {

@@ -59,6 +59,12 @@ struct GingaOptions
   /// @remark Can only when Ginga object is created.
   bool opengl;
 
+  /// @brief Whether to enable the automatic preparation mechanism.
+  bool preparation;
+
+  /// @brief Whether to enable calibration mode.
+  bool calibration;
+
   /// @brief Background color.
   std::string background;
 };

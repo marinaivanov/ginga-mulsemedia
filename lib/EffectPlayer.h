@@ -2,7 +2,7 @@
 #define EFFECT_PLAYER_H
 
 #include "Formatter.h"
-//#include "DeviceCalibration.h"
+#include "DeviceCalibration.h"
 
 GINGA_NAMESPACE_BEGIN
 

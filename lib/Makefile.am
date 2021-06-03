@@ -69,6 +69,7 @@ src+= DeviceScent.cpp
 src+= EffectPlayerLight.cpp
 src+= DeviceLight.cpp
 src+= ParserDeviceFile.cpp
+src+= DeviceCalibration.cpp
 
 if WITH_LIBRSVG
 src+= PlayerSvg.cpp

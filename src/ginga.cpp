@@ -48,6 +48,8 @@ static gboolean opt_experimental = FALSE; // toggle experimental stuff
 static gboolean opt_fullscreen = FALSE;   // toggle fullscreen-mode
 static gboolean opt_opengl = FALSE;       // toggle OpenGL backend
 static string opt_background = "";        // background color
+static gboolean opt_preparation = TRUE;   // automatic preparation
+static gboolean opt_calibration = FALSE;  // sensory device calibration 
 static gint opt_width = 800;              // initial window width
 static gint opt_height = 600;             // initial window height
 
@@ -89,6 +91,27 @@ syntax_error:
   return FALSE;
 }
 
+static gboolean
+opt_preparation_cb (unused (const gchar *opt), const gchar *arg,
+             unused (gpointer data), GError **err)
+{
+  g_assert_nonnull (arg);
+  if (string (arg) =="false")
+  {
+    opt_preparation = FALSE;
+  }
+  else if (string (arg) == "true")
+  {
+    opt_preparation = TRUE;
+  }  
+  else
+  {
+    return FALSE;
+  } 
+  
+  return TRUE;
+}
+
 static void
 opt_version_cb (void)
 {
@@ -109,6 +132,10 @@ static GOptionEntry options[]
           "Set initial window size", "WIDTHxHEIGHT"},
         {"experimental", 'x', 0, G_OPTION_ARG_NONE, &opt_experimental,
           "Enable experimental stuff", NULL},
+        {"preparation", 'p', 0, G_OPTION_ARG_CALLBACK, pointerof (opt_preparation_cb),
+          "Enable or Disable automatic preparation", NULL},
+        {"calibration", 'c', 0, G_OPTION_ARG_NONE, &opt_calibration,
+          "Enable calibration mode", NULL},         
         {"version", 0, G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
           pointerof (opt_version_cb), "Print version information and exit",
           NULL},
@@ -345,8 +372,12 @@ main (int argc, char **argv)
 
   if (saved_argc < 2)
     {
-      usage_error ("Missing file operand");
-      _exit (0);
+      //string recebido = string (saved_argv[1]);
+      if (!opt_calibration)
+      {
+        usage_error ("Missing file operand");
+        _exit (0);
+      } 
     }
 
   if (opt_opengl)
@@ -408,9 +439,28 @@ main (int argc, char **argv)
   opts.debug = opt_debug;
   opts.experimental = opt_experimental;
   opts.opengl = opt_opengl;
+  opts.preparation = opt_preparation;
+  opts.calibration = opt_calibration;
   opts.background = string (opt_background);
   GINGA = Ginga::create (&opts);
   g_assert_nonnull (GINGA);
+
+  if(opts.calibration)
+  {
+    string errmsg;
+    if (unlikely (!GINGA->start (string (""), &errmsg)))
+        {
+          if (saved_argc > 2)
+            error ("Error to start calibration mode\n");
+          else
+            error ("%s", errmsg.c_str ());
+        }
+      gtk_widget_show_all (app);
+      gtk_main ();
+      GINGA->stop ();
+  
+  }
+
 
   // Run each NCL file, one after another.
   int fail_count = 0;

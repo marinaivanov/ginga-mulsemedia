@@ -3,7 +3,7 @@
 
 #include "EffectPlayer.h"
 #include "DeviceScent.h"
-//#include "DeviceCalibration.h"
+#include "DeviceCalibration.h"
 
 GINGA_NAMESPACE_BEGIN
 class Effect;
