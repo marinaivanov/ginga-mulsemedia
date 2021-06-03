@@ -102,25 +102,33 @@ bool compare (const PlanItem& a,const PlanItem& b)
  * @brief Creates the presentation plan from a temporal graph
  * @param _graph The temporal graph representing the multimedia application
  */
-void PresentationOrchestrator::createPresentationPlan (TemporalGraph* _graph)
+void PresentationOrchestrator::createPresentationPlan (TemporalGraph* graph, map<string, Device*> devices)
 {
-    htg = _graph;
+    htg = graph;
+    _deviceList = devices;
+    //htg->printGraph();
     if(htg->start_vertex->getEdgeList().size() == 1)
     {
         Edge* e = htg->start_vertex->getEdgeList().front();
         depthFirstSearch(e->neighbor);
     }
     
-    pO = new PreparationOrchestrator(presentation_plan, htg);
-    presentation_plan.sort(compare);
+    pO = new PreparationOrchestrator(this->presentation_plan, htg);
+    this->presentation_plan.sort(compare);
     list<PlanItem>::iterator it;
-   /* g_print ("Presentation Plan\n");
+    /*g_print("---------------------------------------------------------------\n");
+    g_print ("Presentation Plan\n");
     for( it = presentation_plan.begin(); it != presentation_plan.end(); it++ )
     {
         g_print("%.2fs - %s\n", (*it).instant, (*it).vertex->getVertexAsString().c_str());
     }
-    g_print("---------------------------------------------------------------\n");*/
-    pO->createPreparationPlan();
+    g_print("---------------------------------------------------------------\n");  */
+
+    if (preparationEnabled)
+    {
+        pO->createPreparationPlan(_deviceList);
+    }
+       
 }
 
 // ----------- Preparation Orchestrator
@@ -220,20 +228,22 @@ bool PreparationOrchestrator::verifyMediaType (string type, string uri)
 
 /**
  * @brief Creates the preparation plan from the presentation plan.
- * P.S.: Actually, the preparation is applied only video objects
  */ 
-void PreparationOrchestrator::createPreparationPlan ()
+void PreparationOrchestrator::createPreparationPlan (map<string, Device*> devices)
 {
     list<PlanItem>::iterator it;
     float _time;
+    _deviceList = devices;
 
     for( it = presentation_plan.begin(); it != presentation_plan.end(); it++ )
     {
-        if((*it).vertex->getTransition() == Event::START && (*it).vertex->getEventType()==Event::PRESENTATION){
-            if((*it).vertex->getElementName()=="media")
+        if((*it).vertex->getTransition() == Event::START && (*it).vertex->getEventType()==Event::PRESENTATION)
+        {
+            if((*it).vertex->getElementName()=="Media")
             {
                 
                 Media* m = (Media*) (*it).vertex->getObject();
+                g_assert_nonnull(m);
                 string uri = m->getProperty ("uri");
                 string type = m->getProperty ("type");
                 //Insert to preparation plan only video objects
@@ -245,13 +255,50 @@ void PreparationOrchestrator::createPreparationPlan ()
                     PlanItem item;
                     item.instant = _time;
                     item.vertex = (*it).vertex;
+                    item.action = "start";
                     preparation_plan.push_back(item);
                 } 
             }
+            else if((*it).vertex->getElementName()=="Effect")
+            {
+                
+                Effect* e = (Effect*) (*it).vertex->getObject();
+                
+                g_assert_nonnull(e);
+                string type = e->getProperty("type");
+                int prep_time = getPreparationTime(type, "start");
+                _time = (*it).instant - prep_time; 
+                if(_time < 0)
+                    _time = 0;
+                PlanItem item;
+                item.instant = _time;
+                item.vertex = (*it).vertex;
+                item.action = "start";
+                preparation_plan.push_back(item);                 
+            }
         }        
+
+        //Preparation to stops a sensory effect in advance
+        if((*it).vertex->getTransition() == Event::STOP && (*it).vertex->getEventType()==Event::PRESENTATION
+            && strcmp((*it).vertex->getElementName().c_str(),"Effect")==0)
+        {
+
+            Effect* e = (Effect*) (*it).vertex->getObject();
+            g_assert_nonnull(e);
+            string type = e->getProperty("type");
+            int prep_time = getPreparationTime(type, "stop");
+            _time = (*it).instant - prep_time; 
+            if(_time < 0)
+                _time = 0;
+            PlanItem item;
+            item.instant = _time;
+            item.vertex = (*it).vertex;
+            item.action = "stop";
+            preparation_plan.push_back(item);
+        }
     }
     insertPreparationActions();
-    //preparation_plan.sort(compare);
+    preparation_plan.sort(compare);
     //printPreparationPlan();    
 }
 
@@ -327,4 +374,35 @@ void PreparationOrchestrator::insertPreparationActions ()
         }        
     } 
 }
+
+/**
+ * @brief Return the time to prepare the start or stop of a sensory device
+ * @param devices List of sensory devices availables
+ * @param deviceType Type of the sensory device to be prepared
+ * @param action "start" to get the time to prepare the start of device
+ *                 or "stop" to get the time to prepare the stop of device
+ */
+int
+PreparationOrchestrator::getPreparationTime(string deviceType, string action)
+{
+  auto it = _deviceList.find(deviceType);
+  if (it == _deviceList.end ())
+    return 0;
+  
+  Device* dev = it->second;
+  if (strcmp(action.c_str(),"start")==0)
+  {
+    //return the time necessary to prepare the sensory device start
+    return dev->getStartPreparationTime();
+  }
+
+  if (strcmp(action.c_str(),"stop")==0)
+  {
+    //return the time necessary to prepare the sensory device start
+    return dev->getStopPreparationTime();
+  }
+
+  return 0;
+}
+
 GINGA_NAMESPACE_END

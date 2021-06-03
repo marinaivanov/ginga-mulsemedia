@@ -65,6 +65,8 @@ public:
   bool getEOS ();
   void setEOS (bool);
 
+  Device* getDevice (Formatter *, string);
+
   static void setOptionBackground (Formatter *, const string &, string);
   static void setOptionDebug (Formatter *, const string &, bool);
   static void setOptionExperimental (Formatter *, const string &, bool);
@@ -101,6 +103,9 @@ private:
 
   /// @brief Whether the presentation has ended naturally.
   bool _eos;
+
+  //Actuator device list
+  map<string, Device*> _deviceList;
 };
 
 GINGA_NAMESPACE_END

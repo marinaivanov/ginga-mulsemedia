@@ -21,10 +21,12 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 #include "Context.h"
 #include "Document.h"
 #include "Media.h"
+#include "Effect.h"
 #include "MediaSettings.h"
 #include "Switch.h"
 #include "TemporalGraph.h"
 #include "PresentationOrchestrator.h"
+#include "ParserDeviceFile.h"
 
 #include <libxml/tree.h>
 #include <libxml/parser.h>
@@ -39,6 +41,8 @@ GINGA_NAMESPACE_BEGIN
 
 /// Flags to LibXML parser.
 #define PARSER_LIBXML_FLAGS (XML_PARSE_NOERROR | XML_PARSE_NOWARNING)
+
+#define CONFIG_FILENAME "/gingaFiles/sensoryDevices/config.xml"
 
 /// Gets last XML error as C++ string.
 static inline string
@@ -232,6 +236,8 @@ public:
   static bool pushBindRule (ParserState *, ParserElt *);
   static bool pushMedia (ParserState *, ParserElt *);
   static bool popMedia (ParserState *, ParserElt *);
+  static bool pushEffect (ParserState *, ParserElt *);
+  static bool popEffect (ParserState *, ParserElt *);
   static bool pushArea (ParserState *, ParserElt *);
   static bool pushProperty (ParserState *, ParserElt *);
   static bool pushLink (ParserState *, ParserElt *);
@@ -247,7 +253,7 @@ private:
 
   TemporalGraph *_htg;  ///< The resulting #TemporalGraph
   PresentationOrchestrator *_presOrch; ///< Element that controls the multimedia presentation
-
+  map<string, Device*> _deviceList;   ///< List of sensory devices
   ParserState::Error _error; ///< Last error code.
   string _errorMsg;          ///< Last error message.
 
@@ -473,7 +479,10 @@ static map<string, ParserSyntaxElt> parser_syntax_table = {
 	          { "bottom", 0 },	
 	          { "height", 0 },	
 	          { "width", 0 },	
-	          { "zIndex", 0 } } }, // unused
+	          { "zIndex", 0 },
+            { "azimuthal", 0}, //effect attribute
+            { "polar", 0}, //effect attribute
+            { "location", 0} } }, //effect attribute
   },
   {
       "descriptorBase",
@@ -513,7 +522,12 @@ static map<string, ParserSyntaxElt> parser_syntax_table = {
           {"selBorderColor", 0},
           {"player", 0}, // unused
           {"transIn", 0},
-          {"transOut", 0} } },
+          {"transOut", 0},
+          {"activate", 0}, //effect property
+          {"intensityValue", 0}, //effect property
+          {"intensityRange", 0}, //effect property
+          {"scent", 0}, //scent effect property
+          {"color", 0} }}, //color effect property  
   },
   {
       "descriptorParam",
@@ -781,6 +795,16 @@ static map<string, ParserSyntaxElt> parser_syntax_table = {
           {"instance", 0} } }, // unused
   },
   {
+      "effect",
+      {ParserState::pushEffect,
+        ParserState::popEffect,
+        ELT_CACHE,
+        {"body", "context", "switch"},
+        { {"id", ATTR_ID},
+          {"type", 0},
+          {"descriptor", ATTR_OPT_IDREF} } },         
+  },
+  {
       "area",
       {ParserState::pushArea,
         nullptr,
@@ -796,7 +820,7 @@ static map<string, ParserSyntaxElt> parser_syntax_table = {
       {ParserState::pushProperty,
         nullptr,
         0,
-        {"body", "context", "media"},
+        {"body", "context", "media", "effect"},
         { {"name", ATTR_REQUIRED_NONEMPTY_NAME}, {"value", 0} } },
   },
   {
@@ -1024,9 +1048,11 @@ bool
 ParserElt::getAttribute (const string &name, string *value)
 {
   auto it = _attrs.find (name);
+  
   if (it == _attrs.end ())
     return false;
   tryset (value, it->second);
+ 
   return true;
 }
 
@@ -1654,7 +1680,7 @@ ParserState::resolveComponent (Composition *scope, ParserElt *elt,
   string label;
   string comp;
   string refer;
-
+ 
   label = (elt->getTag () == "bindRule") ? "constituent" : "component";
   g_assert (elt->getAttribute (label, &comp));
 
@@ -1672,7 +1698,10 @@ ParserState::resolveComponent (Composition *scope, ParserElt *elt,
       tryset (obj, child);
       return true;
     }
-
+  else
+  {
+    TRACE("CHILD == NULLPTR");
+  }
   // Check if component refers to a reference (refer) object.
   Media *media;
   if (this->referMapIndex (comp, &media))
@@ -1717,6 +1746,17 @@ ParserState::resolveInterface (Composition *ctx, ParserElt *elt, Event **evt)
 
   result = nullptr;
   if (instanceof (Media *, obj))
+    {
+      result = obj->getPresentationEvent (iface);
+      if (result == nullptr)
+        {
+          result = obj->getAttributionEvent (iface);
+          if (unlikely (result == nullptr))
+                goto fail;
+
+        }
+    }
+  else if (instanceof (Effect *, obj))
     {
       result = obj->getPresentationEvent (iface);
       if (result == nullptr)
@@ -2264,13 +2304,13 @@ Document *
 ParserState::process (xmlDoc *xml)
 {
   xmlNode *root;
-
+  
   g_assert_nonnull (xml);
   _xml = xml;
   _doc = new Document ();
   _htg = new TemporalGraph ();
   _presOrch = new PresentationOrchestrator ();
-
+  //_presOrch->preparationEnabled = true//preparation;
   root = xmlDocGetRootElement (xml);
   g_assert_nonnull (root);
 
@@ -2285,6 +2325,7 @@ ParserState::process (xmlDoc *xml)
     }
 
   g_assert_nonnull (_doc);
+
   return _doc;
 }
 
@@ -2328,6 +2369,7 @@ ParserState::popNcl (ParserState *st, unused (ParserElt *elt))
   list<ParserElt *> media_list;
   list<ParserElt *> switch_list;
   list<ParserElt *> link_list;
+  list<ParserElt *> effect_list;
 
   // Resolve descriptor references to region/transition.
   // (I.e., move region/transition attributes to associated descriptor.)
@@ -2460,6 +2502,30 @@ borderColor='%s'}",
                     continue; // already defined
                   media->addAttributionEvent (it.first);
                   media->setProperty (it.first, it.second);
+
+                  //Creates an edge that the condition is the media explicit duration
+                  if (it.first == "explicitDur")
+                  {
+                    Vertex* v_start = st->_htg->findVertex(media->getId(), Event::START, Event::PRESENTATION);
+                    if (v_start != NULL)
+                    {
+                      Vertex* v_stop = new Vertex (media->getId(), Event::STOP, Event::PRESENTATION, media, "media" );
+                      Edge* e = v_start->findEdge(v_stop);
+                      if (e != NULL)
+                      {
+                        e->setCondition("Duration",it.second);
+                      }
+                      else
+                      {
+                        //Create a stop vertex if not exists
+                        v_stop = st->_htg->createVertex (media->getId(), Event::STOP, Event::PRESENTATION, media, "media");
+                        Edge* edge = new Edge (v_stop);
+                        edge->insertCondition ("Duration",it.second);
+                        v_start->insertEdge (edge);
+                      }
+                      
+                    }
+                  }
                 }
             }
 
@@ -2482,6 +2548,51 @@ borderColor='%s'}",
                       "cannot refer to a reference");
                 }
             }
+        }
+    }
+
+  // Resolve effect reference to descriptor, i.e., move descriptor attributes
+  // to associated effect, and check for unresolved refers.
+  if (st->eltCacheIndexByTag ({"effect"}, &effect_list) > 0)
+    {
+      for (auto effect_elt : effect_list)
+        {
+          string effect_id;
+          Effect *effect;
+
+          string desc_id;
+          string refer;
+
+          // Move descriptor attributes.
+          if (effect_elt->getAttribute ("descriptor", &desc_id))
+            {
+              ParserElt *desc_elt;
+
+              if (unlikely (!st->eltCacheIndexById (desc_id, &desc_elt,
+                                                    {"descriptor"})))
+                {
+                  return st->errEltBadAttribute (effect_elt->getNode (),
+                                                 "descriptor", desc_id,
+                                                 "no such descriptor");
+                }
+
+              g_assert (effect_elt->getAttribute ("id", &effect_id));
+              effect = cast (Effect *,
+                            st->_doc->getObjectByIdOrAlias (effect_id));
+              g_assert_nonnull (effect);
+
+              for (auto it : *desc_elt->getAttributes ())
+                {
+                  if (it.first == "id" || it.first == "region")
+                    continue; // nothing to do
+                  if (effect->getAttributionEvent (it.first) != nullptr)
+                    continue; // already defined
+                  effect->addAttributionEvent (it.first);
+                  effect->setProperty (it.first, it.second);
+                }
+            }
+
+          // TO DO: Check refer effect.
         }
     }
 
@@ -2827,7 +2938,10 @@ borderColor='%s'}",
           st->_htg->addRelations(conditions, actions);
         }
     }
-  st->_presOrch->createPresentationPlan(st->_htg);
+  //load device config file
+  map<string, Device*> devList = ParserDeviceFile::parseFile(CONFIG_FILENAME);
+  st->_doc->setDeviceList(devList);
+  st->_presOrch->createPresentationPlan(st->_htg, devList);
   g_assert_nonnull (st->objStackPop ());
   
   return true;
@@ -4002,9 +4116,9 @@ ParserState::pushMedia (ParserState *st, ParserElt *elt)
         }	
     }	
   
-  Vertex* v = new Vertex (media->getId(), Event::START, Event::PRESENTATION, media, "media");
+  Vertex* v = new Vertex (media->getId(), Event::START, Event::PRESENTATION, media, "Media");
   st->_htg->insertVertex(v);
-  st->_htg->createVerticesByMedia (media->getId(), Event::START, Event::PRESENTATION, media);
+  st->_htg->createVerticesByObject (media->getId(), Event::START, Event::PRESENTATION, media);
   st->objStackPush (media);	
   return true;
 }
@@ -4047,6 +4161,7 @@ ParserState::pushArea (ParserState *st, ParserElt *elt)
 
   if (elt->getAttribute ("label", &label) && label != "")
     {
+      
       if (unlikely (elt->getAttribute ("begin", &str)))
         {
           return st->errEltMutuallyExclAttributes (elt->getNode (), "label",
@@ -4085,7 +4200,7 @@ ParserState::pushArea (ParserState *st, ParserElt *elt)
       media->addPresentationEvent (id, begin, end);
       media->addPreparationEvent (id, begin, end);
      
-      Vertex* v = new Vertex (id, Event::START, Event::PRESENTATION, media, "area");
+      Vertex* v = new Vertex (id, Event::START, Event::PRESENTATION, media, "Area");
       st->_htg->insertVertex (v);
       Vertex* vSource = st->_htg->findVertex(media->getId(), Event::START, Event::PRESENTATION);
       g_assert_nonnull (vSource);
@@ -4099,7 +4214,7 @@ ParserState::pushArea (ParserState *st, ParserElt *elt)
         }
       if(end != GINGA_TIME_NONE)
         {
-          Vertex* v_stop = new Vertex (id, Event::STOP, Event::PRESENTATION, media, "area"); 
+          Vertex* v_stop = new Vertex (id, Event::STOP, Event::PRESENTATION, media, "Area"); 
           st->_htg->insertVertex (v_stop);
           st->_htg->createEdge (vSource,v_stop,"Duration", strE);
         }
@@ -4131,6 +4246,57 @@ ParserState::pushProperty (ParserState *st, ParserElt *elt)
   obj->addAttributionEvent (name);
   if (value != "")	
 	    obj->setProperty (name, value);
+  return true;
+}
+
+/**
+ * @brief Starts the processing of \<effect\> element.
+ *
+ * This function parsers \p elt and pushes it as a #Effect onto the object
+ * stack.
+ *
+ * @param st #ParserState.
+ * @param elt Element wrapper.
+ * @return \c true if successful, or \c false otherwise.
+ */
+bool
+ParserState::pushEffect (ParserState *st, ParserElt *elt)
+{
+  Composition *parent;	
+  Effect *effect;	
+  string id;	
+  string type;	
+  //string refer;	
+  //bool hasRefer;	
+  	
+  g_assert (elt->getAttribute ("id", &id));	
+  g_assert (elt->getAttribute ("type", &type));	
+  
+  effect = new Effect (id);	
+  effect->setProperty ("type", type);	
+  parent = cast (Composition *, st->objStackPeek ());	
+  g_assert_nonnull (parent);	
+  parent->addChild (effect);	
+    
+  Vertex* v = new Vertex (effect->getId(), Event::START, Event::PRESENTATION, effect, "Effect");
+  st->_htg->insertVertex(v);
+  st->objStackPush (effect);	
+  return true;
+}
+
+/**
+ * @brief Ends the processing of \<effect\> element.
+ *
+ * This function pops the object stack.
+ *
+ * @param st #ParserState.
+ * @param elt Element wrapper.
+ * @return \c true if successful, or \c false otherwise.
+ */
+bool
+ParserState::popEffect (ParserState *st, unused (ParserElt *elt))
+{
+  g_assert (instanceof (Effect *, st->objStackPop ()));
   return true;
 }
 
@@ -4191,9 +4357,6 @@ ParserState::pushLinkParam (ParserState *st, ParserElt *elt)
   UDATA_GET (parent_elt, "params", &params);
   (*params)[name] = value;
 
-  //if(name == "delay")
-  //  g_print("delay = %s\n", value.c_str());
-  
   return true;
 }
 
@@ -4282,6 +4445,7 @@ Parser::parseBuffer (const void *buf, size_t size, int width, int height,
  * @param width Initial screen width (in pixels).
  * @param height Initial screen height (in pixels).
  * @param[out] errmsg Variable to store the error message (if any).
+ * @param preparation Variable to activate the automatic preparation
  * @return The resulting #Document if successful, or null otherwise.
  */
 Document *

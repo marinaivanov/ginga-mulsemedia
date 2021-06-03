@@ -82,6 +82,7 @@ public:
     RESUME,    ///< Resume.
     START,     ///< Start.
     STOP,      ///< Stop.
+    PREPARE_STOP, ///< Prepare the effect stopping
   };
 
   Event (Event::Type, Object *, const string &id);

@@ -25,8 +25,11 @@ DISTCLEANFILES+= ginga.pc
 pkgconfigdir= $(libdir)/pkgconfig
 pkgconfig_DATA= ginga.pc
 
-AM_CXXFLAGS= $(GINGA_ALL_CXXFLAGS)
-AM_LDFLAGS= $(GINGA_ALL_LDFLAGS)
+REST_CFLAG= -I/usr/include/restclient-cpp
+REST_LIB = -L/usr/local/lib -lrestclient-cpp -lcurl
+
+AM_CXXFLAGS= $(GINGA_ALL_CXXFLAGS) $(REST_CFLAG)
+AM_LDFLAGS= $(GINGA_ALL_LDFLAGS) $(REST_LIB)
 
 include_HEADERS= ginga.h
 lib_LTLIBRARIES= libginga.la
@@ -38,6 +41,7 @@ src+= Composition.cpp
 src+= Context.cpp
 src+= Document.cpp
 src+= Event.cpp
+src+= Effect.cpp
 src+= Formatter.cpp
 src+= Ginga.cpp
 src+= Media.cpp
@@ -57,6 +61,14 @@ src+= TemporalGraph.cpp
 src+= PresentationOrchestrator.cpp
 src+= aux-ginga.cpp
 src+= aux-gl.cpp
+
+src+= EffectPlayer.cpp
+src+= EffectPlayerScent.cpp
+src+= Device.cpp
+src+= DeviceScent.cpp
+src+= EffectPlayerLight.cpp
+src+= DeviceLight.cpp
+src+= ParserDeviceFile.cpp
 
 if WITH_LIBRSVG
 src+= PlayerSvg.cpp

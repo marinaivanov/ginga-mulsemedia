@@ -455,4 +455,16 @@ Document::setData (const string &key, void *value, UserDataCleanFunc fn)
   return _udata.setData (key, value, fn);
 }
 
+void 
+Document::setDeviceList (map<string, Device*> devices)
+{
+  _deviceList = devices;
+}
+
+map<string, Device*> 
+Document::getDeviceList ()
+{
+  return _deviceList;
+}
+
 GINGA_NAMESPACE_END

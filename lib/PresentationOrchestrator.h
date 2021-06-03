@@ -13,8 +13,10 @@
 #include "Media.h"
 #include "Event.h"
 #include "Context.h"
+#include "Effect.h"
 
-#define PREPARATION_TIME 3 //time default to prepare a media object 
+#define PREPARATION_TIME 2 //time default to prepare a media object 
+#define EFFECT_PREPARATION_TIME 1 //time default to prepare a media object
 GINGA_NAMESPACE_BEGIN
 
 /**
@@ -24,6 +26,7 @@ typedef struct
 {
     float instant;        ///< Instant of transition occurrence
     Vertex* vertex;     ///< Vertex representing the transition in the event states machine
+    string action;      //< Action to be prepared (starts or stop)
 } PlanItem;
 
 class PreparationOrchestrator
@@ -31,7 +34,7 @@ class PreparationOrchestrator
 public:
     PreparationOrchestrator (list<PlanItem> , TemporalGraph*);
     float getPreparationDuration (Media* media);
-    void createPreparationPlan ();
+    void createPreparationPlan (map<string, Device*>);
     void insertPreparationActions ();
 private:
     TemporalGraph* htg;
@@ -40,6 +43,8 @@ private:
     list<PlanItem> preparation_plan;
     list<PlanItem> presentation_plan;
     bool verifyMediaType (string , string );
+    int getPreparationTime (string, string);
+    map<string, Device*> _deviceList;
 };
 
 class PresentationOrchestrator
@@ -47,12 +52,14 @@ class PresentationOrchestrator
 public:
     PresentationOrchestrator ();
     void depthFirstSearch (Vertex* );
-    void createPresentationPlan (TemporalGraph*);
+    void createPresentationPlan (TemporalGraph*, map<string, Device*>);
     list<PlanItem> presentation_plan;       ///< List containing the presentation instant of each vertex.
+    bool preparationEnabled;
 private:
     float time;
     TemporalGraph* htg;                     ///< Temporal Graph that represents the multimedia application
-    PreparationOrchestrator* pO;          
+    PreparationOrchestrator* pO;    
+    map<string, Device*> _deviceList;      
 };
 
 GINGA_NAMESPACE_END

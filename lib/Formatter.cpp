@@ -164,6 +164,9 @@ Formatter::start (const string &file, string *errmsg)
   _lastTickDiff = 0;
   _lastTickFrameNo = 0;
 
+  //Get actuators config file
+  _deviceList = _doc->getDeviceList();
+
   // Run document.
   TRACE ("%s", file.c_str ());
   evt = root->getLambda ();
@@ -588,6 +591,15 @@ Formatter::setOptionSize (Formatter *self, const string &name, int value)
   opts = self->getOptions ();
   self->resize (opts->width, opts->height);
   TRACE ("%s:=%d", name.c_str (), value);
+}
+
+Device* 
+Formatter::getDevice(Formatter *self, string deviceType)
+{
+  auto it = self->_deviceList.find(deviceType);
+  if (it == self->_deviceList.end ())
+    return NULL;
+  return it->second;
 }
 
 GINGA_NAMESPACE_END

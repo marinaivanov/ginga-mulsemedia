@@ -19,6 +19,7 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 #define DOCUMENT_H
 
 #include "Object.h"
+#include "Device.h"
 
 GINGA_NAMESPACE_BEGIN
 
@@ -57,6 +58,9 @@ public:
   bool getData (const string &, void **);
   bool setData (const string &, void *, UserDataCleanFunc fn = nullptr);
 
+  void setDeviceList (map<string, Device*> );
+  map<string, Device*> getDeviceList ();
+
 private:
   set<Object *> _objects;             ///< Objects.
   map<string, Object *> _objectsById; ///< Objects indexed by id.
@@ -66,6 +70,7 @@ private:
   set<Context *> _contexts;           ///< Context objects.
   set<Switch *> _switches;            ///< Switch objects.
   UserData _udata;                    ///< Attached user data.
+  map<string, Device*> _deviceList;   ///< List of sensory devices used in the document
 };
 
 GINGA_NAMESPACE_END

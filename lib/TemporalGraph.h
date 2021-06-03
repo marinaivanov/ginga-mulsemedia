@@ -34,6 +34,7 @@ public:
     map<string, string> getConditionList ();
     string getEdgeAsString ();
     int getDurationEdge();
+    void setCondition (string, string);
     
 private:
     map<string, string> conditions; ///< Edge conditions.
@@ -62,6 +63,7 @@ public:
     string getVertexAsString ();
     string getElementName ();
     Edge* getFirstEdge ();
+    Edge* findEdge (Vertex* );      ///< Verify if already exists an edge to the vertex v
 
 private:
     Event::Transition transition;   ///< Transition on event state machines.
@@ -80,7 +82,7 @@ public:
     TemporalGraph ();
     int getNumberVertices (); 
     Vertex* createVertex (string, Event::Transition, Event::Type, Object*, string );
-    Vertex* createVerticesByMedia (string, Event::Transition, Event::Type, Object*);
+    Vertex* createVerticesByObject (string, Event::Transition, Event::Type, Object*);
     void insertVertex (Vertex* );
     void deleteVertex ();
     list<Vertex*> getVertexList ();

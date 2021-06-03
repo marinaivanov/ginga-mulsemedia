@@ -19,6 +19,7 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 #define PARSER_H
 
 #include "Document.h"
+#include "Device.h"
 
 GINGA_NAMESPACE_BEGIN
 
@@ -27,6 +28,7 @@ class Parser
 public:
   static Document *parseBuffer (const void *, size_t, int, int, string *);
   static Document *parseFile (const string &, int, int, string *);
+  static map<string, Device*> *parseDeviceFile ();
 };
 
 GINGA_NAMESPACE_END

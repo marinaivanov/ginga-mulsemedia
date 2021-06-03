@@ -156,6 +156,13 @@ int Edge::getDurationEdge()
 
     return time;
 }
+
+void Edge::setCondition (string cond, string value)
+{
+   conditions[cond] = value;
+}
+
+
 //------- Vertex class
 /**
  * @brief Constructor.
@@ -284,6 +291,20 @@ void Vertex::edgesCleanup ()
         deleteEdge ();
         delete obj;
     }
+}
+
+/**
+ * Search a edge that contains the vertex v as neighbour
+ */ 
+Edge* Vertex::findEdge (Vertex* v)
+{
+    list<Edge*>::iterator it_e;
+    for(it_e = edges.begin(); it_e != edges.end(); it_e++)
+    {
+        if((*it_e)->neighbor == v )
+            return (*it_e);
+    }
+    return NULL;
 }
 
 /**
@@ -580,54 +601,57 @@ int TemporalGraph::getObjectDuration(string src)
 }
 
 /**
-  * @brief Create two new vertices: a vertex that representing the start of the media object presentation,
-  *        and a vertex that representing the stop of the media object presentation.
+  * @brief Create two new vertices: a vertex that representing the start of the node object presentation,
+  *        and a vertex that representing the stop of the node object presentation.
   * @param _trans event transition.
   * @param _type event type.
   * @param _obj object.
   * @return The vertex representing the start of media object presentation
   */
-Vertex* TemporalGraph::createVerticesByMedia (string _id, Event::Transition _trans, Event::Type _type, Object *_obj )
+Vertex* TemporalGraph::createVerticesByObject (string _id, Event::Transition _trans, Event::Type _type, Object *_obj )
 {
+  string element = _obj->getObjectTypeAsString();
     Vertex* v_start;
-    v_start = createVertex (_id, _trans, _type, _obj, "media");
-    
-    Media *media = cast (Media *, _obj);
-    string uri = media->getProperty ("uri");
-    string type = media->getProperty ("type");
+    v_start = createVertex (_id, _trans, _type, _obj, element);
+        
+    if (strcmp(element.c_str(), "Media")==0){
+        
+        Media *media = cast (Media *, _obj);
+        g_assert_nonnull(media);
+        string uri = media->getProperty ("uri");
+        string type = media->getProperty ("type");
 
-    if (type == "" && uri != "")
-    {
-      string::size_type index, len;
-      index = uri.find_last_of (".");
-      if (index != std::string::npos)
+        if (type == "" && uri != "")
         {
-          index++;
-          len = uri.length ();
-          if (index < len)
+            string::size_type index, len;
+            index = uri.find_last_of (".");
+            if (index != std::string::npos)
             {
-              string extension = uri.substr (index, (len - index));
-              if (extension != "")
-                mime_table_index (extension, &type);
-            }
-        }    
-    }
+                index++;
+                len = uri.length ();
+                if (index < len)
+                {
+                    string extension = uri.substr (index, (len - index));
+                    if (extension != "")
+                        mime_table_index (extension, &type);
+                }
+            }    
+        }
 
-    if (xstrhasprefix (type, "audio") || xstrhasprefix (type, "video"))
-    {
-       int duration = 0;
-       duration =  getObjectDuration (uri);
-       if (duration > 0)
-       {
-           Vertex* v_stop;
-           v_stop = createVertex (_id, Event::STOP, Event::PRESENTATION, _obj, "media");
-           Edge* edge = new Edge (v_stop);
-           edge->insertCondition ("Duration",to_string(duration)+"s");
-           v_start->insertEdge (edge);
-       }      
+        if (xstrhasprefix (type, "audio") || xstrhasprefix (type, "video"))
+        {
+            int duration = 0;
+            duration =  getObjectDuration (uri);
+            if (duration > 0)
+            {
+                Vertex* v_stop;
+                v_stop = createVertex (_id, Event::STOP, Event::PRESENTATION, _obj, "media");
+                Edge* edge = new Edge (v_stop);
+                edge->insertCondition ("Duration",to_string(duration)+"s");
+                v_start->insertEdge (edge);
+            }      
+        }
     }
-    
-    
     return v_start;
 }
 
