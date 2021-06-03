@@ -260,14 +260,11 @@ void
 Player::setPrepared (bool prepared)
 {
   _prepared = prepared;
-  if(_prepared)
-    TRACE("PREPARADOOOOOO");
 }
 
 void
 Player::start ()
 {
-  TRACE("-------------PLAYER START()\n");
   g_assert (_state != OCCURRING);
   _state = OCCURRING;
   _time = 0;
@@ -333,9 +330,9 @@ Player::setProperty (const string &name, const string &value)
   _value = value;
 
   code = Player::getPlayerProperty (name, &defval);
-  if (code == Player::PROP_UNKNOWN)
-    goto done;
-  
+  // NCLua media should perform the doSetProperty to trigger registred funcs
+  if (code == Player::PROP_UNKNOWN && this->getProperty("type") != "application/x-ginga-NCLua")
+    goto done;  
 
   if (_value == "")
     {
@@ -579,8 +576,6 @@ Player::createPlayer (Formatter *formatter, Media *media, const string &uri,
               string extension = uri.substr (index, (len - index));
               if (extension != "")
                 mime_table_index (extension, &mime);
-              if (mime.empty() && xstrhasprefix(uri,"rtp"))
-                mime = "stream";
             }
         }
     }
@@ -609,10 +604,6 @@ Player::createPlayer (Formatter *formatter, Media *media, const string &uri,
     {
       player = new PlayerText (formatter, media);
     }
-  else if (mime == "stream")
-    {
-      player = new PlayerStream (formatter, media);
-    }
   
 #if defined WITH_CEF && WITH_CEF
   else if (xstrhasprefix (mime, "text/html"))
@@ -639,10 +630,13 @@ Player::createPlayer (Formatter *formatter, Media *media, const string &uri,
         {
           WARNING ("unknown mime '%s': creating an empty player",
                    mime.c_str ());
+          if (!media->getProperty("uri").empty ())
+            ERROR ("media from \"application/x-ginga-timer\" type should not have src");        
         }
     }
 
   g_assert_nonnull (player);
+  media->setProperty ("type", mime);
   return player;
 }
 
