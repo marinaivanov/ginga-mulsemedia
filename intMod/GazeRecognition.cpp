@@ -162,21 +162,21 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
 
         if (!startRegions.empty())
         {
-            cout << "Notified media START: " << startRegions << endl;
+            cout << "\nNotified media START: " << startRegions << endl;
             sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::START, user, startRegions);
             startRegions = "";
         }
 
         if (!stopRegions.empty())
         {
-            cout << "Notified media STOP: " << stopRegions << endl;
+            cout << "\nNotified media STOP: " << stopRegions << endl;
             sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::STOP, user, stopRegions);
             stopRegions = "";
         }
 
         if (!abortRegions.empty())
         {
-            cout << "Notified media ABORT: " << abortRegions << endl;
+            cout << "\nNotified media ABORT: " << abortRegions << endl;
             sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::ABORT, user, abortRegions);
             abortRegions = "";
         }

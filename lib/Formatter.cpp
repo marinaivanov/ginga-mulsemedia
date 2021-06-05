@@ -461,25 +461,29 @@ bool Formatter::sendViewed(Event::Transition tr, const string &user, const strin
 	// e dos obje que estão na key
   Object * maiorIndex;
   int maior = -1;
-  for (auto obj : buf) //olhar o zindex
+  if (!buf.empty())
   {
-    int zIndex = 0;
-    if (obj->getProperty("zIndex").empty())
-      zIndex = 0;
-    else
+    for (auto obj : buf) //olhar o zindex
     {
-      char * aux = (char *) obj->getProperty("zIndex").c_str();
-      // zIndex = (int)std::strtol(obj->getProperty("zIndex").c_str(), nullptr, 10);
-      zIndex = atoi(aux);
+      int zIndex = 0;
+      if (obj->getProperty("zIndex").empty())
+        zIndex = 0;
+      else
+     {
+        char * aux = (char *) obj->getProperty("zIndex").c_str();
+        // zIndex = (int)std::strtol(obj->getProperty("zIndex").c_str(), nullptr, 10);
+        zIndex = atoi(aux);
+     }
+      if (zIndex > maior)
+      {
+        maior = zIndex;
+        maiorIndex = obj;
+      }
     }
-    if (zIndex > maior)
-    {
-      maior = zIndex;
-      maiorIndex = obj;
-    }
+ 	  maiorIndex->sendViewed(tr, user);
+    return true;
   }
- 	maiorIndex->sendViewed(tr, user);
-	return true;
+	return false;
 }
 
 bool
