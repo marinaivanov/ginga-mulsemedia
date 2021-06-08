@@ -36,7 +36,6 @@ public:
   map<string, string> getProperties ();
   void sendKey (const string &, bool) override;
   void sendKey (const string &,const string &, bool press) override;
-  void sendViewed (Event::Transition, const string &) override;
   void sendTick (Time, Time, Time) override;
   bool beforeTransition (Event *, Event::Transition) override;
   bool afterTransition (Event *, Event::Transition) override;

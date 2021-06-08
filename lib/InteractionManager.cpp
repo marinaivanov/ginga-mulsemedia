@@ -4,7 +4,6 @@
 #include <iomanip>
 #include "InteractionManager.h"
 #include "../intMod/VoiceRecognition.h"
-#include "../intMod/GazeRecognition.h"
 #include "../intMod/FacialExpressionRecognition.h"
 #include "aux-glib.h"
 #include <cairo.h>
@@ -147,19 +146,6 @@ void InteractionManager::start()
 					}
  					break;
 				}
-				case Event::EYE_GAZE:
-				{
-					map<Event::Type,list<Key>> keyList = (((Formatter *)ginga)->getDocument())->getKeyList();
-
-					list<Key>gazeList = keyList[it->first];
-
-					for (auto it1=gazeList.begin(); it1!=gazeList.end(); it1++)
-					{
-						InteractionModule * umEyeGaze =  new GazeRecognition(this);
-						ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umEyeGaze));
-					}
-					break;
-				}
 				case Event::FACE_RECOGNITION:
 				{
 					if (userAuthorization("Permite habilitar sua camera?\n"))
@@ -191,12 +177,6 @@ printf("\n**********Foi dito %s pelo %s ****************\n",key.c_str(), user.c_
 			if (!(ginga->sendKey (std::string(key),std::string(user),true)))
 				return false;
 	        if (!(ginga->sendKey (std::string(key), std::string(user),false)))
-				return false;
-	        return true;
-		}
-		case Event::EYE_GAZE:
-		{
-			if (!(((Formatter *)ginga)->sendViewed (tran, user, key)))
 				return false;
 	        return true;
 		}
@@ -283,48 +263,6 @@ void InteractionManager::setUserKeyListModules()
 
 					break;
 
-				}
-				case Event::EYE_GAZE:
-				{
-
-					json UserKeyList;
-
-					const GingaOptions *options = ginga->getOptions();
-
-					UserKeyList.emplace("user", it2->first);
-					UserKeyList.emplace("screenWidth", options->width);
-					UserKeyList.emplace("screenHeight", options->height);
-
-					json keys={};
-					Object * md;
-
-					for (auto it3=it2->second.begin(); it3!=it2->second.end(); ++it3)
-					{
-//						md = (((Formatter *)ginga)->getDocument())->getObjectById(it3->c_str());
-						md = (((Formatter *)ginga)->getDocument())->getObjectById(it3->component);
-
-						string left = md->getProperty("left");
-						string top = md->getProperty("top");
-						string width = md->getProperty("width");
-						string height = md->getProperty("height");
-
-						json media;
-						
-						media.emplace("id",it3->component);
-						media.emplace("left",left.c_str());
-						media.emplace("top",top.c_str());
-						media.emplace("width",width.c_str());
-						media.emplace("height",height.c_str());
-					
-						keys+=(media);
-
-					}
-					//printf("\n%s:%s:%s:%s \n", left.c_str(),top.c_str(), width.c_str(),height.c_str());
-					UserKeyList.push_back({"key", keys});
-					string strEvent  = Event::getEventTypeAsString(it1->first);
-					setUserkeyListInteractionModule(strEvent, UserKeyList);
-
-					break;
 				}
 			}
 		}

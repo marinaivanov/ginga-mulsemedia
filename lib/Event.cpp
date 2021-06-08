@@ -97,7 +97,6 @@ Event::getFullId ()
       else
         return obj_id + "$" + _id;
     case Event::VOICE_RECOGNITION:
-    case Event::EYE_GAZE:
     case Event::FACE_RECOGNITION:
     case Event::GESTURE_RECOGNITION:
       return obj_id + "&" + _owner + ":" + _id;
@@ -280,8 +279,6 @@ Event::getEventTypeAsString (Event::Type type)
       return "preparation";
     case Event::VOICE_RECOGNITION:
       return "voice_recognition";
-    case Event::EYE_GAZE:
-      return "eye_gaze";
     case Event::FACE_RECOGNITION:
       return "face_recognition";
     case Event::GESTURE_RECOGNITION:

@@ -158,35 +158,6 @@ Media::sendKey (const string &key,const string &user, bool press)
 
 }
 
-void Media::sendViewed(Event::Transition tr, const string &user)
-{
-	list<Event *> buf;
-
-    if (unlikely (this->isSleeping ()))
-	    return; // nothing to do
-
-	if (_player == nullptr)
-	    return; // nothing to do
-
-	// Collect the events to be triggered.
-	for (auto evt : _events)
-	{
-
-	    if (evt->getType () != Event::EYE_GAZE)
-	    {
-	        continue;
-        }
-
-	   buf.push_back (evt);
-	}
-
-	for (Event *evt : buf)
-	{
-	   _doc->evalAction (evt, tr);
-	}
-
-}
-
 void
 Media::sendKey (const string &key, bool press)
 {
@@ -427,9 +398,6 @@ Media::beforeTransition (Event *evt, Event::Transition transition)
     case Event::GESTURE_RECOGNITION:
       break;
 
-    case Event::EYE_GAZE:
-      break;
-
     default:
       g_assert_not_reached ();
     }
@@ -632,28 +600,6 @@ Media::afterTransition (Event *evt, Event::Transition transition)
             }
 
           break;
-      }
-    
-    case Event::EYE_GAZE:
-	    {
-        string key, user;
-        evt->getParameter ("key", &key);
-        evt->getParameter ("user", &user);
-        switch (transition)
-        {
-          case Event::START:
-            TRACE ("start eye gaze %s", evt->getFullId ().c_str ());
-            break;
-          case Event::STOP:
-            TRACE ("stop eye gaze %s", evt->getFullId ().c_str ());
-            break;
-          case Event::ABORT:
-            TRACE ("abort eye gaze %s", evt->getFullId ().c_str ());
-            break;
-          default:
-            g_assert_not_reached ();
-        }
-        break;
       }
 
     default:

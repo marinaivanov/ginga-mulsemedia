@@ -78,9 +78,6 @@ public:
   Event *getGestureRecognitionEvent (const string &, const string &);
   void addGestureRecognitionEvent (const string &, const string &);
 
-  Event *getEyeGazeEvent (const string &, const string &);
-  void addEyeGazeEvent (const string &, const string &);
-
   Event *getLambda ();
   bool isOccurring ();
   bool isPaused ();
@@ -95,7 +92,6 @@ public:
 
   virtual void sendKey (const string &, bool);
   virtual void sendKey (const string &, const string &, bool);
-  virtual void sendViewed (Event::Transition, const string &);
   virtual void sendTick (Time, Time, Time);
 
   Time getTime ();
