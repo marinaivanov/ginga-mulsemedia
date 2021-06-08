@@ -281,7 +281,7 @@ keyboard_callback (GtkWidget *widget, GdkEventKey *e, gpointer type)
       break;
     }
 
-  printf("Captura da tecla antes de chamar o sendkey: tecla: %s \n\n", key);
+  //printf("Captura da tecla antes de chamar o sendkey: tecla: %s \n\n", key);
   if (string (key).c_str() ==  string ("g").c_str() )
 	  printf("ok!\n");
 

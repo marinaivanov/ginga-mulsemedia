@@ -542,12 +542,14 @@ Document::addKeyList (Event::Type intEvent, Key key)
 {
 	  auto it = _keyList.find (intEvent);
 	  if (it == _keyList.end ())
-	  {  list<Key> lst;
-	  	  lst.push_back(key);
+	  { 
+      list<Key> lst;
+	  	lst.push_back(key);
 		  _keyList.insert(std::pair<Event::Type, list<Key>>(intEvent,lst));
 	  }
 	  else
-	  {  // auto list  =  it->second();
+	  { 
+       // auto list  =  it->second();
 		  it->second.push_back(key);
 	  }
 }

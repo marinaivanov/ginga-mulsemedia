@@ -833,7 +833,7 @@ parser_syntax_table = {
           {"type", 0},
           {"descriptor", ATTR_OPT_IDREF},
           {"refer", ATTR_OPT_IDREF},
-          {"user", ATTR_OPT_IDREF},
+          {"user", 0},
           {"instance", 0} } }, // unused
   },
   {
@@ -2915,6 +2915,7 @@ borderColor='%s'}",
                       }
                     act.value = st->resolveParameter (
                         role->key, &bind->params, params, &ghosts_map);
+
                     obj->addSelectionEvent (act.value);
                     act.event = obj->getSelectionEvent (act.value);
                     g_assert_nonnull (act.event);
@@ -2936,16 +2937,16 @@ borderColor='%s'}",
                   case Event::GESTURE_RECOGNITION:
                   case Event::VOICE_RECOGNITION:
                   {
-                        act.value = st->resolveParameter (
-                            role->key, &bind->params, params, &ghosts_map);
+                    act.value = st->resolveParameter (
+                        role->key, &bind->params, params, &ghosts_map);
 
-                        act.owner = st->resolveParameter (
-                            role->user, &bind->params, params, &ghosts_map);
+                    act.owner = st->resolveParameter (
+                        role->user, &bind->params, params, &ghosts_map);
 
                 		for (auto & c: act.owner) c = toupper(c);
                 		for (auto & c: act.value) c = toupper(c);
 
-                        Key oneKey;
+                    Key oneKey;
                 		oneKey.key = act.value;
                 		oneKey.user = act.owner;
 

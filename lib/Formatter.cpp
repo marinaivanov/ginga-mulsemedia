@@ -214,10 +214,8 @@ Formatter::start (const string &file, string *errmsg)
   _intManager->setUserKeyListModules();
   _intManager->startModules();
 
- // _userManager = new UserContextManager(this);
- // _userManager->start();
 
-
+   					
   return true;
 }
 
@@ -411,7 +409,6 @@ bool
 Formatter::sendKey (const string &key, const string &user,bool press)
 {
   list<Object *> buf;
-
   // This must be the first check.
   if (_state != GINGA_STATE_PLAYING)
     return false;
@@ -430,7 +427,12 @@ Formatter::sendKey (const string &key, const string &user,bool press)
       
   for (auto obj : buf)
   {
-    obj->sendKey (key, user,  press);
+    if (obj->getObjectTypeAsString().compare("MediaSettings")!=0)
+    {
+
+//printf("\n User no sendKey do ginga: %s\n", user.c_str());
+      obj->sendKey (key, user,  press);
+    }
   }
   return true;
 }

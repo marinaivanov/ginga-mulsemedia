@@ -71,6 +71,7 @@ Media::toString ()
 void
 Media::setProperty (const string &name, const string &value, Time dur)
 {
+  //printf("\n Mudança na media %s da prop: %s Valor:%s\n", this->getId().c_str(),name.c_str(),value.c_str());
   string from = this->getProperty (name);
   Object::setProperty (name, value, dur);
 
@@ -84,10 +85,33 @@ Media::setProperty (const string &name, const string &value, Time dur)
     _player->setProperty (name, value);
 }
 
+map<string, string> Media::getProperties()
+{
+  return this->_properties;
+}
 
 void
 Media::sendKey (const string &key,const string &user, bool press)
 {
+  //if (this->getObjectTypeAsString().compare("MediaSettings")==0)
+  //{
+    //this->setProperty("usr",user);
+    map<string, string> props = this->getProperties();
+    printf("\n User no sendKey do media: %s\n", user.c_str());
+    this->setProperty ("usr", user);
+
+    //this->addDelayedAction (evt, Event::STOP, user);
+
+  // printf("\nMedia: %s\n", this->getId().c_str());
+  // printf("\n Nome: %s\n", this->toString().c_str());
+  
+  for (auto it=props.begin(); it!=props.end(); ++it)
+	{
+    printf("\nProps[%s]= %s\n", it->first.c_str(), it->second.c_str());
+  }
+  
+  // this->afterTransition()
+  //return;
   list<Event *> buf;
   string expected;
   string parUser;
@@ -102,33 +126,36 @@ Media::sendKey (const string &key,const string &user, bool press)
   for (auto evt : _events)
   {
 
-     if ((evt->getType () != Event::VOICE_RECOGNITION) && (evt->getType () != Event::FACE_RECOGNITION))
-     {
-        continue;
-     }
+    if ((evt->getType () != Event::VOICE_RECOGNITION) && (evt->getType () != Event::FACE_RECOGNITION))
+    {
+      continue;
+    }
+    expected = "";
+    parUser = "";
 
-     expected = "";
-     parUser = "";
+    evt->getParameter ("key", &expected);
+    evt->getParameter ("user", &parUser);
 
-     evt->getParameter ("key", &expected);
-     evt->getParameter ("user", &parUser);
+    bool noParam = expected == "";
 
-     bool noParam = expected == "";
+    bool paramKeyNoUser = (expected != "") && (key == expected) && (parUser == "");
 
-     bool paramKeyNoUser = (expected != "") && (key == expected) && (parUser == "");
+    bool paramKeyUser = (expected != "") && (parUser != "") && (key == expected) && ((parUser == user));
 
-     bool paramKeyUser = (expected != "") && (parUser != "") && (key == expected) && (parUser == user);
-
-     if (!(noParam || paramKeyNoUser || paramKeyUser))
-     {
+    if (!(noParam || paramKeyNoUser || paramKeyUser))
+    {
    	  continue;
-     }
-     buf.push_back (evt);
+    }
+    buf.push_back (evt);
   }
 
   // Run collected events.
   for (Event *evt : buf)
+  {
     _doc->evalAction (evt, press ? Event::START : Event::STOP);
+  
+  }
+
 }
 
 void Media::sendViewed(Event::Transition tr, const string &user)

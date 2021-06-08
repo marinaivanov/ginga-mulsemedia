@@ -25,7 +25,7 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 #include "Device.h"
 #include "DeviceCalibration.h"
 #include "InteractionManager.h"
-#include "UserContextManager.h"
+
 
 
 GINGA_NAMESPACE_BEGIN
@@ -121,10 +121,9 @@ private:
   //Actuator device list
   map<string, Device*> _deviceList;
   /// @brief Interaction Manager.
-  InteractionManager *_intManager;
+  InteractionManager *_intManager = NULL;
 
-  /// @brief User Context Manager.
-  UserContextManager *_userManager;
+
 };
 
 GINGA_NAMESPACE_END

@@ -33,6 +33,7 @@ public:
   string getObjectTypeAsString () override;
   string toString () override;
   void setProperty (const string &, const string &, Time dur = 0) override;
+  map<string, string> getProperties ();
   void sendKey (const string &, bool) override;
   void sendKey (const string &,const string &, bool press) override;
   void sendViewed (Event::Transition, const string &) override;
