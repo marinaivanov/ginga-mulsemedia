@@ -24,6 +24,8 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 #include "Event.h"
 #include "Player.h"
 
+
+
 GINGA_NAMESPACE_BEGIN
 
 // Public.
@@ -82,6 +84,82 @@ Media::setProperty (const string &name, const string &value, Time dur)
     _player->setProperty (name, value);
 }
 
+
+void
+Media::sendKey (const string &key,const string &user, bool press)
+{
+  list<Event *> buf;
+  string expected;
+  string parUser;
+
+  if (unlikely (this->isSleeping ()))
+    return; // nothing to do
+
+  if (_player == nullptr)
+    return; // nothing to do
+
+  // Collect the events to be triggered.
+  for (auto evt : _events)
+  {
+
+     if ((evt->getType () != Event::VOICE_RECOGNITION) && (evt->getType () != Event::FACE_RECOGNITION))
+     {
+        continue;
+     }
+
+     expected = "";
+     parUser = "";
+
+     evt->getParameter ("key", &expected);
+     evt->getParameter ("user", &parUser);
+
+     bool noParam = expected == "";
+
+     bool paramKeyNoUser = (expected != "") && (key == expected) && (parUser == "");
+
+     bool paramKeyUser = (expected != "") && (parUser != "") && (key == expected) && (parUser == user);
+
+     if (!(noParam || paramKeyNoUser || paramKeyUser))
+     {
+   	  continue;
+     }
+     buf.push_back (evt);
+  }
+
+  // Run collected events.
+  for (Event *evt : buf)
+    _doc->evalAction (evt, press ? Event::START : Event::STOP);
+}
+
+void Media::sendViewed(Event::Transition tr, const string &user)
+{
+	list<Event *> buf;
+
+    if (unlikely (this->isSleeping ()))
+	    return; // nothing to do
+
+	if (_player == nullptr)
+	    return; // nothing to do
+
+	// Collect the events to be triggered.
+	for (auto evt : _events)
+	{
+
+	    if (evt->getType () != Event::EYE_GAZE)
+	    {
+	        continue;
+        }
+
+	   buf.push_back (evt);
+	}
+
+	for (Event *evt : buf)
+	{
+	   _doc->evalAction (evt, tr);
+	}
+
+}
+
 void
 Media::sendKey (const string &key, bool press)
 {
@@ -124,6 +202,7 @@ Media::sendKey (const string &key, bool press)
       if (evt->getType () != Event::SELECTION)
         continue;
 
+
       expected = "";
       evt->getParameter ("key", &expected);
       if (!((expected == "" && key == "ENTER" && _player->isFocused ())
@@ -138,6 +217,7 @@ Media::sendKey (const string &key, bool press)
   for (Event *evt : buf)
     _doc->evalAction (evt, press ? Event::START : Event::STOP);
 }
+
 
 void
 Media::sendTick (Time total, Time diff, Time frame)
@@ -313,6 +393,14 @@ Media::beforeTransition (Event *evt, Event::Transition transition)
       break; // nothing to do
 
     case Event::PREPARATION:
+      break;
+
+    case Event::VOICE_RECOGNITION:
+    case Event::FACE_RECOGNITION:
+    case Event::GESTURE_RECOGNITION:
+      break;
+
+    case Event::EYE_GAZE:
       break;
 
     default:
@@ -497,6 +585,50 @@ Media::afterTransition (Event *evt, Event::Transition transition)
         break;
       }
 
+    case Event::VOICE_RECOGNITION: 
+    case Event::FACE_RECOGNITION: 
+    case Event::GESTURE_RECOGNITION:
+      {
+          string key, user;
+          evt->getParameter ("key", &key);
+          evt->getParameter ("user", &user);
+          switch (transition)
+            {
+            case Event::START:
+              TRACE ("start voice recognition %s", evt->getFullId ().c_str ());
+              break;
+            case Event::STOP:
+              TRACE ("stop voice recognition %s", evt->getFullId ().c_str ());
+              break;
+            default:
+              g_assert_not_reached ();
+            }
+
+          break;
+      }
+    
+    case Event::EYE_GAZE:
+	    {
+        string key, user;
+        evt->getParameter ("key", &key);
+        evt->getParameter ("user", &user);
+        switch (transition)
+        {
+          case Event::START:
+            TRACE ("start eye gaze %s", evt->getFullId ().c_str ());
+            break;
+          case Event::STOP:
+            TRACE ("stop eye gaze %s", evt->getFullId ().c_str ());
+            break;
+          case Event::ABORT:
+            TRACE ("abort eye gaze %s", evt->getFullId ().c_str ());
+            break;
+          default:
+            g_assert_not_reached ();
+        }
+        break;
+      }
+
     default:
       g_assert_not_reached ();
     }
@@ -513,7 +645,7 @@ Media::getCurrentPreparationEvent ()
 void
 Media::createPlayer ()
 {
-  TRACE("---------------------MEDIA:CREATEPLAYER\n");
+ // TRACE("---------------------MEDIA:CREATEPLAYER\n");
   if (_player)
     return;
   Formatter *fmt;

@@ -28,13 +28,18 @@ pkgconfig_DATA= ginga.pc
 REST_CFLAG= -I/usr/include/restclient-cpp
 REST_LIB = -L/usr/local/lib -lrestclient-cpp -lcurl
 
+TOBII_CFLAG= -I/usr/include/tobii
+TOBII_LIB = -L/usr/lib/tobii -ltobii_stream_engine
+
 AM_CXXFLAGS= $(GINGA_ALL_CXXFLAGS) $(REST_CFLAG)
 AM_LDFLAGS= $(GINGA_ALL_LDFLAGS) $(REST_LIB)
 
-include_HEADERS= ginga.h
+
+include_HEADERS= ginga.h mqtt/src/mqtt.h mqtt/src/mqtt_pal.h mqtt/include/posix_sockets.h 
+
 lib_LTLIBRARIES= libginga.la
-libginga_la_CXXFLAGS= $(AM_CXXFLAGS)
-libginga_la_LDFLAGS= $(AM_LDFLAGS)
+libginga_la_CXXFLAGS= $(AM_CXXFLAGS) $(TOBII_CFLAG)
+libginga_la_LDFLAGS= $(AM_LDFLAGS) $(TOBII_LIB)
 libginga_la_SOURCES= $(src)
 src=
 src+= Composition.cpp
@@ -59,9 +64,17 @@ src+= Predicate.cpp
 src+= Switch.cpp
 src+= TemporalGraph.cpp
 src+= PresentationOrchestrator.cpp
+src+= mqtt/src/mqtt.c
+src+= mqtt/src/mqtt_pal.c
+src+= ../intMod/InteractionModule.cpp
+src+= ../intMod/VoiceRecognition.cpp
+src+= ../intMod/GazeRecognition.cpp
+src+= ../intMod/FacialExpressionRecognition.cpp
+#src+= ../intMod/HandPoseRecognition.cpp
+src+= InteractionManager.cpp
+src+= UserContextManager.cpp
 src+= aux-ginga.cpp
 src+= aux-gl.cpp
-
 src+= EffectPlayer.cpp
 src+= EffectPlayerScent.cpp
 src+= Device.cpp

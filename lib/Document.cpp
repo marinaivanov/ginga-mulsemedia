@@ -122,7 +122,7 @@ Document::addObject (Object *obj)
 
   // Settings can only be added once.
   if (unlikely (_settings != nullptr && instanceof (MediaSettings *, obj)))
-    g_assert_false (instanceof (MediaSettings *, obj));
+        g_assert_false (instanceof (MediaSettings *, obj));
 
   obj->initDocument (this);
   _objects.insert (obj);
@@ -206,8 +206,10 @@ int
 Document::evalAction (Event *event, Event::Transition transition,
                       const string &value)
 {
+
   Action act;
   act.event = event;
+ // TRACE("\n Evento: %s", event->toString().c_str ());
   g_assert_nonnull (event);
   act.transition = transition;
   act.predicate = nullptr;
@@ -472,6 +474,165 @@ map<string, Device*>
 Document::getDeviceList ()
 {
   return _deviceList;
+}
+/**
+ * @brief Gets document's interaction.
+ * @return The interactions that the Interaction Manager (modulo with managing of
+ * interactions like voice, gesture, etc .. ) runs.
+ */
+map<Event::Type,bool>
+Document::getInteractions()
+{
+	return _interactions;
+}
+/**
+ * @brief Add a event of the interaction
+ * @return a bool to ok the addition
+ */
+
+bool
+Document::addInteractions (Event::Type intEvent, bool on)
+{
+	  auto it = _interactions.find (intEvent);
+	  if (it == _interactions.end ())
+	  {
+		  _interactions.insert(std::pair<Event::Type,bool>(intEvent,on));
+		  return true;
+
+	  }
+	  return false;
+}
+/**
+ * @brief Change true or false that signalize to on or off the modulo that trigger of the event
+ * @return a bool to signalize if happened the changing
+ */
+bool
+Document::setInteractions (Event::Type intEvent, bool on)
+{
+	  auto it = _interactions.find (intEvent);
+	  if (it == _interactions.end ())
+	    return false;
+
+	  it->second = on;
+
+	  return true;
+}
+
+map<Event::Type,list<Key>> Document::getKeyList()
+{
+	return _keyList;
+}
+
+/**
+ * @brief Change true or false that sinilize to on or off the modulo that try of the event
+ * @return a bool to signalize if happened the checking
+*/
+bool
+Document::checkInteractions (Event::Type intEvent)
+{
+	  auto it = _interactions.find (intEvent);
+	  if (it == _interactions.end ())
+	    return false;
+
+	  return  it->second;
+}
+
+void
+Document::addKeyList (Event::Type intEvent, Key key)
+{
+	  auto it = _keyList.find (intEvent);
+	  if (it == _keyList.end ())
+	  {  list<Key> lst;
+	  	  lst.push_back(key);
+		  _keyList.insert(std::pair<Event::Type, list<Key>>(intEvent,lst));
+	  }
+	  else
+	  {  // auto list  =  it->second();
+		  it->second.push_back(key);
+	  }
+}
+
+/**
+ * @brief Gets document's users.
+ * @return The users who will participate in the application
+ */
+map<string,user> 
+Document::getUsers()
+{
+	return _userList;
+}
+/**
+ * @brief Gets document's profilies.
+ * @return The profilies that will participate in the application
+ */
+map<string,profile>
+Document::getProfiles()
+{
+	return _profileList;
+}
+/**
+ * @brief Gets document's user settings.
+ * @return The user properties that will participate in the application
+ */
+ map<string, MediaSettings *>
+ Document::getuserSettings()
+{
+	return _userSettingsList;
+}
+
+/**
+ * @brief add user to the document
+ * @return true if you managed to add
+ */
+bool
+Document::addUser (user _user)
+{
+	  auto it = _userList.find (_user.id);
+	  if (it == _userList.end ())
+	  {
+		  _userList.insert(std::pair<string, user>(_user.id,_user));
+		  return true;
+
+	  }
+	  return false;
+}
+/**
+ * @brief add profile to the document
+ * @return true if you managed to add
+ */
+bool
+Document::addProfile (profile _profile)
+{
+	  auto it = _profileList.find (_profile.id);
+	  if (it == _profileList.end ())
+	  {
+		  _profileList.insert(std::pair<string, profile>(_profile.id,_profile ));
+		  return true;
+
+	  }
+	  return false;
+}
+/**
+ * @brief add profile to the document
+ * @return true if you managed to add
+ */
+MediaSettings *
+Document::addUserSetting (string idUser)
+{
+	  auto it = _userSettingsList.find (idUser);
+	  if (it == _userSettingsList.end ())
+	  {
+      MediaSettings *userSetting;
+      userSetting = new MediaSettings ("__settings__");
+      if (userSetting != NULL)
+      {
+          userSetting->setProperty("type","application/x−ginga-user−settings",NULL);
+		      _userSettingsList.insert(std::pair<string, MediaSettings *>(idUser,userSetting));
+      }
+		  return userSetting;
+
+	  }
+	  return NULL;
 }
 
 GINGA_NAMESPACE_END

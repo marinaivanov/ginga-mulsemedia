@@ -281,6 +281,11 @@ keyboard_callback (GtkWidget *widget, GdkEventKey *e, gpointer type)
       break;
     }
 
+  printf("Captura da tecla antes de chamar o sendkey: tecla: %s \n\n", key);
+  if (string (key).c_str() ==  string ("g").c_str() )
+	  printf("ok!\n");
+
+
   bool status = GINGA->sendKey (
       string (key), g_str_equal ((const char *) type, "press") == 0);
 
@@ -335,6 +340,21 @@ tick_callback (GtkWidget *widget)
   gtk_widget_queue_draw (widget);
   return G_SOURCE_CONTINUE;
 }
+
+static gboolean
+voice_callback (GtkWidget *widget, GdkEventKey *e, gpointer type)
+{
+	 printf("Captura do movimento do mouse!! \n\n");
+
+	  bool status = GINGA->sendKey (string ("RED"), string ("FABIO"), g_str_equal ((const char *) type, "press") == 0);
+	  status = GINGA->sendKey (string ("RED"), string ("FABIO"), g_str_equal ((const char *) type, "release") == 0);
+	  //bool status = GINGA->sendKey (string ("RED"), string ("FABIO"), true);
+
+	  return status;
+
+}
+
+
 
 // Main.
 
@@ -393,10 +413,12 @@ main (int argc, char **argv)
   // Create application window.
   app = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   g_assert_nonnull (app);
+   
   gtk_window_set_title (GTK_WINDOW (app), PACKAGE_STRING);
   gtk_window_set_default_size (GTK_WINDOW (app), opt_width, opt_height);
+
   if (opt_fullscreen)
-    gtk_window_fullscreen (GTK_WINDOW (app));
+   gtk_window_fullscreen (GTK_WINDOW (app));
 
   // Setup draw area.
   if (opt_opengl)
@@ -419,14 +441,15 @@ main (int argc, char **argv)
 
   // Setup GTK+ callbacks.
   g_signal_connect (app, "destroy", G_CALLBACK (exit_callback), NULL);
-  g_signal_connect (app, "configure-event", G_CALLBACK (resize_callback),
-                    NULL);
-  g_signal_connect (app, "key-press-event", G_CALLBACK (keyboard_callback),
-                    deconst (void *, "press"));
-  g_signal_connect (app, "key-release-event",
-                    G_CALLBACK (keyboard_callback),
-                    deconst (void *, "release"));
-#if GTK_CHECK_VERSION(3, 8, 0)
+  g_signal_connect (app, "configure-event", G_CALLBACK (resize_callback), NULL);
+  g_signal_connect (app, "key-press-event", G_CALLBACK (keyboard_callback), deconst (void *, "press"));
+  g_signal_connect (app, "key-release-event", G_CALLBACK (keyboard_callback), deconst (void *, "release"));
+
+  g_signal_connect (app, "motion-notify-event", G_CALLBACK (voice_callback), deconst (void *, "press"));
+  g_signal_connect (app, "motion-notify-event", G_CALLBACK (voice_callback), deconst (void *, "release"));
+
+
+  #if GTK_CHECK_VERSION(3, 8, 0)
   gtk_widget_add_tick_callback (app, (GtkTickCallback) tick_callback, NULL,
                                 NULL);
 #else

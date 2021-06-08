@@ -33,6 +33,7 @@ GINGA_END_DECLS
 #include <cstdint>
 #include <string>
 
+
 /**
  * @file ginga.h
  * @brief The libginga API.
@@ -97,6 +98,8 @@ public:
   virtual void redraw (cairo_t *cr) = 0;
 
   virtual bool sendKey (const std::string &key, bool press) = 0;
+  virtual bool sendKey (const std::string &user,const std::string &key, bool press) = 0;
+  //virtual bool sendViewed (Event::Transition, const std::string &user,const std::string &key) = 0;
   virtual bool sendTick (uint64_t total, uint64_t diff, uint64_t frame) = 0;
 
   virtual const GingaOptions *getOptions () = 0;
