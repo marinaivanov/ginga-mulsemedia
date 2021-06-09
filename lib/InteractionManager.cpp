@@ -5,6 +5,7 @@
 #include "InteractionManager.h"
 #include "../intMod/VoiceRecognition.h"
 #include "../intMod/FacialExpressionRecognition.h"
+#include "../intMod/HandPoseRecognition.h"
 #include "aux-glib.h"
 #include <cairo.h>
 #include <gtk/gtk.h>
@@ -146,6 +147,15 @@ void InteractionManager::start()
 					}
  					break;
 				}
+				case Event::HANDPOSE_RECOGNITION:
+				{
+					if (userAuthorization("Permite habilitar sua camera?\n"))
+					{
+						InteractionModule * umExtModule =  new HandPoseRecognition(this);
+						ExtModules.insert(std::pair<std::string,InteractionModule *>(Event::getEventTypeAsString(it->first), umExtModule));
+					}
+					break;
+				}
 				case Event::FACE_RECOGNITION:
 				{
 					if (userAuthorization("Permite habilitar sua camera?\n"))
@@ -181,6 +191,7 @@ printf("\n**********Foi dito %s pelo %s ****************\n",key.c_str(), user.c_
 	        return true;
 		}
 		case Event::FACE_RECOGNITION:
+		case Event::HANDPOSE_RECOGNITION:
 		{
 			//printf("\nUser: %s e Key: %s", user.c_str(),key.c_str());
 			if (!(ginga->sendKey (std::string(key),std::string(user),true)))
@@ -249,7 +260,7 @@ void InteractionManager::setUserKeyListModules()
 			switch (it1->first)
 			{
                 case Event::FACE_RECOGNITION:
-                case Event::GESTURE_RECOGNITION:
+                case Event::HANDPOSE_RECOGNITION:
 				case Event::VOICE_RECOGNITION:
 				{
 					json keys={};

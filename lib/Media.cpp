@@ -395,7 +395,7 @@ Media::beforeTransition (Event *evt, Event::Transition transition)
 
     case Event::VOICE_RECOGNITION:
     case Event::FACE_RECOGNITION:
-    case Event::GESTURE_RECOGNITION:
+    case Event::HANDPOSE_RECOGNITION:
       break;
 
     default:
@@ -582,7 +582,7 @@ Media::afterTransition (Event *evt, Event::Transition transition)
 
     case Event::VOICE_RECOGNITION: 
     case Event::FACE_RECOGNITION: 
-    case Event::GESTURE_RECOGNITION:
+    case Event::HANDPOSE_RECOGNITION:
       {
           string key, user;
           evt->getParameter ("key", &key);

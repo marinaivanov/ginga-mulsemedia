@@ -98,7 +98,7 @@ Event::getFullId ()
         return obj_id + "$" + _id;
     case Event::VOICE_RECOGNITION:
     case Event::FACE_RECOGNITION:
-    case Event::GESTURE_RECOGNITION:
+    case Event::HANDPOSE_RECOGNITION:
       return obj_id + "&" + _owner + ":" + _id;
     default:
       g_assert_not_reached ();
@@ -281,8 +281,8 @@ Event::getEventTypeAsString (Event::Type type)
       return "voice_recognition";
     case Event::FACE_RECOGNITION:
       return "face_recognition";
-    case Event::GESTURE_RECOGNITION:
-      return "gesture_recognition";
+    case Event::HANDPOSE_RECOGNITION:
+      return "handpose_recognition";
     default:
       g_assert_not_reached ();
     }

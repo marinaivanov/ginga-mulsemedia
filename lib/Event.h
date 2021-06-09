@@ -82,12 +82,12 @@ public:
 	 FACE_RECOGNITION,
 
 	 /**
-		 * @brief Gesture Recognition event.
+		 * @brief Hand Pose Recognition event.
 		 *
-		 *Stands for the recognition of a gesture, which is
+		 *Stands for the recognition of a hand pose, which is
 		 * directed to the object.
 	*/
-	 GESTURE_RECOGNITION,
+	 HANDPOSE_RECOGNITION,
   };
 
   /// @brief Event state.

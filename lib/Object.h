@@ -75,8 +75,8 @@ public:
   Event *getFaceRecognitionEvent (const string &, const string &);
   void addFaceRecognitionEvent (const string &, const string &);
 
-  Event *getGestureRecognitionEvent (const string &, const string &);
-  void addGestureRecognitionEvent (const string &, const string &);
+  Event *getHandPoseRecognitionEvent (const string &, const string &);
+  void addHandPoseRecognitionEvent (const string &, const string &);
 
   Event *getLambda ();
   bool isOccurring ();

@@ -478,7 +478,7 @@ Document::getDeviceList ()
 /**
  * @brief Gets document's interaction.
  * @return The interactions that the Interaction Manager (modulo with managing of
- * interactions like voice, gesture, etc .. ) runs.
+ * interactions like voice, hand pose, etc .. ) runs.
  */
 map<Event::Type,bool>
 Document::getInteractions()

@@ -163,7 +163,7 @@ typedef struct ParserConnRole
   string duration;              ///< Role duration (if action).
   string delay;                 ///< Role delay.
   string key;                   ///< Role key (if selection).
-  string user;                  ///< Role user (if voice_recognition, face_recognition, gesture_recognition).
+  string user;                  ///< Role user (if voice_recognition, face_recognition, handpose_recognition).
   string value;                 ///< Role value (if attribution).
 } ParserConnRole;
 
@@ -941,7 +941,7 @@ static map<string, pair<Event::Type, Event::Transition> >
       {"onEndSelection", {Event::SELECTION, Event::STOP} },
 	    {"onVoiceRecognition", {Event::VOICE_RECOGNITION, Event::STOP} }, //Added to represent voice interactions
 	    {"onFaceRecognition", {Event::FACE_RECOGNITION, Event::STOP} }, //Added to represent Face interactions
-	    {"onGestureRecognition", {Event::GESTURE_RECOGNITION, Event::STOP} }, //Added to represent Gesture interactions
+	    {"onHandPoseRecognition", {Event::HANDPOSE_RECOGNITION, Event::STOP} }, //Added to represent Hand Pose interactions
 	    {"onBeginPreparation", {Event::PREPARATION, Event::START} }, // conditions
       {"onEndPreparation", {Event::PREPARATION, Event::STOP} },
       {"onAbortPreparation", {Event::PREPARATION, Event::ABORT} },
@@ -983,7 +983,7 @@ static map<string, Event::Type> parser_syntax_event_type_table = {
   {"preparation", Event::PREPARATION},
   {"voice_recognition", Event::VOICE_RECOGNITION},
   {"face_recognition", Event::FACE_RECOGNITION},
-  {"gesture_recognition", Event::GESTURE_RECOGNITION},
+  {"handpose_recognition", Event::HANDPOSE_RECOGNITION},
 };
 
 /// Known transitions.
@@ -2930,7 +2930,7 @@ borderColor='%s'}",
                     break;
                   }
                   case Event::FACE_RECOGNITION:
-                  case Event::GESTURE_RECOGNITION:
+                  case Event::HANDPOSE_RECOGNITION:
                   case Event::VOICE_RECOGNITION:
                   {
                     act.value = st->resolveParameter (
@@ -3455,11 +3455,11 @@ ParserState::pushSimpleCondition (ParserState *st, ParserElt *elt)
     elt->getAttribute ("delay", &role.delay);
 
   if ((role.eventType == Event::SELECTION) || (role.eventType == Event::VOICE_RECOGNITION)||
-      (role.eventType == Event::FACE_RECOGNITION)||(role.eventType == Event::GESTURE_RECOGNITION))
+      (role.eventType == Event::FACE_RECOGNITION)||(role.eventType == Event::HANDPOSE_RECOGNITION))
     elt->getAttribute ("key", &role.key);
 
   if ((role.eventType == Event::VOICE_RECOGNITION)||(role.eventType == Event::FACE_RECOGNITION)||
-  (role.eventType == Event::GESTURE_RECOGNITION))
+  (role.eventType == Event::HANDPOSE_RECOGNITION))
     elt->getAttribute ("user", &role.user);
 
   if (unlikely (!role.condition && role.eventType == Event::ATTRIBUTION
@@ -3473,7 +3473,7 @@ ParserState::pushSimpleCondition (ParserState *st, ParserElt *elt)
   {
    
   	case Event::FACE_RECOGNITION: 
-    case Event::GESTURE_RECOGNITION:
+    case Event::HANDPOSE_RECOGNITION:
     case Event::VOICE_RECOGNITION:
 	  {
 		  (st->getDoc())->addInteractions (role.eventType, true);

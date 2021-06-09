@@ -139,7 +139,7 @@ Object::toString ()
         break;
       case Event::VOICE_RECOGNITION:
       case Event::FACE_RECOGNITION:
-      case Event::GESTURE_RECOGNITION:
+      case Event::HANDPOSE_RECOGNITION:
         vo_rec.push_back (evt->getId ());
         break;
       default:
@@ -382,17 +382,17 @@ Object::addFaceRecognitionEvent (const string &key,const string &user )
 }
 
 Event *
-Object::getGestureRecognitionEvent (const string &key, const string &user)
+Object::getHandPoseRecognitionEvent (const string &key, const string &user)
 {
-  return this->getEvent (Event::GESTURE_RECOGNITION, key, user);
+  return this->getEvent (Event::HANDPOSE_RECOGNITION, key, user);
 }
 
 void
-Object::addGestureRecognitionEvent (const string &key,const string &user )
+Object::addHandPoseRecognitionEvent (const string &key,const string &user )
 {
   Event *evt;
 
-  if (this->getGestureRecognitionEvent (key, user))
+  if (this->getHandPoseRecognitionEvent (key, user))
     return;
 
   evt = new Event (Event::FACE_RECOGNITION, this, key, user);

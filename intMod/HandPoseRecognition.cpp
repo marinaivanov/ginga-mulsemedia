@@ -132,7 +132,7 @@ void publish_callback(void **unused, struct mqtt_response_publish *published)
 					c = toupper(c);
 				if (key.compare(keyDoc) == 0)
 				{
-					intManagerShared->notifyInteraction(Event::GESTURE_RECOGNITION, Event::STOP, user, key);
+					intManagerShared->notifyInteraction(Event::HANDPOSE_RECOGNITION, Event::STOP, user, key);
 					break;
 				}
 			}
