@@ -29,8 +29,6 @@ static bool
 keyboard_callback (unused (GtkWidget *widget), GdkEventConfigure *e,
                  unused (gpointer data))
 {
-  printf("\nClicar:\n ");
-
   // We must return FALSE here, otherwise the new geometry is not propagated
   // to the draw_callback().
   return false;
@@ -55,8 +53,6 @@ void UserContextManager::start()
 		{
 	    	if (!prof->second.src.empty())
 			{
-//				printf ("\n*********** Caminho: %s \n ", prof->second.src.c_str());
-//				printf ("\n*********** profielCaminho: %s \n ", prof->second.id.c_str());
 				map<string,string> _properties = ParserUserDescription::parseFile (prof->second.src.c_str());
 				if (!_properties.empty())
 				{

@@ -20,12 +20,12 @@ map<string,string> ParserUserDescription::parseFile(const char * filename)
 
     if (doc == NULL ) 
     {
-        fprintf(stderr,"Error to parser device config file. \n");
+        fprintf(stderr,"Error to parser user file. \n");
     }
     cur = xmlDocGetRootElement(doc);
 
     if (cur == NULL) {
-        fprintf(stderr,"Error to parser device config file: empty document\n");
+        fprintf(stderr,"Error to parser user file: empty document\n");
         xmlFreeDoc(doc);
     }
     if (xmlStrcmp(cur->name, (const xmlChar *) "UD")) 

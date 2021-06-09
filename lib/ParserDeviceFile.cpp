@@ -46,37 +46,47 @@ ParserDeviceFile::parseFile(const char * filename)
     uid_t uid = getuid();
     char * home_dir = getpwuid( uid )->pw_dir;
 
+    LIBXML_TEST_VERSION;
+    
     const char * path = strcat(home_dir,filename);
+    
     doc = xmlParseFile(path);
-
+    
     if (doc == NULL ) 
     {
         fprintf(stderr,"Error to parser device config file. \n");
     }
-    cur = xmlDocGetRootElement(doc);
-    if (cur == NULL) {
-        fprintf(stderr,"Error to parser device config file: empty document\n");
-        xmlFreeDoc(doc);
-    }
-    if (xmlStrcmp(cur->name, (const xmlChar *) "devices")) 
+    else
     {
-        fprintf(stderr,"Document of the wrong type, root node != devices");
-        xmlFreeDoc(doc);
-    }
-    
-    // Retrieving Element Content
-    cur = cur->xmlChildrenNode;
-    while (cur != NULL) 
-    {
-        if ((!xmlStrcmp(cur->name, (const xmlChar *)"deviceDescription")))
-        {
-            Device* _dev = parseDeviceDescription (doc, cur);
-            g_assert_nonnull(_dev);
-            _devices.insert({_dev->getEffectType(),_dev});
+        cur = xmlDocGetRootElement(doc);
+        if (cur == NULL) {
+            fprintf(stderr,"Error to parser device config file: empty document\n");
+            xmlFreeDoc(doc);
         }
-        cur = cur->next;
+        else
+        {
+            if (xmlStrcmp(cur->name, (const xmlChar *) "devices")) 
+            {
+                fprintf(stderr,"Document of the wrong type, root node != devices");
+                xmlFreeDoc(doc);
+            }
+            else
+            {
+                // Retrieving Element Content
+                cur = cur->xmlChildrenNode;
+                while (cur != NULL) 
+                {
+                    if ((!xmlStrcmp(cur->name, (const xmlChar *)"deviceDescription")))
+                    {
+                        Device* _dev = parseDeviceDescription (doc, cur);
+                        g_assert_nonnull(_dev);
+                        _devices.insert({_dev->getEffectType(),_dev});
+                    }
+                    cur = cur->next;
+                }
+            }
+        }
     }
-    
     return _devices;
 }
 
