@@ -45,9 +45,10 @@ void UserContextManager::start()
 	map<string,user> userList = (((Formatter *)ginga)->getDocument())->getUsers();
 	map<string,MediaSettings *> userSettingsList = (((Formatter *)ginga)->getDocument())->getuserSettings();
 	map<string,map<string,string>>profileProps;
-  	//int pos;      
-	//Verificar se há profile. Só tem sentido carregar as informações de profiel se existe este profile vindo junto a aplicação.	
-   	if (!profileList.empty())  //Tem tag userProfile portanto tem que carregar os userSetingsNode com propriedades de usuários compativeis
+	
+	//int pos;      
+	//Verificar se há profile. Só tem sentido carregar as informações de profile se existe este profile vindo junto a aplicação.	
+   	if (profileList.size() > 0)  //Tem tag userProfile portanto tem que carregar os userSetingsNode com propriedades de usuários compativeis
 	{
 		for (auto prof=profileList.begin(); prof!=profileList.end(); ++prof)
 		{
@@ -65,13 +66,14 @@ void UserContextManager::start()
 			}
 		}
 	}
+
     uid_t uid = getuid();
     char * home_dir = getpwuid( uid )->pw_dir;
-	const char * path = strcat(home_dir,"/gingaFiles/");
+	const char * path = strcat(home_dir,"/gingaFiles/users/");
+	
  	DIR *dir = NULL;
     struct dirent *lsdir = NULL;
     dir = opendir(path);
-	//lsdir = readdir(dir);
 	list<string> arqUsrsList;
     while ( ( lsdir = readdir(dir) ) != NULL )
     {
@@ -82,8 +84,6 @@ void UserContextManager::start()
 			std::remove(str.begin(), str.end(), ' ');
             pathFile+=str;
 			arqUsrsList.push_back(pathFile);
-//			printf("\n Caminho : %s\n", path);
-//			printf("\n Arquivo : %s\n", pathFile.c_str());
 		}		
     }
 	

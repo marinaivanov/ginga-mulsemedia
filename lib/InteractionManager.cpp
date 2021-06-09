@@ -124,10 +124,10 @@ printf("\n****************Dono Evento*****: %s\n",evt->getOwner().c_str());
 void InteractionManager::start()
 {
 
-  _userManager = new UserContextManager(ginga); 
-  _userManager->start();
+	_userManager = new UserContextManager(ginga); 
+	_userManager->start();
 
-  createProfileLinks();
+	createProfileLinks();
 
 	map<Event::Type,bool> interactions = (((Formatter *)ginga)->getDocument())->getInteractions();
 	
