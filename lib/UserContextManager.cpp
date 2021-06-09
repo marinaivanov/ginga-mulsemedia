@@ -71,7 +71,7 @@ void UserContextManager::start()
 	}
     uid_t uid = getuid();
     char * home_dir = getpwuid( uid )->pw_dir;
-	const char * path = strcat(home_dir,"/gingaFiles/");
+	const char * path = strcat(home_dir,"/gingaFiles/users/");
  	DIR *dir = NULL;
     struct dirent *lsdir = NULL;
     dir = opendir(path);
