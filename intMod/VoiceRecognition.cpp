@@ -119,7 +119,7 @@ void VoiceRecognition::start()
     printf("User: %s Key: %s\n", user.c_str(),key.c_str());
 */
 
- //   std::cout << std::setw(4) << userKeyListShared << "\n";
+  //  std::cout << std::setw(4) << userKeyListShared << "\n";
 
 //std::cout << std::setw(4) << userKeyListShared;
     for (auto& itUser : userKeyListShared)
@@ -132,8 +132,22 @@ void VoiceRecognition::start()
 //printf("\nvoice: UserDOc: %s",userDoc.c_str());
 //printf("\nvoice: User: %s",user.c_str());
 
-        for (auto & c: userDoc) c = toupper(c);
-        if (user.compare(userDoc) == 0)
+       for (auto & c: userDoc) c = toupper(c);
+       if (userDoc.empty())
+	   {
+          for (auto& itKey : itUser["key"])
+          {
+        	 std::string keyDoc = (string)itKey;
+             for (auto & c: keyDoc) c = toupper(c);
+             if (key.compare(keyDoc) == 0)
+        	 {
+        //  	 printf("**************Notify********** voice");
+            	intManagerShared->notifyInteraction(Event::VOICE_RECOGNITION, Event::STOP, user, key);
+                break;
+             }
+          } 
+	   }  
+	   if (user.compare(userDoc) == 0)
        {
 
           for (auto& itKey : itUser["key"])
@@ -142,7 +156,7 @@ void VoiceRecognition::start()
              for (auto & c: keyDoc) c = toupper(c);
              if (key.compare(keyDoc) == 0)
         	 {
-            	 printf("**************Notify********** voice");
+        //    	 printf("**************Notify********** voice");
             	intManagerShared->notifyInteraction(Event::VOICE_RECOGNITION, Event::STOP, user, key);
                 break;
              }

@@ -122,6 +122,22 @@ void HP_publish_callback(void **unused, struct mqtt_response_publish *published)
 		std::string userDoc = (string)itUser["user"];
 		for (auto &c : userDoc)
 			c = toupper(c);
+
+       if (userDoc.empty())
+	   {
+          for (auto& itKey : itUser["key"])
+          {
+        	 std::string keyDoc = (string)itKey;
+             for (auto & c: keyDoc) c = toupper(c);
+             if (key.compare(keyDoc) == 0)
+        	 {
+        //  	 printf("**************Notify********** voice");
+            	HP_intManagerShared->notifyInteraction(Event::HANDPOSE_RECOGNITION, Event::STOP, user, key);
+                break;
+             }
+          } 
+	   }  
+
 		if (user.compare(userDoc) == 0)
 		{
 
