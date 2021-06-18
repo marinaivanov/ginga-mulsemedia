@@ -97,19 +97,19 @@ Media::sendKey (const string &key,const string &user, bool press)
   //{
     //this->setProperty("usr",user);
     map<string, string> props = this->getProperties();
-    printf("\n User no sendKey do media: %s\n", user.c_str());
+    //printf("\n User no sendKey do media: %s\n", user.c_str());
     this->setProperty ("usr", user);
 
     //this->addDelayedAction (evt, Event::STOP, user);
 
   // printf("\nMedia: %s\n", this->getId().c_str());
   // printf("\n Nome: %s\n", this->toString().c_str());
-  
+  /*
   for (auto it=props.begin(); it!=props.end(); ++it)
 	{
     printf("\nProps[%s]= %s\n", it->first.c_str(), it->second.c_str());
   }
-  
+  */
   // this->afterTransition()
   //return;
   list<Event *> buf;
@@ -126,7 +126,8 @@ Media::sendKey (const string &key,const string &user, bool press)
   for (auto evt : _events)
   {
 
-    if ((evt->getType () != Event::VOICE_RECOGNITION) && (evt->getType () != Event::FACE_RECOGNITION))
+    if ((evt->getType () != Event::VOICE_RECOGNITION) && (evt->getType () != Event::FACE_RECOGNITION) &&
+       (evt->getType () != Event::HANDPOSE_RECOGNITION))
     {
       continue;
     }

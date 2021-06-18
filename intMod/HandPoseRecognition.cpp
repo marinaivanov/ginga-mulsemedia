@@ -118,7 +118,7 @@ void HP_publish_callback(void **unused, struct mqtt_response_publish *published)
 	for (auto &itUser : HP_userKeyListShared)
 	{
 		//	printf("\nUser:\n");
-		//  std::cout << std::setw(4) << itUser["user"] << "\n";
+		  std::cout << std::setw(4) << itUser["user"] << "\n";
 		std::string userDoc = (string)itUser["user"];
 		for (auto &c : userDoc)
 			c = toupper(c);
@@ -131,7 +131,7 @@ void HP_publish_callback(void **unused, struct mqtt_response_publish *published)
              for (auto & c: keyDoc) c = toupper(c);
              if (key.compare(keyDoc) == 0)
         	 {
-        //  	 printf("**************Notify********** voice");
+          	// printf("**************Notify********** handpose");
             	HP_intManagerShared->notifyInteraction(Event::HANDPOSE_RECOGNITION, Event::STOP, user, key);
                 break;
              }
