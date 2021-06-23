@@ -3043,8 +3043,24 @@ borderColor='%s'}",
     for (auto userProfile_elt : userProfile_list)
         {
           profile _userProfile;
-          g_assert (userProfile_elt->getAttribute ("id", &_userProfile.id));
-          userProfile_elt->getAttribute ("src", &_userProfile.src);
+          string psrc;
+          g_assert (userProfile_elt->getAttribute ("id", &_userProfile.id));        
+          userProfile_elt->getAttribute ("src", &psrc);
+          if (psrc != "")
+          {
+            // Makes uri based in the main document uri
+            xmlChar *s = xmlBuildURI (toXmlChar (psrc),	
+                                        toXmlChar (st->getURI ()));	
+            psrc = toCPPString (s);
+            // If fails makes the uri based in the current dir
+            if (!xpathisuri (psrc) && !xpathisabs (psrc))
+            {
+              psrc = xpathmakeabs (psrc);
+            }
+            xmlFree (s);
+          }
+
+          _userProfile.src = psrc;
           userProfile_elt->getAttribute ("type", &_userProfile.type);
           userProfile_elt->getAttribute ("min", &_userProfile.min);
           userProfile_elt->getAttribute ("max", &_userProfile.max);
