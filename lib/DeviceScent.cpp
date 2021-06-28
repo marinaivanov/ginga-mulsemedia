@@ -271,8 +271,10 @@ DeviceScent::login()
         headers["accept"] = "application/json";
         headers["Content-Type"] = "application/json";
         conn->SetHeaders(headers); 
-
-        string _body = "{  \"email\": \"marii.ivanov@gmail.com\",  \"password\": \"m1d14c0m\"}";
+        
+        //string _body = "{  \"email\": \"marii.ivanov@gmail.com\",  \"password\": \"m1d14c0m\"}";
+        string _body = "{  \"email\": \""+ this->getLogin() +"\",  \"password\": \"" + this->getPassword() + "\"}";
+        g_print("Body: %s\n", _body.c_str());
         RestClient::Response r  = conn->post("/login",_body);
         // HTTPS response code
         if (r.code == 200 && !r.body.empty())

@@ -7,7 +7,8 @@
 
 #define MY_ENCODING "ISO-8859-1"
 
-list<string> tags = {"id","effectType","minIntensity", "maxIntensity","locator","unit","numOfLevels", "ipAddress"};
+list<string> tags = {"id","effectType","minIntensity", "maxIntensity","locator","unit","numOfLevels", 
+        "ipAddress", "login", "user"};
 
 DeviceCalibration::DeviceCalibration ()
 {
@@ -161,6 +162,14 @@ DeviceCalibration::getDevicePropertyValue (Device* dev, string prop)
     else if (prop ==  "ipAddress")
     {
         return dev->getAddress();
+    }
+    else if (prop ==  "login")
+    {
+        return dev->getLogin();
+    }
+    else if (prop ==  "password")
+    {
+        return dev->getPassword();
     }
     return "";
     

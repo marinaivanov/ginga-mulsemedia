@@ -19,6 +19,8 @@ EffectPlayerScent::EffectPlayerScent (Formatter *fmt, Effect *effect) :  EffectP
         device->setLocator(dev->getLocator());
         device->setUnit(dev->getUnit());
         device->setNumOfLevels(dev->getNumOfLevels());
+        device->setLogin(dev->getLogin());
+        device->setPassword(dev->getPassword());
         g_assert_nonnull(device);
     }    
 }

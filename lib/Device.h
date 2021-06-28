@@ -42,6 +42,8 @@ class Device
     void setAddress (string );
     void addSupportedValue (string );
     void setSupportedValues(list<string> );
+    void setLogin (string );
+    void setPassword (string );
 
     string getId();
     string getEffectType();
@@ -56,6 +58,8 @@ class Device
     string getAddress ();
     list<string> getSupportedValues ();
     string getLocatorAsString();
+    string getLogin();
+    string getPassword();
     string getDeviceTypeAsString ();
     bool isActive ();   //indicates if the device is active or no
 
@@ -74,6 +78,8 @@ class Device
     list<string> _supportedValues;       //only applied to light and scent devices
     bool _active;
     string _address;
+    string _login;
+    string _password;
 };
 
 #endif // DEVICE_H

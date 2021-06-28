@@ -15,6 +15,8 @@ Device::Device()
     _active = false;
     _address = "";
     locator_string = "";
+    _login = "";
+    _password = "";
 }
 
 Device::~Device()
@@ -132,6 +134,18 @@ Device::setSupportedValues(list<string> listValues)
     _supportedValues = listValues;
 }
 
+void
+Device::setLogin (string login)
+{
+    _login = login;
+}
+
+void
+Device::setPassword (string pass)
+{
+    _password = pass;
+}
+
 void 
 Device::addSupportedValue (string value)
 {
@@ -226,4 +240,16 @@ string
 Device::getLocatorAsString()
 {
     return locator_string;
+}
+
+string 
+Device::getLogin()
+{
+    return _login;
+}
+
+string 
+Device::getPassword()
+{
+    return _password;
 }

@@ -134,6 +134,14 @@ ParserDeviceFile::parseDeviceDescription(xmlDocPtr doc,xmlNodePtr cur)
         {
             _dev->setAddress(value);
         }
+        else if (!xmlStrcmp(cur->name, (const xmlChar *)"login"))
+        {
+            _dev->setLogin(value);
+        }
+        else if (!xmlStrcmp(cur->name, (const xmlChar *)"password"))
+        {
+            _dev->setPassword(value);
+        }
         cur = cur->next;
     }
 
