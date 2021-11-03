@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <chrono>
 #include <ctime>
+#include <unistd.h>
 #include <iostream>
 #include <fstream>
 #include "GazeRecognition.h"
@@ -57,6 +58,21 @@ double durationGaze;
  *        region to START the eyeGaze event.
 */
 double startConstant;
+
+
+/*** GazeRecognition EVALUATION FUNCTIONS *****************************************/
+
+void FakeNotification(){
+    int exec = usleep(1000000);
+    string user = "user";
+    string idMedia = "img";
+    if(exec == 0){
+        //time_point<system_clock> inicioTeste = system_clock::now();
+        TRACE("--> onEndEyeGaze notificado.");
+        sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::STOP, user, idMedia);
+        //cout << "\nNotified media STOP at: " << std::chrono::system_clock::now() << " UTC\n" << endl;
+    }
+}
 
 
 
@@ -162,25 +178,27 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
 
         if (!startRegions.empty())
         {
-            cout << "\nNotified media START: " << startRegions << endl;
-            sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::START, user, startRegions);
+            //cout << "\nNotified media START: " << startRegions << endl;
+            //sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::START, user, startRegions);
             startRegions = "";
         }
 
         if (!stopRegions.empty())
         {
-            cout << "\nNotified media STOP: " << stopRegions << endl;
-            sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::STOP, user, stopRegions);
+            //cout << "\nNotified media STOP: " << stopRegions << endl;
+            //sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::STOP, user, stopRegions);
             stopRegions = "";
         }
 
         if (!abortRegions.empty())
         {
-            cout << "\nNotified media ABORT: " << abortRegions << endl;
-            sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::ABORT, user, abortRegions);
+            //cout << "\nNotified media ABORT: " << abortRegions << endl;
+            //sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::ABORT, user, abortRegions);
             abortRegions = "";
         }
     }
+
+    FakeNotification();
 }
 
 /**

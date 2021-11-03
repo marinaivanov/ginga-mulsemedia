@@ -101,7 +101,8 @@ bool InteractionManager::notifyInteraction(Event::Type ev, Event::Transition tra
 	        return true;
 		}
 		case Event::EYE_GAZE:
-		{
+		{	
+			TRACE("--> InteractionMagager recebeu notificação e aciona sendViewed().");
 			if (!(((Formatter *)ginga)->sendViewed (tran, user, key)))
 				return false;
 	        return true;

@@ -155,6 +155,7 @@ void Media::sendViewed(Event::Transition tr, const string &user)
 
 	for (Event *evt : buf)
 	{
+    TRACE("--> Media recebeu notificação no sendViewed().");
 	   _doc->evalAction (evt, tr);
 	}
 
