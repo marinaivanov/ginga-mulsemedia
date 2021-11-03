@@ -86,6 +86,8 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
     // Check that the data is valid before using it
     if( gaze_point->validity == TOBII_VALIDITY_VALID )
     {
+        TRACE("--> Ponto lido do tobii.");
+
         Point p;
         p.x = static_cast<double>(gaze_point->position_xy[ 0 ]);
         p.y = static_cast<double>(gaze_point->position_xy[ 1 ]);
@@ -96,6 +98,8 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
         // For each region sent by the interaction manager.
         for (auto& reg : regionList)
         {
+            cout << endl << "--> Mídia: " << reg.id << endl;
+
             // If the gaze point IS inside the current region.
             if (pointIsInsideRegion(reg, p))
             {
@@ -158,6 +162,8 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
             }
         }
 
+        TRACE("--> Processamento do ponto finalizado.");
+
         // Sent to the Interaction Manager, the media that need to start, stop, and abort.
 
         if (!startRegions.empty())
@@ -205,7 +211,7 @@ void url_receiver( char const* url, void* user_data )
  * @param data Is the thread's data.
  */
 void* eyeTrackingStart(void* data)
-{
+{    
     tobii_api_t* api = NULL;
     tobii_error_t result = tobii_api_create( &api, NULL, NULL );
     assert( result == TOBII_ERROR_NO_ERROR );
