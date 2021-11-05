@@ -472,7 +472,7 @@ bool
 Formatter::sendTick (uint64_t total, uint64_t diff, uint64_t frame)
 {
   list<Object *> buf;
-
+  
   // This must be the first check.
   if (_state != GINGA_STATE_PLAYING)
     return false;

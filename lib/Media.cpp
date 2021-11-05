@@ -97,19 +97,10 @@ Media::sendKey (const string &key,const string &user, bool press)
   //{
     //this->setProperty("usr",user);
     map<string, string> props = this->getProperties();
-    //printf("\n User no sendKey do media: %s\n", user.c_str());
     this->setProperty ("usr", user);
 
     //this->addDelayedAction (evt, Event::STOP, user);
 
-  // printf("\nMedia: %s\n", this->getId().c_str());
-  // printf("\n Nome: %s\n", this->toString().c_str());
-  /*
-  for (auto it=props.begin(); it!=props.end(); ++it)
-	{
-    printf("\nProps[%s]= %s\n", it->first.c_str(), it->second.c_str());
-  }
-  */
   // this->afterTransition()
   //return;
   list<Event *> buf;
@@ -222,7 +213,6 @@ void
 Media::sendTick (Time total, Time diff, Time frame)
 {
   Time dur;
-  
   if (this->isPreparing ())
     {
       g_assert_nonnull (_player);
@@ -483,6 +473,8 @@ Media::afterTransition (Event *evt, Event::Transition transition)
                        evt->getFullId ().c_str (), GINGA_TIME_ARGS (end),
                        GINGA_TIME_ARGS (_time));
             }
+
+          
           break;
 
         default:
@@ -606,7 +598,6 @@ Media::afterTransition (Event *evt, Event::Transition transition)
     default:
       g_assert_not_reached ();
     }
-
   return true;
 }
 
@@ -619,7 +610,6 @@ Media::getCurrentPreparationEvent ()
 void
 Media::createPlayer ()
 {
- // TRACE("---------------------MEDIA:CREATEPLAYER\n");
   if (_player)
     return;
   Formatter *fmt;
@@ -666,7 +656,6 @@ Media::redraw (cairo_t *cr)
 void
 Media::doStop ()
 {
-  TRACE("MEDIA doStop\n");
   if (_player == nullptr)
     {
       g_assert (this->isSleeping ());

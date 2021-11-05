@@ -206,10 +206,8 @@ int
 Document::evalAction (Event *event, Event::Transition transition,
                       const string &value)
 {
-
-  Action act;
+   Action act;
   act.event = event;
- // TRACE("\n Evento: %s", event->toString().c_str ());
   g_assert_nonnull (event);
   act.transition = transition;
   act.predicate = nullptr;
@@ -247,7 +245,7 @@ Document::evalAction (Action init)
       evt->setParameter ("duration", act.duration);
       if (evt->getType () == Event::ATTRIBUTION)
         evt->setParameter ("value", act.value);
-
+      
       if (!evt->transition (act.transition))
         continue;
 
@@ -255,7 +253,7 @@ Document::evalAction (Action init)
       done = false;
       obj = evt->getObject ();
       g_assert_nonnull (obj);
-
+      
       // Trigger links in parent context.
       comp = obj->getParent ();
       if (comp != nullptr &&
@@ -317,7 +315,7 @@ Document::evalAction (Action init)
                 }
             }
         }
-
+      
       // Trigger links in context itself.
       if (!done && instanceof (Context *, obj))
         {
@@ -336,10 +334,8 @@ Document::evalPredicate (Predicate *pred)
   switch (pred->getType ())
     {
     case Predicate::FALSUM:
-      TRACE ("false");
       break;
     case Predicate::VERUM:
-      TRACE ("true");
       break;
     case Predicate::ATOM:
       {
@@ -414,11 +410,9 @@ Document::evalPredicate (Predicate *pred)
           {
             if (!this->evalPredicate (child))
               {
-                TRACE ("and -> false");
                 return false;
               }
           }
-        TRACE ("and -> true");
         return true;
       }
       break;
