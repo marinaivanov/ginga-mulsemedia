@@ -63,13 +63,14 @@ double startConstant;
 /*** GazeRecognition EVALUATION FUNCTIONS *****************************************/
 
 void FakeNotification(){
-    int exec = usleep(1000000);
-    string user = "user";
+    int exec = usleep(2000000);
+    string user = "all";
     string idMedia = "img";
     if(exec == 0){
         //time_point<system_clock> inicioTeste = system_clock::now();
-        TRACE("--> onEndEyeGaze notificado.");
-        sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::STOP, user, idMedia);
+        TRACE("--> onBeginEyeGaze notificado.");
+        sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::START, user, idMedia);
+        //sharedIntManager->notifyInteraction(Event::EYE_GAZE, Event::STOP, user, idMedia);
         //cout << "\nNotified media STOP at: " << std::chrono::system_clock::now() << " UTC\n" << endl;
     }
 }
@@ -197,8 +198,6 @@ void gaze_point_callback( tobii_gaze_point_t const* gaze_point, void* user_data)
             abortRegions = "";
         }
     }
-
-    FakeNotification();
 }
 
 /**
@@ -246,7 +245,7 @@ void* eyeTrackingStart(void* data)
     // Subscribe to gaze data
     result = tobii_gaze_point_subscribe( device, gaze_point_callback, 0 );
     assert( result == TOBII_ERROR_NO_ERROR );
-
+    FakeNotification();
     while(true){
         // Puts the thread to sleep until there are new callbacks available to process.
         result = tobii_wait_for_callbacks( 1, &device );
