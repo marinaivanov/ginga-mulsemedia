@@ -260,14 +260,11 @@ void
 Player::setPrepared (bool prepared)
 {
   _prepared = prepared;
-  if(_prepared)
-    TRACE("PREPARADOOOOOO");
 }
 
 void
 Player::start ()
 {
-  TRACE("-------------PLAYER START()\n");
   g_assert (_state != OCCURRING);
   _state = OCCURRING;
   _time = 0;
@@ -280,6 +277,7 @@ Player::start ()
 void
 Player::stop ()
 {
+  TRACE("--> dando stop na midia");
   g_assert (_state != SLEEPING);
   _state = SLEEPING;
   this->resetProperties ();

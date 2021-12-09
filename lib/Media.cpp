@@ -645,7 +645,7 @@ Media::getCurrentPreparationEvent ()
 void
 Media::createPlayer ()
 {
- // TRACE("---------------------MEDIA:CREATEPLAYER\n");
+
   if (_player)
     return;
   Formatter *fmt;
@@ -692,7 +692,6 @@ Media::redraw (cairo_t *cr)
 void
 Media::doStop ()
 {
-  TRACE("MEDIA doStop\n");
   if (_player == nullptr)
     {
       g_assert (this->isSleeping ());
