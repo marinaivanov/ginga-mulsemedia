@@ -92,6 +92,7 @@ public:
 
   virtual void sendKey (const string &, bool);
   virtual void sendKey (const string &, const string &, bool);
+  virtual void sendViewed (Event::Transition, const string &);
   virtual void sendTick (Time, Time, Time);
 
   Time getTime ();

@@ -476,6 +476,10 @@ void Object::sendKey (unused (const string &user), unused (const string &key), u
 {
 }
 
+void Object::sendViewed (Event::Transition tr , unused (const string &user))
+{
+}
+
 void
 Object::sendTick (unused (Time total), Time diff, unused (Time frame))
 {
