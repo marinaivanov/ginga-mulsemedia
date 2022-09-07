@@ -32,6 +32,14 @@ cd nclua
 make
 sudo make install
 
+echo "Instalando Restclient para comunicacao com Moodo..."
+cd ..
+git clone https://github.com/mrtazz/restclient-cpp.git
+cd restclient-cpp
+./autogen.sh
+./configure
+sudo make install
+
 echo "Instalando Ginga..." 
 cd ..
 sudo apt-get install -y git gcc g++ autotools-dev dh-autoreconf \
