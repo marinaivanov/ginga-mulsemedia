@@ -59,7 +59,6 @@ src+= PlayerImage.cpp
 src+= PlayerSigGen.cpp
 src+= PlayerText.cpp
 src+= PlayerVideo.cpp
-src+= PlayerStream.cpp
 src+= Predicate.cpp
 src+= Switch.cpp
 src+= TemporalGraph.cpp
