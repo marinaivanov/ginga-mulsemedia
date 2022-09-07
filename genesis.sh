@@ -13,7 +13,14 @@ sudo apt-get install curl
 echo "instalando git..."
 sudo apt-get install git
 
-echo "Instalando Ginga..." 
+echo "Instalando servidor e cliente Mosquitto..."
+sudo apt-get install mosquitto
+sudo apt-get install mosquitto-clients
+echo "Diretorio com Read.me do mosquitto: /usr/share/doc/mosquitto"
+echo "Diretorio com .config do mosquitto: /etc/mosquitto/mosquitto.conf"
+
+
+echo "Instalando NCLua..." 
 cd ..
 git clone https://github.com/TeleMidia/nclua.git
 sudo apt-get install -y git gcc g++ autotools-dev dh-autoreconf \
@@ -24,6 +31,8 @@ cd nclua
 ./configure --prefix=/usr/
 make
 sudo make install
+
+echo "Instalando Ginga..." 
 cd ..
 sudo apt-get install -y git gcc g++ autotools-dev dh-autoreconf \
     cmake cmake-data liblua5.2-dev libglib2.0-dev libpango1.0-dev \
@@ -36,24 +45,3 @@ cd ginga-mulsemedia
 make
 cd ~
 
-echo "instalando lua 5.2..."
-cd ~/Downloads
-curl -R -O "https://www.lua.org/ftp/lua-5.2.4.tar.gz"
-tar -zxf lua-5.2.4.tar.gz 
-cd lua-5.2.4/
-make linux test
-sudo make install
-cd ~
-
-
-echo "Instalando servidor Mosquitto..."
-sudo apt-get install mosquitto
-sudo apt-get install mosquitto-clients
-
-echo "Diretorio com Read.me do mosquitto: /usr/share/doc/mosquitto"
-echo "Diretorio com .config do mosquitto: /etc/mosquitto/mosquitto.conf"
-
-# Para teste sera necessario dois terminais de comando. Em um faca:
-# mosquitto_sub -t "test"
-# No outro faca:
-# mosquitto_pub -m "Mensagem" -t "test"
