@@ -22,7 +22,7 @@ public:
   
 protected:
   bool doSetProperty (Property, const string &, const string &) override;
-  
+  int connectionAttempts = 0;
 private:
   //list<Actuator> actuatorDevices;
   struct

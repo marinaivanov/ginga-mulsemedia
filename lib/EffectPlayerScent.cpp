@@ -43,8 +43,9 @@ EffectPlayerScent::start ()
     else
     {
         this->startPreparation();
-        //_formatter->calibration->set_time_start_effect();
-        this->start ();        
+        
+        if(this->connectionAttempts < 3)
+            this->start ();        
     }    
 }
 
@@ -81,7 +82,8 @@ EffectPlayerScent::startPreparation ()
     g_assert_nonnull(device);
     if (device->connectDevice())
         this->_prepared = true;
-        
+    else
+        this->connectionAttempts++;
 }
 
 bool 
