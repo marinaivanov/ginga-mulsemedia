@@ -1,0 +1,6 @@
+{
+	"eyeGaze":{
+		"duration": 1,
+		"constant": 0.3
+	}
+}
