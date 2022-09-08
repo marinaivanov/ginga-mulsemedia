@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd ..
+
 echo "atualizando pacotes..."
 sudo apt-get update
 sudo apt-get upgrade
@@ -19,9 +21,15 @@ sudo apt-get install mosquitto-clients
 echo "Diretorio com Read.me do mosquitto: /usr/share/doc/mosquitto"
 echo "Diretorio com .config do mosquitto: /etc/mosquitto/mosquitto.conf"
 
+echo "Instalando biblioteca so Tobii e Gerenciador Tobii Pro.."
+git clone https://github.com/Eitol/tobii_eye_tracker_linux_installer.git
+cd tobii_eye_tracker_linux_installer
+sudo bash ./install_all.sh
+cd ..
+sudo rm -r tobii_eye_tracker_linux_installer
+
 
 echo "Instalando NCLua..." 
-cd ..
 git clone https://github.com/TeleMidia/nclua.git
 sudo apt-get install -y git gcc g++ autotools-dev dh-autoreconf \
   liblua5.2-dev libglib2.0-dev libpango1.0-dev \
@@ -32,16 +40,18 @@ cd nclua
 make
 sudo make install
 
-echo "Instalando Restclient para comunicacao com Moodo..."
 cd ..
+
+echo "Instalando Restclient para comunicacao com Moodo..."
 git clone https://github.com/mrtazz/restclient-cpp.git
 cd restclient-cpp
 ./autogen.sh
 ./configure
 sudo make install
 
-echo "Instalando Ginga..." 
 cd ..
+
+echo "Instalando Ginga..." 
 sudo apt-get install -y git gcc g++ autotools-dev dh-autoreconf \
     cmake cmake-data liblua5.2-dev libglib2.0-dev libpango1.0-dev \
     librsvg2-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
@@ -51,5 +61,10 @@ cd ginga-mulsemedia
 ./bootstrap
 ./configure --prefix=/usr/
 make
-cd ~
+
+echo "Criando diretorios de arquivos necessários para o Ginga..."
+mkdir ~/gingaFiles
+mkdir ~/gingaFiles/users
+mkdir ~/gingaFiles/interactionConfig
+cp interaction-config.json ~/gingaFiles/interactionConfig
 
