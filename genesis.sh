@@ -13,6 +13,7 @@ echo
 
 echo "installing cURL..."
 sudo apt-get install curl
+sudo apt-get install libcurl4-openssl-dev
 echo
 
 echo "installing git..."
