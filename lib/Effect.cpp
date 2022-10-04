@@ -38,9 +38,6 @@ Effect::toString ()
   if (type != "")
     str += "  type: " + type + "\n";
   
-  //TO DO: imprimir o player de efeito
-  //str += xstrbuild ("  player: %p\n", _player);
-
   return str;
 }
 
@@ -55,11 +52,6 @@ Effect::setProperty (const string &name, const string &value, Time dur)
 
   _player->setProperty (name, value);
   //g_assert (GINGA_TIME_IS_VALID (dur));
-  //TO DO: adicionar isso pro player de efeito
-  /*if (dur > 0)
-    _player->schedulePropertyAnimation (name, from, value, dur);
-  else
-    _player->setProperty (name, value);*/
 }
 
 void
@@ -67,7 +59,7 @@ Effect::sendTick (Time total, Time diff, Time frame)
 {
   Time dur;
   
-  //TO DO: inserir isso apos criar o player de efeito
+  //TO DO
   /*if (this->isPreparing ())
     {
       g_assert_nonnull (_player);
@@ -84,27 +76,13 @@ Effect::sendTick (Time total, Time diff, Time frame)
   // Update object time.
   Object::sendTick (total, diff, frame);
 
-  //TO DO: descomentar isso apos ter o player de efeito
+  //TO DO
   //if (_player == nullptr)
   //  return; // nothing to do.
 
   // Update player time.
   //g_assert_nonnull (_player);
   //_player->incTime (diff);
-
-  // Check EOS.
-  //TO DO: o efeito vai ter duração implicita?
-    /*if (_player->getEOS ()
-        || (GINGA_TIME_IS_VALID (dur = _player->getDuration ())
-            && _time > dur ))
-      {
-        Event *lambda = this->getLambda ();
-        g_assert_nonnull (lambda);
-        //TRACE ("eos %s at %" GINGA_TIME_FORMAT, lambda->getFullId ().c_str (),
-        //      GINGA_TIME_ARGS (_time));
-        _doc->evalAction (lambda, Event::STOP);
-        return;
-      }*/
   
 }
 
@@ -135,7 +113,7 @@ Effect::beforeTransition (Event *evt, Event::Transition transition)
             break;
           }
 
-        //TO DO: implementar o pause e resume de efeitos
+        //TO DO: implements pause and resume 
        // case Event::PAUSE:
        /* case Event::RESUME:
           {
@@ -160,14 +138,10 @@ Effect::beforeTransition (Event *evt, Event::Transition transition)
           if(evt->isLambda())
             g_print("stop presentation %s\n", this->getId().c_str());
           break; // nothing to do
-
-        //TO DO: como implementar o abort de efeitos
         case Event::ABORT:
           break; // nothing to do
-
         case Event::PREPARE_STOP:
           break; // nothing to do
-
         default:
           g_assert_not_reached ();
         }
@@ -175,7 +149,6 @@ Effect::beforeTransition (Event *evt, Event::Transition transition)
     
     case Event::ATTRIBUTION:
       break; // nothing to do
-    //TO DO: vai ter selection em efeito?
     case Event::SELECTION:
       break; // nothing to do
 
@@ -207,22 +180,18 @@ Effect::afterTransition (Event *evt, Event::Transition transition)
             }
           break;
 
-        //TO DO: Implementar se tiver pause e resume para efeito
-        /*case Event::PAUSE:
-          TRACE ("pause %s", evt->getFullId ().c_str ());
+        case Event::PAUSE:
           break; // nothing to do
 
         case Event::RESUME:
-          TRACE ("resume %s", evt->getFullId ().c_str ());
-          break; // nothing to do*/
+          break; // nothing to do
 
         case Event::STOP:
         case Event::ABORT:
           if (evt->isLambda ())
             {
               // Stop object.
-              //TO DO: inserir apos criar o player de efeitos
-              //g_assert_nonnull (_player);
+              g_assert_nonnull (_player);
               this->doStop ();
               if (transition == Event::ABORT)
                 TRACE ("abort %s", evt->getFullId ().c_str ());
@@ -275,25 +244,6 @@ Effect::afterTransition (Event *evt, Event::Transition transition)
           g_assert_not_reached ();
         }
       break;
-
-    //TO DO: Inserir se for permitido seleção de efeito sensorial
-    /*case Event::SELECTION:
-      {
-        string key;
-        evt->getParameter ("key", &key);
-        switch (transition)
-          {
-          case Event::START:
-            TRACE ("start %s", evt->getFullId ().c_str ());
-            break;
-          case Event::STOP:
-            TRACE ("stop %s", evt->getFullId ().c_str ());
-            break;
-          default:
-            g_assert_not_reached ();
-          }
-        break;
-      }*/
 
     case Event::PREPARATION:
       {

@@ -23,7 +23,6 @@ protected:
   bool doSetProperty (Property, const string &, const string &) override;
   
 private:
-  //list<Actuator> actuatorDevices;
   struct
   {
     bool activate;      // true if effect is activate

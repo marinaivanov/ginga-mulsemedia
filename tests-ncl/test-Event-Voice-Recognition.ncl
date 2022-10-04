@@ -71,7 +71,7 @@
         <bind role="stop" component="text2"  />
      </link>
 
-   <link xconnector="onKeySelectionStart">
+   <link xconnector="onBeginStop">
         <bind role="onBegin" component="text1" interface="segText2" />
         <bind role="stop" component="text2"  />
     </link>

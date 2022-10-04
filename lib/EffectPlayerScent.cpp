@@ -25,7 +25,6 @@ EffectPlayerScent::EffectPlayerScent (Formatter *fmt, Effect *effect) :  EffectP
     }    
 }
 
-
 EffectPlayerScent::~EffectPlayerScent ()
 {
 }
@@ -35,15 +34,13 @@ EffectPlayerScent::start ()
 {
     if (this->_prepared)
     {
-        //Start effect presentation
-        
+        //Start effect presentation        
         device->activate(getProperty("scent"), atoi(getProperty("intensityValue").c_str()));
         EffectPlayer::start ();
     }
     else
     {
-        this->startPreparation();
-        
+        this->startPreparation();        
         if(this->connectionAttempts < 3)
             this->start ();        
     }    
@@ -55,8 +52,7 @@ EffectPlayerScent::stop ()
     g_assert_nonnull(device);
     if (device->isActive())
         device->deactivate(getProperty("scent"));
-    EffectPlayer::stop ();  
-    
+    EffectPlayer::stop ();      
 }
 
 void

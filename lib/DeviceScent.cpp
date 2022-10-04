@@ -54,14 +54,7 @@ DeviceScent::activate(string _scent, int _intensity){
             slot2.emplace("fan_speed",0);
             slot2.emplace("fan_active",false);
             slot3.emplace("fan_speed",0);
-            slot3.emplace("fan_active",false);
-            /*slot1.emplace("fan_speed",this->settings[1]["fan_speed"]);
-            slot1.emplace("fan_active",this->settings[1]["fan_active"]);
-            slot2.emplace("fan_speed",this->settings[2]["fan_speed"]);
-            slot2.emplace("fan_active",this->settings[2]["fan_active"]);
-            slot3.emplace("fan_speed",this->settings[3]["fan_speed"]);
-            slot3.emplace("fan_active",this->settings[3]["fan_active"]);*/
-            
+            slot3.emplace("fan_active",false);            
         }
         else if (_scent == "Coconuts")
         {
@@ -73,12 +66,6 @@ DeviceScent::activate(string _scent, int _intensity){
             slot2.emplace("fan_active",false);
             slot3.emplace("fan_speed",0);
             slot3.emplace("fan_active",false);
-            /*slot0.emplace("fan_speed",this->settings[0]["fan_speed"]);
-            slot0.emplace("fan_active",this->settings[0]["fan_active"]);
-            slot2.emplace("fan_speed",this->settings[2]["fan_speed"]);
-            slot2.emplace("fan_active",this->settings[2]["fan_active"]);
-            slot3.emplace("fan_speed",this->settings[3]["fan_speed"]);
-            slot3.emplace("fan_active",this->settings[3]["fan_active"]);*/
         }
         else if (_scent == "Amber Marine")
         {
@@ -90,12 +77,6 @@ DeviceScent::activate(string _scent, int _intensity){
             slot0.emplace("fan_active",false);
             slot3.emplace("fan_speed",0);
             slot3.emplace("fan_active",false);
-            /*slot1.emplace("fan_speed",this->settings[1]["fan_speed"]);
-            slot1.emplace("fan_active",this->settings[1]["fan_active"]);
-            slot0.emplace("fan_speed",this->settings[0]["fan_speed"]);
-            slot0.emplace("fan_active",this->settings[0]["fan_active"]);
-            slot3.emplace("fan_speed",this->settings[3]["fan_speed"]);
-            slot3.emplace("fan_active",this->settings[3]["fan_active"]);*/
         }
         else if (_scent == "Sweet")
         {
@@ -107,12 +88,6 @@ DeviceScent::activate(string _scent, int _intensity){
             slot2.emplace("fan_active",false);
             slot0.emplace("fan_speed",0);
             slot0.emplace("fan_active",false);
-            /*slot1.emplace("fan_speed",this->settings[1]["fan_speed"]);
-            slot1.emplace("fan_active",this->settings[1]["fan_active"]);
-            slot2.emplace("fan_speed",this->settings[2]["fan_speed"]);
-            slot2.emplace("fan_active",this->settings[2]["fan_active"]);
-            slot0.emplace("fan_speed",this->settings[0]["fan_speed"]);
-            slot0.emplace("fan_active",this->settings[0]["fan_active"]);*/
         }
         else
         {
@@ -132,7 +107,6 @@ DeviceScent::activate(string _scent, int _intensity){
         if (r.code == 200){
             json body_response;
             body_response = json::parse(r.body.c_str());
-            //std::cout << body_response.dump(4) << std::endl;
             _active = true;
         }   
     }
@@ -150,14 +124,6 @@ DeviceScent::deactivate(string _scent)
     {
         if (_scent == "Sea")
         {            
-            /*slot0.emplace("fan_speed",0);
-            slot0.emplace("fan_active",false);
-            slot1.emplace("fan_speed",this->settings[1]["fan_speed"]);
-            slot1.emplace("fan_active",this->settings[1]["fan_active"]);
-            slot2.emplace("fan_speed",this->settings[2]["fan_speed"]);
-            slot2.emplace("fan_active",this->settings[2]["fan_active"]);
-            slot3.emplace("fan_speed",this->settings[3]["fan_speed"]);
-            slot3.emplace("fan_active",this->settings[3]["fan_active"]);*/
             slot0.emplace("fan_speed",0);
             slot0.emplace("fan_active",false);
             slot1.emplace("fan_speed",0);
@@ -170,14 +136,6 @@ DeviceScent::deactivate(string _scent)
         }
         else if (_scent == "Coconuts")
         {
-            /*slot1.emplace("fan_speed",0);
-            slot1.emplace("fan_active",false);
-            slot0.emplace("fan_speed",this->settings[0]["fan_speed"]);
-            slot0.emplace("fan_active",this->settings[0]["fan_active"]);
-            slot2.emplace("fan_speed",this->settings[2]["fan_speed"]);
-            slot2.emplace("fan_active",this->settings[2]["fan_active"]);
-            slot3.emplace("fan_speed",this->settings[3]["fan_speed"]);
-            slot3.emplace("fan_active",this->settings[3]["fan_active"]);*/
             slot1.emplace("fan_speed",0);
             slot1.emplace("fan_active",false);
             slot0.emplace("fan_speed",0);
@@ -189,14 +147,6 @@ DeviceScent::deactivate(string _scent)
         }
         else if (_scent == "Amber Marine")
         {
-            /*slot2.emplace("fan_speed",0);
-            slot2.emplace("fan_active",false);
-            slot1.emplace("fan_speed",this->settings[1]["fan_speed"]);
-            slot1.emplace("fan_active",this->settings[1]["fan_active"]);
-            slot0.emplace("fan_speed",this->settings[0]["fan_speed"]);
-            slot0.emplace("fan_active",this->settings[0]["fan_active"]);
-            slot3.emplace("fan_speed",this->settings[3]["fan_speed"]);
-            slot3.emplace("fan_active",this->settings[3]["fan_active"]);*/
             slot2.emplace("fan_speed",0);
             slot2.emplace("fan_active",false);
             slot1.emplace("fan_speed",0);
@@ -208,14 +158,6 @@ DeviceScent::deactivate(string _scent)
         }
         else if (_scent == "Sweet")
         {
-            /*slot3.emplace("fan_speed",0);
-            slot3.emplace("fan_active",false);
-            slot1.emplace("fan_speed",this->settings[1]["fan_speed"]);
-            slot1.emplace("fan_active",this->settings[1]["fan_active"]);
-            slot2.emplace("fan_speed",this->settings[2]["fan_speed"]);
-            slot2.emplace("fan_active",this->settings[2]["fan_active"]);
-            slot0.emplace("fan_speed",this->settings[0]["fan_speed"]);
-            slot0.emplace("fan_active",this->settings[0]["fan_active"]);*/
             slot3.emplace("fan_speed",0);
             slot3.emplace("fan_active",false);
             slot1.emplace("fan_speed",0);
@@ -272,9 +214,7 @@ DeviceScent::login()
         headers["Content-Type"] = "application/json";
         conn->SetHeaders(headers); 
         
-        //string _body = "{  \"email\": \"marii.ivanov@gmail.com\",  \"password\": \"m1d14c0m\"}";
         string _body = "{  \"email\": \""+ this->getLogin() +"\",  \"password\": \"" + this->getPassword() + "\"}";
-        g_print("Body: %s\n", _body.c_str());
         RestClient::Response r  = conn->post("/login",_body);
         // HTTPS response code
         if (r.code == 200 && !r.body.empty())
@@ -327,7 +267,6 @@ DeviceScent::getBoxes()
     {    
         json response = json::parse(r.body.c_str());
         json box = response["boxes"];
-        //TRACE ("Return: %s\n", box[0].dump(4).c_str());
         this->device_key = box[0]["device_key"].dump().c_str();
         this->fan_volume = box[0]["fan_volume"].dump().c_str();
         this->box_status = box[0]["box_status"].dump().c_str();

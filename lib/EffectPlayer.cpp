@@ -50,11 +50,6 @@ EffectPlayer::EffectPlayer (Formatter *formatter, Effect *effect)
 
 EffectPlayer::~EffectPlayer ()
 {
-  //delete _animator;
-  //if (_surface != nullptr)
-  //  cairo_surface_destroy (_surface);
-  //if (_gltexture)
-  //  GL::delete_texture (&_gltexture);
   _properties.clear ();
 }
 
@@ -106,11 +101,6 @@ EffectPlayer::start ()
   g_assert (_state != OCCURRING);
   _state = OCCURRING;
   _time = 0;
-  
-    //_eos = false;
-  //this->reload ();
-  //_animator->scheduleTransition ("start", &_prop.rect, &_prop.bgColor,
-  //                               &_prop.alpha, &_crop);
 }
 
 void
@@ -178,9 +168,6 @@ EffectPlayer::setProperty (const string &name, const string &value)
   string defval;
   string _value;
 
-  //if (name == "transIn" || name == "transOut")
-  //  _animator->setTransitionProperties (name, value);
-
   use_defval = false;
   _value = value;
 
@@ -225,43 +212,9 @@ EffectPlayer::resetProperties (set<string> *props)
     this->setProperty (name, "");
 }
 
-/*void
-Player::schedulePropertyAnimation (const string &name, const string &from,
-                                   const string &to, Time dur)
-{
-  _animator->schedule (name, from, to, dur);
-}*/
-
 void EffectPlayer::sendKeyEvent (unused (const string &key), unused (bool press))
 {
 }
-
-// Public: Static.
-
-/*EffectPlayer::Property
-EffectPlayer::getPlayerProperty (const string &name, string *defval)
-{
-  map<string, EffectPlayerPropertyInfo>::iterator it;
-  EffectPlayerPropertyInfo *info;
-  string _name = name;
- 
-  if ((it = effect_player_property_map.find (_name)) == effect_player_property_map.end ())
-    {
-      map<string, string>::iterator italias;
-      if ((italias = player_property_aliases.find (_name))
-          == player_property_aliases.end ())
-        {
-          tryset (defval, "");
-          return PROP_UNKNOWN;
-        }
-      _name = italias->second;
-      it = player_property_map.find (_name);
-      g_assert (it != player_property_map.end ());
-    }
-  info = &it->second;
-  tryset (defval, info->defval);
-  return info->code;
-}*/
 
 EffectPlayer *
 EffectPlayer::createEffectPlayer (Formatter *formatter, Effect *effect,
@@ -408,7 +361,6 @@ bool
 EffectPlayer::isFocused ()
 {
   return false;
-  //return _prop.focusIndex != "" && _prop.focusIndex == _currentFocus;
 }
 
 GINGA_NAMESPACE_END

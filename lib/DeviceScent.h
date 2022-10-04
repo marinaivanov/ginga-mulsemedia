@@ -13,6 +13,10 @@ using json = nlohmann::json;
 
 GINGA_NAMESPACE_BEGIN
 
+/**
+ * This class implements a scent device that enables Ginga controls the Moodo device
+ */ 
+
 class DeviceScent : public Device
 {
 public:
@@ -36,8 +40,6 @@ public:
     //Rest client
     void init();
 
-    //void activate(Actuator d); //send a activate command for the actuator
-    //void deactivate(Actuator d); //send a deactivate command to the actuator
     void setFragance();       //define the fragance to be used
     void setIntensityValue();        //define the intensity to be used
     

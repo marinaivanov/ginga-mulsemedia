@@ -35,14 +35,6 @@ public:
     PROP_COLOR    
   };
 
-  /*enum CommandType // known commands
-  {
-    ACTIVATE = 0,
-    DEACTIVATE,
-    UP_INTENSITY,
-    DOWN_INTENSITY   
-  };*/
-
   EffectPlayer (Formatter *, Effect *);
   virtual ~EffectPlayer ();
 
@@ -71,22 +63,10 @@ public:
   void setProperty (const string &, const string &);
   void resetProperties ();
   void resetProperties (set<string> *);
-  //void schedulePropertyAnimation (const string &, const string &,
-  //                                const string &, Time);
-  //virtual void reload ();
-  //virtual void redraw (cairo_t *);
 
   virtual void sendKeyEvent (const string &, bool);
 
-  // For now, only for the lua player (which reimplements it).
-  virtual void
-  sendPresentationEvent (const string &, const string &)
-  {
-  }
-
   // Static.
-  //static string getCurrentFocus ();
-  //static void setCurrentFocus (const string &);
   static Property getEffectPlayerProperty (const string &, string *);
   static EffectPlayer *createEffectPlayer (Formatter *, Effect *, const string &type = "");
 

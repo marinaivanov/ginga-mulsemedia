@@ -158,14 +158,13 @@ EffectPlayerLight::resume ()
 void 
 EffectPlayerLight::startPreparation ()
 {
-    TRACE("Start Preparation");
+    TRACE("starting Effect Player Light preparation");
     g_assert_nonnull(device);
     this->connectionFault = !device->connectDevice();
     if (this->connectionFault)
         device->disconnect();
     else
-        this->_prepared = true;
-        
+        this->_prepared = true;        
 }
 
 bool 

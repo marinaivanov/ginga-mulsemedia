@@ -117,14 +117,7 @@ void PresentationOrchestrator::createPresentationPlan (TemporalGraph* graph, map
     pO = new PreparationOrchestrator(this->presentation_plan, htg);
     this->presentation_plan.sort(compare);
     list<PlanItem>::iterator it;
-    /*g_print("---------------------------------------------------------------\n");
-    g_print ("Presentation Plan\n");
-    for( it = presentation_plan.begin(); it != presentation_plan.end(); it++ )
-    {
-        g_print("%.2fs - %s\n", (*it).instant, (*it).vertex->getVertexAsString().c_str());
-    }
-    g_print("---------------------------------------------------------------\n");  */
-
+  
     if (preparationEnabled)
     {
         pO->createPreparationPlan(_deviceList);
@@ -323,12 +316,6 @@ void PreparationOrchestrator::printPreparationPlan ()
  */ 
 void PreparationOrchestrator::insertPreparationActions ()
 {
-    //Verificar o contexto que a midia a ser preparada pertence,
-    //e chamar o metodo addLinks() igual e' feito na adição de links do parser.
-    //Context::addLink (list<Action> conds, list<Action> acts)
-    //Olhar o metodo Document::evalAction() como base
-    //Para cada preparação, vou criar um link tendo como condição, o início do no' inicial, e 
-    // a ação, a preparação definida com delay
     list<PlanItem>::iterator it;
     
     Vertex* v_start = htg->start_vertex;
@@ -356,22 +343,38 @@ void PreparationOrchestrator::insertPreparationActions ()
 
             if ((*it).instant > 0)
             {
-                Media* _media = (Media*) (*it).vertex->getObject(); //Media to be prepared
-                _media->addPreparationEvent("@lambda");
+                if(strcmp((*it).vertex->getElementName().c_str(),"Media") == 0)
+                {
+                    Media* _media = (Media*) (*it).vertex->getObject(); //Media to be prepared
+                    _media->addPreparationEvent("@lambda");
 
-                act.event = _media->getPreparationEvent("@lambda");
-                act.transition = Event::START;
-                act.delay = to_string((*it).instant); 
-                act.predicate = nullptr;
-                act.value = "";
-                actions.push_back(act);
-                conditions.push_back(_condition);
-                if (_ctx != nullptr){
-                    _ctx->addLink(conditions, actions);
-                }
-            }       
-           
-           
+                    act.event = _media->getPreparationEvent("@lambda");
+                    act.transition = Event::START;
+                    act.delay = to_string((*it).instant); 
+                    act.predicate = nullptr;
+                    act.value = "";
+                    actions.push_back(act);
+                    conditions.push_back(_condition);
+                    if (_ctx != nullptr){
+                        _ctx->addLink(conditions, actions);
+                    }
+                }else if(strcmp((*it).vertex->getElementName().c_str(),"Effect") == 0)
+                {
+                    Effect* _effect = (Effect*) (*it).vertex->getObject(); //Effect to be prepared
+                    _effect->addPreparationEvent("@lambda");
+
+                    act.event = _effect->getPreparationEvent("@lambda");
+                    act.transition = Event::START;
+                    act.delay = to_string((*it).instant); 
+                    act.predicate = nullptr;
+                    act.value = "";
+                    actions.push_back(act);
+                    conditions.push_back(_condition);
+                    if (_ctx != nullptr){
+                        _ctx->addLink(conditions, actions);
+                    }
+                }                
+            }  
         }        
     } 
 }
