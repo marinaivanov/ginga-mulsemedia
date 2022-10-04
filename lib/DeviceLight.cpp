@@ -102,7 +102,7 @@ DeviceLight::connectDevice()
 
     // Create an socket to connect with the bulb
     if ((this->socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-        g_print("Error on connect with light device");
+        g_print("Error creating socket to connect with light device");
         return false;
     }
 
@@ -114,7 +114,7 @@ DeviceLight::connectDevice()
 
     // Tries to connect to the server 
     if (connect(this->socket_fd, (struct sockaddr*) &server, len) == -1) {
-        g_print("Can't connect to server\n");
+        g_print("Error on connect with light device\n");
         return false;
     }
 
@@ -137,7 +137,7 @@ DeviceLight::setColor(string _color)
         send(this->socket_fd, msgColor.c_str(), strlen(msgColor.c_str()), 0);
         if (send(this->socket_fd, msgColor.c_str(), strlen(msgColor.c_str()), 0) == -1)
         {
-            printf("Error to set light color");
+            printf("Error to set light color\n");
         }
     }
 }
