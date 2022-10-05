@@ -146,7 +146,6 @@ Formatter::start (const string &file, string *errmsg)
 #if defined WITH_LUA && WITH_LUA
   if (xstrhassuffix (file, ".lua"))
     {
-      printf("\nArquivo:        %s", file.c_str());
       _doc = ParserLua::parseFile (file, errmsg);
       if (unlikely (_doc == nullptr))
         return false;
@@ -213,8 +212,6 @@ Formatter::start (const string &file, string *errmsg)
   _intManager->start();
   _intManager->setUserKeyListModules();
   _intManager->startModules();
-
-
    					
   return true;
 }
@@ -429,8 +426,6 @@ Formatter::sendKey (const string &key, const string &user,bool press)
   {
     if (obj->getObjectTypeAsString().compare("MediaSettings")!=0)
     {
-
-//printf("\n User no sendKey do ginga: %s\n", user.c_str());
       obj->sendKey (key, user,  press);
     }
   }
@@ -495,30 +490,27 @@ bool Formatter::sendViewed(Event::Transition tr, const string &user, const strin
     }
   }
 
-	//Ordernar buf pelo zIndex (executar o sendViewed de maior zIndex)
-	// e dos obje que estão na key
-  Object * maiorIndex;
-  int maior = -1;
+  Object * objViewed;
+  int maxIndex = -1;
   if (!buf.empty())
   {
-    for (auto obj : buf) //olhar o zindex
+    for (auto obj : buf) //checks the media zIndex
     {
       int zIndex = 0;
       if (obj->getProperty("zIndex").empty())
         zIndex = 0;
       else
-     {
-        char * aux = (char *) obj->getProperty("zIndex").c_str();
-        // zIndex = (int)std::strtol(obj->getProperty("zIndex").c_str(), nullptr, 10);
-        zIndex = atoi(aux);
-     }
-      if (zIndex > maior)
       {
-        maior = zIndex;
-        maiorIndex = obj;
+          char * aux = (char *) obj->getProperty("zIndex").c_str();
+          zIndex = atoi(aux);
+      }
+      if (zIndex > maxIndex)
+      {
+        maxIndex = zIndex;
+        objViewed = obj;
       }
     }
- 	  maiorIndex->sendViewed(tr, user);
+ 	  objViewed->sendViewed(tr, user);
     return true;
   }
 	return false;

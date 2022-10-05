@@ -1746,10 +1746,7 @@ ParserState::resolveComponent (Composition *scope, ParserElt *elt,
       tryset (obj, child);
       return true;
     }
-  else
-  {
-    TRACE("CHILD == NULLPTR");
-  }
+    
   // Check if component refers to a reference (refer) object.
   Media *media;
   if (this->referMapIndex (comp, &media))

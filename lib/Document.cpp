@@ -471,7 +471,7 @@ Document::getDeviceList ()
 }
 /**
  * @brief Gets document's interaction.
- * @return The interactions that the Interaction Manager (modulo with managing of
+ * @return The interactions that the Interaction Manager (module with managing of
  * interactions like voice, hand pose, etc .. ) runs.
  */
 map<Event::Type,bool>
@@ -497,7 +497,7 @@ Document::addInteractions (Event::Type intEvent, bool on)
 	  return false;
 }
 /**
- * @brief Change true or false that signalize to on or off the modulo that trigger of the event
+ * @brief Change true or false that signalize to on or off the module that trigger of the event
  * @return a bool to signalize if happened the changing
  */
 bool
@@ -518,7 +518,7 @@ map<Event::Type,list<Key>> Document::getKeyList()
 }
 
 /**
- * @brief Change true or false that sinilize to on or off the modulo that try of the event
+ * @brief Change true or false that sinilize to on or off the module that try of the event
  * @return a bool to signalize if happened the checking
 */
 bool
@@ -577,7 +577,7 @@ Document::getProfiles()
 }
 
 /**
- * @brief add user to the document
+ * @brief Add an user to the document
  * @return true if you managed to add
  */
 bool
@@ -593,7 +593,7 @@ Document::addUser (user _user)
 	  return false;
 }
 /**
- * @brief add profile to the document
+ * @brief Add a profile to the document
  * @return true if you managed to add
  */
 bool
@@ -609,7 +609,7 @@ Document::addProfile (profile _profile)
 	  return false;
 }
 /**
- * @brief add profile to the document
+ * @brief Add a profile to the document
  * @return true if you managed to add
  */
 MediaSettings *

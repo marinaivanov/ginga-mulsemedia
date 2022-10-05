@@ -71,7 +71,6 @@ Media::toString ()
 void
 Media::setProperty (const string &name, const string &value, Time dur)
 {
-  //printf("\n Mudança na media %s da prop: %s Valor:%s\n", this->getId().c_str(),name.c_str(),value.c_str());
   string from = this->getProperty (name);
   Object::setProperty (name, value, dur);
 
@@ -93,16 +92,8 @@ map<string, string> Media::getProperties()
 void
 Media::sendKey (const string &key,const string &user, bool press)
 {
-  //if (this->getObjectTypeAsString().compare("MediaSettings")==0)
-  //{
-    //this->setProperty("usr",user);
-    map<string, string> props = this->getProperties();
-    this->setProperty ("usr", user);
-
-    //this->addDelayedAction (evt, Event::STOP, user);
-
-  // this->afterTransition()
-  //return;
+  map<string, string> props = this->getProperties();
+  this->setProperty ("usr", user);
   list<Event *> buf;
   string expected;
   string parUser;
@@ -208,7 +199,6 @@ Media::sendKey (const string &key, bool press)
     _doc->evalAction (evt, press ? Event::START : Event::STOP);
 }
 
-
 void
 Media::sendTick (Time total, Time diff, Time frame)
 {
@@ -237,20 +227,17 @@ Media::sendTick (Time total, Time diff, Time frame)
   _player->incTime (diff);
 
   // Check EOS.
-  //if(_player->getState() != Player::PREPARING)
-  //{
-    if (_player->getEOS ()
-        || (GINGA_TIME_IS_VALID (dur = _player->getDuration ())
-            && _time > dur ))
-      {
-        Event *lambda = this->getLambda ();
-        g_assert_nonnull (lambda);
-        //TRACE ("eos %s at %" GINGA_TIME_FORMAT, lambda->getFullId ().c_str (),
-        //      GINGA_TIME_ARGS (_time));
-        _doc->evalAction (lambda, Event::STOP);
-        return;
-      }
-  //}
+  if (_player->getEOS ()
+      || (GINGA_TIME_IS_VALID (dur = _player->getDuration ())
+          && _time > dur ))
+    {
+      Event *lambda = this->getLambda ();
+      g_assert_nonnull (lambda);
+      //TRACE ("eos %s at %" GINGA_TIME_FORMAT, lambda->getFullId ().c_str (),
+      //      GINGA_TIME_ARGS (_time));
+      _doc->evalAction (lambda, Event::STOP);
+      return;
+    }
 }
 
 bool
@@ -574,8 +561,6 @@ Media::afterTransition (Event *evt, Event::Transition transition)
       }
 
     case Event::VOICE_RECOGNITION: 
-    case Event::FACE_RECOGNITION: 
-    case Event::HANDPOSE_RECOGNITION:
       {
           string key, user;
           evt->getParameter ("key", &key);
@@ -587,6 +572,44 @@ Media::afterTransition (Event *evt, Event::Transition transition)
               break;
             case Event::STOP:
               TRACE ("stop voice recognition %s", evt->getFullId ().c_str ());
+              break;
+            default:
+              g_assert_not_reached ();
+            }
+
+          break;
+      }
+    case Event::FACE_RECOGNITION: 
+      {
+          string key, user;
+          evt->getParameter ("key", &key);
+          evt->getParameter ("user", &user);
+          switch (transition)
+            {
+            case Event::START:
+              TRACE ("start face recognition %s", evt->getFullId ().c_str ());
+              break;
+            case Event::STOP:
+              TRACE ("stop face recognition %s", evt->getFullId ().c_str ());
+              break;
+            default:
+              g_assert_not_reached ();
+            }
+
+          break;
+      }
+    case Event::HANDPOSE_RECOGNITION:
+      {
+          string key, user;
+          evt->getParameter ("key", &key);
+          evt->getParameter ("user", &user);
+          switch (transition)
+            {
+            case Event::START:
+              TRACE ("start handpose recognition %s", evt->getFullId ().c_str ());
+              break;
+            case Event::STOP:
+              TRACE ("stop handpose recognition %s", evt->getFullId ().c_str ());
               break;
             default:
               g_assert_not_reached ();

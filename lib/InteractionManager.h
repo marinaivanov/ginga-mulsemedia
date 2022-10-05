@@ -1,5 +1,3 @@
-
-
 #ifndef INTERACTION_MANAGER_H
 #define INTERACTION_MANAGER_H
 #include "Composition.h"
@@ -16,8 +14,6 @@ GINGA_NAMESPACE_BEGIN
 class InteractionManager
 {
 	public:
-
-	    // Os parâmetros poderam ser as opções do documento tendo a especificações dos modulos
 	    InteractionManager(Ginga *ginga);
 
 	    void start();
@@ -32,14 +28,12 @@ class InteractionManager
 
 //	    void addInteractionModule(InteractionModule *elem);
 //	    void stopInteractionModule(std::string &idModulo);
-
 		
 	private:
 
 		Ginga *ginga;
 		std::map<std::string,InteractionModule *> ExtModules;
-  	/// @brief User Context Manager.
-  	UserContextManager *_userManager = NULL;
+		UserContextManager *_userManager = NULL;
 };
 
 GINGA_NAMESPACE_END

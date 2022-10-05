@@ -65,21 +65,21 @@ public:
      */
     PREPARATION,
 
-	/**
-	 * @brief Voice Recognition event.
-	 *
-	 *Stands for the recognition of a  specific key (this case word), which is
-	 * directed to the object.
-	 */
-	 VOICE_RECOGNITION,
+    /**
+     * @brief Voice Recognition event.
+     *
+     *Stands for the recognition of a  specific key (this case word), which is
+     * directed to the object.
+    */
+    VOICE_RECOGNITION,
 
-	 /**
-		 * @brief Face Recognition event.
-		 *
-		 *Stands for the recognition of a Face expression, which is
-		 * directed to the object.
-	*/
-	 FACE_RECOGNITION,
+    /**
+     * @brief Face Recognition event.
+     *
+     *Stands for the recognition of a Face expression, which is
+     * directed to the object.
+    */
+    FACE_RECOGNITION,
 
 	 /**
 		 * @brief Hand Pose Recognition event.

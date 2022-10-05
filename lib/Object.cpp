@@ -337,9 +337,6 @@ void
 Object::addInteractionEvent (Event::Type ev, const string &key,const string &user )
 {
   Event *evt;
-//printf("addInteractionEvent: %s", this->getId().c_str());
- // if (this->getInteractionEvent (ev, key, user))
-   // return;
 
   evt = new Event (ev, this, key, user);
   _events.insert (evt);
