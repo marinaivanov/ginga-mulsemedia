@@ -31,6 +31,7 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 #include <libxml/tree.h>
 #include <libxml/parser.h>
 #include <libxml/uri.h>
+#include <pwd.h>
 
 GINGA_NAMESPACE_BEGIN
 
@@ -209,7 +210,7 @@ public:
   ParserState (int, int);
   ~ParserState ();
   ParserState::Error getError (string *);
-  Document *process (xmlDoc *, bool);
+  Document *process (xmlDoc *, bool, bool);
 
   // push & pop
   static bool pushNcl (ParserState *, ParserElt *);
@@ -276,6 +277,8 @@ private:
 
   ///< Reference map for solving the refer attribute in \<media\>.
   map<string, Media *> _referMap;
+
+  bool _effectSimulation;
 
   string genId ();
   string getURI ();
@@ -2346,7 +2349,7 @@ ParserState::getError (string *message)
  * @return The resulting #Document if successful, or null otherwise.
  */
 Document *
-ParserState::process (xmlDoc *xml, bool preparation)
+ParserState::process (xmlDoc *xml, bool preparation, bool effectSimulation)
 {
   xmlNode *root;
   
@@ -2356,6 +2359,7 @@ ParserState::process (xmlDoc *xml, bool preparation)
   _htg = new TemporalGraph ();
   _presOrch = new PresentationOrchestrator ();
   _presOrch->preparationEnabled = preparation;
+  _effectSimulation = effectSimulation;
   root = xmlDocGetRootElement (xml);
   g_assert_nonnull (root);
 
@@ -2623,20 +2627,41 @@ borderColor='%s'}",
                                                  "no such descriptor");
                 }
 
-              g_assert (effect_elt->getAttribute ("id", &effect_id));
-              effect = cast (Effect *,
-                            st->_doc->getObjectByIdOrAlias (effect_id));
-              g_assert_nonnull (effect);
+              if(!st->_effectSimulation)
+              {
+                g_assert (effect_elt->getAttribute ("id", &effect_id));
+                effect = cast (Effect *,
+                              st->_doc->getObjectByIdOrAlias (effect_id));
+                g_assert_nonnull (effect);
 
-              for (auto it : *desc_elt->getAttributes ())
-                {
-                  if (it.first == "id" || it.first == "region")
-                    continue; // nothing to do
-                  if (effect->getAttributionEvent (it.first) != nullptr)
-                    continue; // already defined
-                  effect->addAttributionEvent (it.first);
-                  effect->setProperty (it.first, it.second);
-                }
+                for (auto it : *desc_elt->getAttributes ())
+                  {
+                    if (it.first == "id" || it.first == "region")
+                      continue; // nothing to do
+                    if (effect->getAttributionEvent (it.first) != nullptr)
+                      continue; // already defined
+                    effect->addAttributionEvent (it.first);
+                    effect->setProperty (it.first, it.second);
+                  }
+              } 
+              // else
+              // {
+              //   g_assert (effect_elt->getAttribute ("id", &effect_id));
+              //   Media* media = cast (Media *,
+              //                 st->_doc->getObjectByIdOrAlias (effect_id));
+              //   g_assert_nonnull (media);
+
+              //   for (auto it : *desc_elt->getAttributes ())
+              //     {
+              //       if (it.first == "id" || it.first == "region")
+              //         continue; // nothing to do
+              //       if (media->getAttributionEvent (it.first) != nullptr)
+              //         continue; // already defined
+              //       media->addAttributionEvent (it.first);
+              //       if(it.first != "location")
+              //         media->setProperty (it.first, it.second);
+              //     }
+              // }             
             }
 
           // TO DO: Check refer effect.
@@ -4524,16 +4549,67 @@ ParserState::pushEffect (ParserState *st, ParserElt *elt)
   g_assert (elt->getAttribute ("id", &id));	
   g_assert (elt->getAttribute ("type", &type));	
   
-  effect = new Effect (id);	
-  effect->setProperty ("type", type);	
-  parent = cast (Composition *, st->objStackPeek ());	
-  g_assert_nonnull (parent);	
-  parent->addChild (effect);	
+  Vertex* v;
+  if(st->_effectSimulation)
+  {
+    Media * media = new Media(id);
+    uid_t uid = getuid();
+    char * home_dir = getpwuid( uid )->pw_dir;
+    const char * path;
+    string uri = "file:///";
+    string top;
     
-  Vertex* v = new Vertex (effect->getId(), Event::START, Event::PRESENTATION, effect, "Effect");
-  st->_htg->insertVertex(v);
-  st->objStackPush (effect);	
-  return true;
+    if (type == "LightType")
+    {
+      path = strcat(home_dir,"/gingaFiles/simulation/light.png");
+      top = "5%";
+    }
+    else if (type == "ScentType")
+    {
+      path = strcat(home_dir,"/gingaFiles/simulation/scent.png");
+      top = "20%";
+    }
+    else if (type == "WindType")
+    {
+      path = strcat(home_dir,"/gingaFiles/simulation/wind.png");
+      top = "35%";
+    }
+    else
+    {
+      path = strcat(home_dir,"/gingaFiles/simulation/undefined.png");
+    }
+    
+    uri += path;
+    media->setProperty ("uri", uri.c_str());	
+    media->setProperty ("type", "image");	
+    media->setProperty ("width", "8%");
+    media->setProperty ("height", "9%");
+    media->setProperty ("zIndex", "100");
+    media->setProperty ("top", top.c_str());
+    media->setProperty ("left", "90%");
+    parent = cast (Composition *, st->objStackPeek ());	
+    g_assert_nonnull (parent);	
+    parent->addChild (media);	
+    v = new Vertex (media->getId(), Event::START, Event::PRESENTATION, media, "Media");
+    st->_htg->insertVertex(v);
+    st->objStackPush (media);	 
+    
+  }
+  else
+  {
+    effect = new Effect (id);	
+    //effect->enableEffectSimulation(st->_effectSimulation);
+    effect->setProperty ("type", type);	
+    parent = cast (Composition *, st->objStackPeek ());
+    g_assert_nonnull (parent);	
+    parent->addChild (effect);	
+      
+    v = new Vertex (effect->getId(), Event::START, Event::PRESENTATION, effect, "Effect");
+    st->_htg->insertVertex(v);
+    st->objStackPush (effect);	 
+  }
+
+   return true;
 }
 
 /**
@@ -4548,7 +4624,14 @@ ParserState::pushEffect (ParserState *st, ParserElt *elt)
 bool
 ParserState::popEffect (ParserState *st, unused (ParserElt *elt))
 {
-  g_assert (instanceof (Effect *, st->objStackPop ()));
+  if(st->_effectSimulation)
+  {
+    g_assert (instanceof (Media *, st->objStackPop ()));
+  }
+  else
+  {
+    g_assert (instanceof (Effect *, st->objStackPop ()));
+  }
   return true;
 }
 
@@ -4655,12 +4738,12 @@ ParserState::getDoc()
 
 /// Helper function used by Parser::parseBuffer() and Parser::parseFile().
 static Document *
-process (xmlDoc *xml, int width, int height, string *errmsg, bool preparation)
+process (xmlDoc *xml, int width, int height, string *errmsg, bool preparation, bool effectSimulation)
 {
   ParserState st (width, height);
   Document *doc;
 
-  doc = st.process (xml,preparation);
+  doc = st.process (xml,preparation, effectSimulation);
   if (unlikely (doc == nullptr))
     {
       g_assert (st.getError (errmsg) != ParserState::ERROR_NONE);
@@ -4682,7 +4765,7 @@ process (xmlDoc *xml, int width, int height, string *errmsg, bool preparation)
  */
 Document *
 Parser::parseBuffer (const void *buf, size_t size, int width, int height,
-                     string *errmsg, bool preparation)
+                     string *errmsg, bool preparation, bool effectSimulation)
 {
   xmlDoc *xml;
   Document *doc;
@@ -4695,7 +4778,7 @@ Parser::parseBuffer (const void *buf, size_t size, int width, int height,
       return nullptr;
     }
 
-  doc = process (xml, width, height, errmsg, preparation);
+  doc = process (xml, width, height, errmsg, preparation, effectSimulation);
   xmlFreeDoc (xml);
   return doc;
 }
@@ -4711,7 +4794,7 @@ Parser::parseBuffer (const void *buf, size_t size, int width, int height,
  */
 Document *
 Parser::parseFile (const string &path, int width, int height,
-                   string *errmsg, bool preparation)
+                   string *errmsg, bool preparation, bool effectSimulation)
 {
   xmlDoc *xml;
   Document *doc;
@@ -4731,7 +4814,7 @@ Parser::parseFile (const string &path, int width, int height,
       return nullptr;
     }
 
-  doc = process (xml, width, height, errmsg, preparation);
+  doc = process (xml, width, height, errmsg, preparation, effectSimulation);
   xmlFreeDoc (xml);
 
   return doc;

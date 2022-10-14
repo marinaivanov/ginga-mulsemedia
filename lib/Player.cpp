@@ -242,11 +242,6 @@ Player::getEOS ()
 bool
 Player::getPrepared ()
 {
-  //simulatedPrepareCounter--;
-  //if (simulatedPrepareCounter == 0)
-  //  return true;
-  //else
-  //  return false;
   return _prepared;
 }
 

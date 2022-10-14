@@ -282,6 +282,7 @@ EffectPlayer::createEffectPlayer (Formatter *formatter, Effect *effect,
       WARNING ("unknown effect type '%s': creating an empty player",
                    effectType.c_str ());
     }
+    
   
   g_assert_nonnull (effectPlayer);
   return effectPlayer;

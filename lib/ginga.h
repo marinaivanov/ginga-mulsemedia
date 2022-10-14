@@ -66,6 +66,9 @@ struct GingaOptions
   /// @brief Whether to enable calibration mode.
   bool calibration;
 
+   /// @brief Whether to enable effect simulation mode.
+  bool simulation;
+
   /// @brief Background color.
   std::string background;
 };

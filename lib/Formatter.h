@@ -80,7 +80,8 @@ public:
   static void setOptionExperimental (Formatter *, const string &, bool);
   static void setOptionOpenGL (Formatter *, const string &, bool);
   static void setOptionPreparation (Formatter *, const string &, bool);
-  static void setOptionCalibration (Formatter *, const string &, bool);  
+  static void setOptionCalibration (Formatter *, const string &, bool); 
+  static void setOptionSimulation (Formatter *, const string &, bool);   
   static void setOptionSize (Formatter *, const string &, int);
 
   //Sensory Device Calibration

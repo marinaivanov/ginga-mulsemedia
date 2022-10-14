@@ -385,6 +385,7 @@ Media::beforeTransition (Event *evt, Event::Transition transition)
 bool
 Media::afterTransition (Event *evt, Event::Transition transition)
 {
+  g_assert_nonnull(evt);
   switch (evt->getType ())
     {
     case Event::PRESENTATION:
@@ -396,7 +397,6 @@ Media::afterTransition (Event *evt, Event::Transition transition)
               // Start media as a whole.
               g_assert_nonnull (_player);
               Object::doStart ();
-
               // Schedule anchors.
               for (Event *e : _events)
                 {
@@ -411,8 +411,10 @@ Media::afterTransition (Event *evt, Event::Transition transition)
                     }
                 }
               TRACE ("start %s", evt->getFullId ().c_str ());
+              
               if(this->getId () != "__settings__")
                 g_print ("start presentation %s\n", this->getId ().c_str ());
+              
             }
           else if (evt->hasLabel ())
             {

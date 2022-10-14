@@ -19,7 +19,7 @@ along with Ginga.  If not, see <https://www.gnu.org/licenses/>.  */
 #include <stdio.h>
 #include <string.h>
 
-#include "aux-glib.h"
+#include <aux-glib.h>
 #include <cairo.h>
 #include <gtk/gtk.h>
 
@@ -50,6 +50,7 @@ static gboolean opt_opengl = FALSE;       // toggle OpenGL backend
 static string opt_background = "";        // background color
 static gboolean opt_preparation = TRUE;   // automatic preparation
 static gboolean opt_calibration = FALSE;  // sensory device calibration 
+static gboolean opt_simulation = FALSE;  // sensory effect simulation 
 static gint opt_width = 800;              // initial window width
 static gint opt_height = 600;             // initial window height
 
@@ -135,7 +136,9 @@ static GOptionEntry options[]
         {"preparation", 'p', 0, G_OPTION_ARG_CALLBACK, pointerof (opt_preparation_cb),
           "Enable or Disable automatic preparation", NULL},
         {"calibration", 'c', 0, G_OPTION_ARG_NONE, &opt_calibration,
-          "Enable calibration mode", NULL},         
+          "Enable calibration mode", NULL},
+        {"simulation", 'e', 0, G_OPTION_ARG_NONE, &opt_simulation,
+          "Enable sensory effect simulation mode", NULL},         
         {"version", 0, G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
           pointerof (opt_version_cb), "Print version information and exit",
           NULL},
@@ -344,8 +347,6 @@ tick_callback (GtkWidget *widget)
 static gboolean
 voice_callback (GtkWidget *widget, GdkEventKey *e, gpointer type)
 {
-	 printf("Captura do movimento do mouse!! \n\n");
-
 	  bool status = GINGA->sendKey (string ("RED"), string ("FABIO"), g_str_equal ((const char *) type, "press") == 0);
 	  status = GINGA->sendKey (string ("RED"), string ("FABIO"), g_str_equal ((const char *) type, "release") == 0);
 	  //bool status = GINGA->sendKey (string ("RED"), string ("FABIO"), true);
@@ -392,7 +393,6 @@ main (int argc, char **argv)
 
   if (saved_argc < 2)
     {
-      //string recebido = string (saved_argv[1]);
       if (!opt_calibration)
       {
         usage_error ("Missing file operand");
@@ -464,6 +464,7 @@ main (int argc, char **argv)
   opts.opengl = opt_opengl;
   opts.preparation = opt_preparation;
   opts.calibration = opt_calibration;
+  opts.simulation = opt_simulation;
   opts.background = string (opt_background);
   GINGA = Ginga::create (&opts);
   g_assert_nonnull (GINGA);

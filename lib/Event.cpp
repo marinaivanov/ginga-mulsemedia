@@ -248,11 +248,11 @@ Event::transition (Event::Transition trans)
 
   // Finish transition.
   if (unlikely (!_object->afterTransition (this, trans)))
-    {
-      _state = curr;
-      return false;
-    }
-
+  {
+    _state = curr;
+    return false;
+  }
+    
   return true;
 }
 

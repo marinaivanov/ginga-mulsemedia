@@ -37,7 +37,6 @@ cairox_surface_create_from_uri (const char *path, cairo_surface_t **dup)
   g_assert_nonnull (dup);
   GFile *file = g_file_new_for_uri (path);
   g_assert_nonnull (file);
-
   GFileInputStream *input = g_file_read (file, NULL, &error);
   g_assert_nonnull (input);
   if (input)

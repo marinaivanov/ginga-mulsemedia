@@ -21,7 +21,8 @@ EffectPlayerLight::EffectPlayerLight (Formatter *fmt, Effect *effect) :  EffectP
     _prepared = false;
     connectionFault = false;
     
-    Device* dev = fmt->getDevice(fmt,"LightType");
+    Device* dev;
+    dev = fmt->getDevice(fmt,"LightType");
     if (dev != NULL)
     {
         device = new DeviceLight();
@@ -35,8 +36,8 @@ EffectPlayerLight::EffectPlayerLight (Formatter *fmt, Effect *effect) :  EffectP
         device->setNumOfLevels(dev->getNumOfLevels());
         device->setAddress(dev->getAddress());
         g_assert_nonnull(device);
-    }    
-
+    }   
+        
     // Initialize some handled properties.
     static set<string> handled = {"activate", "intensityValue", "color"};
     this->initProperties (&handled);
@@ -124,7 +125,8 @@ EffectPlayerLight::start ()
         else
         {
             this->startPreparation();
-            this->start ();            
+            if(this->connectionAttempts < 2)
+                this->start ();            
         }   
     } 
 }
@@ -161,8 +163,10 @@ EffectPlayerLight::startPreparation ()
     TRACE("starting Effect Player Light preparation");
     g_assert_nonnull(device);
     this->connectionFault = !device->connectDevice();
-    if (this->connectionFault)
+    if (this->connectionFault){
         device->disconnect();
+        this->connectionAttempts++;
+    }
     else
         this->_prepared = true;        
 }

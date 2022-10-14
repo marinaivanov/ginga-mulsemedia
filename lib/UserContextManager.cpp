@@ -128,24 +128,16 @@ printf("\n****************Imprimir os propriedades de usuários que estvamo em u
 			{   adicionar = 1;
 				for (auto propProfile=profile->second.begin(); propProfile!=profile->second.end(); ++propProfile)
 				{
-	//				  printf("\n!!!!!!!!Nome da propriedade no profile: %s\n", propProfile->first.c_str());
 					  map<string, string>::iterator iter = usrProps->second.find(propProfile->first.c_str());
 					  if (iter == usrProps->second.end())
 					  {
-	//				     printf("\n!!!!!!!!NÃO ACHEI A PROPRIEDADE: %s\n", propProfile->first.c_str());
-
-						  
 					 	adicionar = 0;
 						break;
 					  }							
 					  else
 					  {  
-
-	//				  printf("\n!!!!!!!!Propriedade Profile: %s; Propriedade Usuario: %s \n", propProfile->second.c_str(),iter->second.c_str());
-
 							if (!(iter->second.compare(propProfile->second.c_str())==0))
 							{
-	//							printf("\n!!!!!!!!NÃO FOI IGUAL A PROPRIEDADE: %s\n", propProfile->first.c_str());
 								adicionar = 0;
 								break;
 							}
@@ -153,37 +145,12 @@ printf("\n****************Imprimir os propriedades de usuários que estvamo em u
 				}
 				if(adicionar)
 				{
-	//				printf("\nAdicionando usuário: %s", usrProps->first.c_str());
 					user usr;
 					usr.id = usrProps->first.c_str();
 					usr.profile = profile->first.c_str();
                  	for (auto & c: usr.id) c = toupper(c);
                  	for (auto & c: usr.profile) c = toupper(c);
 					(((Formatter *)ginga)->getDocument())->addUser(usr);
-/*
-   					map<Event::Type,list<Key>> keyLists = (((Formatter *)ginga)->getDocument())->getKeyList();
-					
-					for (auto lstKeys=keyLists.begin(); lstKeys!=keyLists.end(); ++lstKeys)
-					{
-						for (auto itKey=lstKeys->second.begin(); itKey!=lstKeys->second.end(); ++itKey)
-						{
-							if (itKey->user.compare(usr.profile.c_str())==0)
-							{
-/*
-printf("\n################Achou um key!");	
-printf("\n***********Key: %s!\n", itKey->key.c_str());	
-printf("\n****************User: %s!\n", usr.id.c_str());						
-								Key aKey;
-								aKey.key = itKey->key.c_str();
-								aKey.user = usr.id.c_str();
-							//	(((Formatter *)ginga)->getDocument())->addKeyList(lstKeys->first,aKey);
-							}
-						}
-					}
-*/
-					//verificar na _keyList do documento se há ocorrências de profiles, caso positvo adicionar o usuário com sua chaves
-					//MediaSettings * usrSettings = (((Formatter *)ginga)->getDocument())->addUserSetting(usrProps->first.c_str());				
-					//adicionar todas as propriedades no usuário no MediaSttings
 				}
 			}	
 

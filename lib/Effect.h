@@ -3,6 +3,7 @@
 
 #include "Object.h"
 #include "EffectPlayer.h"
+#include "Player.h"
 
 GINGA_NAMESPACE_BEGIN
 
@@ -23,7 +24,8 @@ public:
   // Effect:
   virtual bool isFocused ();
   virtual Event * getCurrentPreparationEvent ();
-  
+  bool getEffectSimulationEnabled();
+  void enableEffectSimulation(bool );
   //TO DO: virtual bool getIntensity (int *, int *);
 
 protected:
@@ -32,6 +34,7 @@ protected:
   string type;
 
   void createEffectPlayer ();
+  void createImagePlayer ();
   void doStop () override;
 };
 

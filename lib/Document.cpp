@@ -248,14 +248,13 @@ Document::evalAction (Action init)
       
       if (!evt->transition (act.transition))
         continue;
-
       n++;
       done = false;
       obj = evt->getObject ();
       g_assert_nonnull (obj);
-      
       // Trigger links in parent context.
       comp = obj->getParent ();
+      
       if (comp != nullptr &&
           instanceof (Context *, comp) && comp->isOccurring ())
         {
@@ -324,7 +323,7 @@ Document::evalAction (Action init)
           done = true;
           goto trigger;
         }
-    }
+    } 
   return n;
 }
 

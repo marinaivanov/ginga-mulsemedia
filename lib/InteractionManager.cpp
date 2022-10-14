@@ -37,63 +37,140 @@ int userAuthorization(std::string msg)
 		return 0;
 }
 
+// void InteractionManager::createProfileLinks()
+// {
+// 	map<string,user> usrs = ((Formatter *)ginga)->getDocument()->getUsers();
+
+// 	for (auto obj : *((Formatter *)ginga)->getDocument()->getObjects())
+// 	{
+// 		Context *_ctx;
+// 		Composition* comp;
+//         comp = obj->getParent();
+// 		if (comp != nullptr && instanceof (Context *, comp))
+//    			_ctx = cast (Context *, comp);
+// 		g_assert_nonnull(_ctx);
+		
+// 		for (auto link : *_ctx->getLinks ())
+// 		{
+// 			for (auto cond : link.first)
+// 			{
+// 				for (auto usr=usrs.begin(); usr!=usrs.end(); ++usr)
+// 				{
+// 					if ((usr->second.profile.compare(cond.owner.c_str())==0)||(cond.owner.compare("all")==0))
+// 					{
+// 						string key;
+// 						cond.event->getParameter("key",&key);
+
+// 						Key userKey;
+// 						userKey.key = key;
+// 						userKey.user = usr->second.id.c_str();
+                	
+// 						for (auto & c: userKey.key) c = toupper(c);
+//                 		for (auto & c: userKey.user) c = toupper(c);
+				
+// 						((Formatter *)ginga)->getDocument()->addKeyList(cond.event->getType(),userKey);
+// 						obj->addInteractionEvent (cond.event->getType(),key.c_str(), usr->second.id.c_str());
+// 						Action condition;
+//                 		condition.event = obj->getInteractionEvent (cond.event->getType(), key.c_str(), usr->second.id.c_str());
+// 	                	g_assert_nonnull (condition.event);
+//                 		condition.event->setParameter ("key", key.c_str());
+//                 		condition.event->setParameter ("user", usr->second.id.c_str());
+// 				   		condition.transition = Event::STOP;
+//         				condition.predicate = nullptr;
+// 						condition.owner = usr->second.id.c_str();
+// 						list<Action> conditions;
+// 						list<Action> actions = link.second;
+// 						conditions.push_back(condition);
+// 						_ctx->addLink(conditions, actions);
+// 					}
+// 				}
+// 			}
+// 		}	
+// 	}
+// }
+
 void InteractionManager::createProfileLinks()
 {
 	map<string,user> usrs = ((Formatter *)ginga)->getDocument()->getUsers();
 
-	for (auto obj : *((Formatter *)ginga)->getDocument()->getObjects())
-	{
-		Context* _ctx;
-		Composition* comp;
-        comp = obj->getParent();
-		if (comp != nullptr && instanceof (Context *, comp))
-   			_ctx = cast (Context *, comp);
-		for (auto link : *_ctx->getLinks ())
-		{
-			for (auto cond : link.first)
-			{
-				for (auto usr=usrs.begin(); usr!=usrs.end(); ++usr)
-				{
-					if ((usr->second.profile.compare(cond.owner.c_str())==0)||(cond.owner.compare("all")==0))
-					{
-						string key;
-						cond.event->getParameter("key",&key);
 
-						Key userKey;
-						userKey.key = key;
-						userKey.user = usr->second.id.c_str();
+	for (auto obj : *((Formatter *)ginga)->getDocument()->getObjects())
+		for (auto evt : *obj->getEvents())
+		{
+			
+			for (auto usr=usrs.begin(); usr!=usrs.end(); ++usr)
+			{
+				string perfil;
+		
+				if ((usr->second.profile.compare(evt->getOwner().c_str())==0))
+				{
+					string key;
+					evt->getParameter("key",&key);
+					Key userKey;
+					userKey.key = key;
+					userKey.user = usr->second.id.c_str();
                 	
-						for (auto & c: userKey.key) c = toupper(c);
-                		for (auto & c: userKey.user) c = toupper(c);
-				
-						((Formatter *)ginga)->getDocument()->addKeyList(cond.event->getType(),userKey);
-						obj->addInteractionEvent (cond.event->getType(),key.c_str(), usr->second.id.c_str());
-						Action condition;
-                		condition.event = obj->getInteractionEvent (cond.event->getType(), key.c_str(), usr->second.id.c_str());
-	                	g_assert_nonnull (condition.event);
-                		condition.event->setParameter ("key", key.c_str());
-                		condition.event->setParameter ("user", usr->second.id.c_str());
-				   		condition.transition = Event::STOP;
-        				condition.predicate = nullptr;
-						condition.owner = usr->second.id.c_str();
-						list<Action> conditions;
-						list<Action> actions = link.second;
-						conditions.push_back(condition);
-						_ctx->addLink(conditions, actions);
+					for (auto & c: userKey.key) c = toupper(c);
+                	for (auto & c: userKey.user) c = toupper(c);
+					
+					((Formatter *)ginga)->getDocument()->addKeyList(evt->getType(),userKey);
+
+					obj->addInteractionEvent (evt->getType(),key.c_str(), usr->second.id.c_str());
+					
+					Action condition;
+                	condition.event = obj->getInteractionEvent (evt->getType(), key.c_str(), usr->second.id.c_str());
+
+                	g_assert_nonnull (condition.event);
+
+                	condition.event->setParameter ("key", key.c_str());
+                	condition.event->setParameter ("user", usr->second.id.c_str());
+				   	condition.transition = Event::STOP;
+        			condition.predicate = nullptr;
+
+					Context* _ctx;
+					Composition* comp;
+        			comp = obj->getParent();
+
+        			if (comp != nullptr && instanceof (Context *, comp))
+            			_ctx = cast (Context *, comp);
+
+					for (auto link : *_ctx->getLinks ())
+                	{
+                  		for (auto cond : link.first)
+						{
+							printf("\ncondição %s\n", cond.owner.c_str());
+
+							if ((usr->second.profile.compare(cond.owner.c_str())==0))
+							{
+								list<Action> conditions;
+          						list<Action> actions = link.second;
+								conditions.push_back(condition);
+								/*
+                  					for (auto act : link.second)
+									{
+										if ((usr->second.profile.compare(act.value.c_str())==0))							
+										{
+											act.value = usr->second.id.c_str();
+										}
+										actions.push_back(act);
+									}
+								*/
+								_ctx->addLink(conditions, actions);
+							}
+						}
 					}
 				}
 			}
-		}	
-	}
+		}
 }
 
 void InteractionManager::start()
 {
 	_userManager = new UserContextManager(ginga); 
 	_userManager->start();
-
+	
 	createProfileLinks();
-
+	
 	map<Event::Type,bool> interactions = (((Formatter *)ginga)->getDocument())->getInteractions();
 
 	int cont = 0;

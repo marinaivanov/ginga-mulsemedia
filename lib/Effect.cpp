@@ -1,8 +1,9 @@
 #include "aux-ginga.h"
-
+#include "Media.h"
 #include "Effect.h"
 #include "Event.h"
 #include "EffectPlayer.h"
+#include "Player.h"
 
 GINGA_NAMESPACE_BEGIN
 
@@ -50,8 +51,7 @@ Effect::setProperty (const string &name, const string &value, Time dur)
   if (_player == nullptr)
     return;
 
-  _player->setProperty (name, value);
-  //g_assert (GINGA_TIME_IS_VALID (dur));
+  _player->setProperty (name, value);  
 }
 
 void
@@ -106,8 +106,7 @@ Effect::beforeTransition (Event *evt, Event::Transition transition)
                       return false; // fail
 
                     // Start underlying player.
-                    // TO DO: Check player failure. 
-                    _player->start (); // Just lambda events reaches this!
+                    _player->start (); // Just lambda events reaches this!                    
                   }
               }
             break;
@@ -284,6 +283,7 @@ Effect::isFocused ()
 {
   if (!this->isOccurring ())
     return false;
+  
   g_assert_nonnull (_player);
   return _player->isFocused ();
 }
@@ -291,17 +291,19 @@ Effect::isFocused ()
 void
 Effect::createEffectPlayer ()
 {
-  if (_player)
-    return;
   Formatter *fmt;
   g_assert (_doc->getData ("formatter", (void **) &fmt));
+    
+  if (_player)
+    return;
+  
   g_assert_null (_player);
   _player = EffectPlayer::createEffectPlayer (fmt, this, _properties["type"]);
   g_assert_nonnull (_player);
   for (auto it : _properties)
   {
     _player->setProperty (it.first, it.second);
-  }
+  } 
 }
 
 // Protected.
@@ -310,15 +312,16 @@ void
 Effect::doStop ()
 {
   if (_player == nullptr)
-    {
-      g_assert (this->isSleeping ());
-      return; // nothing to do
-    }
+  {
+    g_assert (this->isSleeping ());
+    return; // nothing to do
+  }
 
   if (_player->getState () != EffectPlayer::SLEEPING)
     _player->stop ();
   delete _player;
   _player = nullptr;
+  
   Object::doStop ();
 }
 

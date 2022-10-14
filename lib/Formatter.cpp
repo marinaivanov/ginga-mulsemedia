@@ -52,6 +52,7 @@ static GingaOptions opts_defaults = {
   false, // opengl
   true,  // preparation 
   false, // calibration mode
+  false, // simulation mode
   "",    // background ("" == none)
 };
 
@@ -82,6 +83,7 @@ static map<string, GingaOptionData> opts_table = {
   OPTS_ENTRY (width, G_TYPE_INT, Size),
   OPTS_ENTRY (preparation, G_TYPE_BOOLEAN, Preparation),
   OPTS_ENTRY (calibration, G_TYPE_BOOLEAN, Calibration),
+  OPTS_ENTRY (simulation, G_TYPE_BOOLEAN, Simulation),
 };
 
 // Indexes option table.
@@ -163,11 +165,11 @@ Formatter::start (const string &file, string *errmsg)
 
       path = strcat(home_dir,"/gingaFiles/calibration/app-calibration.ncl");
       _opts.preparation = FALSE;
-      _doc = Parser::parseFile (path, w, h, errmsg, false);
+      _doc = Parser::parseFile (path, w, h, errmsg, false, false);
     }
     else
     {
-      _doc = Parser::parseFile (file, w, h, errmsg, _opts.preparation);
+      _doc = Parser::parseFile (file, w, h, errmsg, _opts.preparation, _opts.simulation);
     }
   }
   
@@ -199,12 +201,10 @@ Formatter::start (const string &file, string *errmsg)
   g_assert_nonnull (evt);
   if (_doc->evalAction (evt, Event::START) == 0)
     return false;
-
   // Start settings.
   evt = _doc->getSettings ()->getLambda ();
   g_assert_nonnull (evt);
   g_assert (evt->transition (Event::START));
-
   // Sets formatter state.
   _state = GINGA_STATE_PLAYING;
 
@@ -212,7 +212,6 @@ Formatter::start (const string &file, string *errmsg)
   _intManager->start();
   _intManager->setUserKeyListModules();
   _intManager->startModules();
-   					
   return true;
 }
 
@@ -616,6 +615,7 @@ Formatter::Formatter (const GingaOptions *opts) : Ginga (opts)
   setOptionOpenGL (this, "opengl", _opts.opengl);
   setOptionPreparation (this, "preparation", _opts.preparation);
   setOptionCalibration (this, "calibration", _opts.calibration);
+  setOptionSimulation (this, "simulation", _opts.simulation);
 }
 
 /**
@@ -758,6 +758,20 @@ Formatter::setOptionCalibration (unused (Formatter *self),
                                   const string &name, bool value)
 {
   g_assert (name == "calibration");
+  TRACE ("%s:=%s", name.c_str (), strbool (value));
+}
+
+/**
+ * @brief Sets the simulation option of the given Formatter.
+ * @param self Formatter.
+ * @param name Must be the string "simulation".
+ * @param value Simulation flag value.
+ */
+void
+Formatter::setOptionSimulation (unused (Formatter *self),
+                                  const string &name, bool value)
+{
+  g_assert (name == "simulation");
   TRACE ("%s:=%s", name.c_str (), strbool (value));
 }
 
