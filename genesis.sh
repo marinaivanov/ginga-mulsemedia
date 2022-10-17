@@ -90,7 +90,23 @@ echo "Creating file directories needed to running the Ginga..."
 mkdir ~/gingaFiles
 mkdir ~/gingaFiles/users
 mkdir ~/gingaFiles/interactionConfig
+mkdir ~/gingaFiles/calibration
+mkdir ~/gingaFiles/calibration/media
+mkdir ~/gingaFiles/sensoryDevices
+mkdir ~/gingaFiles/simulation
+
 cp interaction-config.json ~/gingaFiles/interactionConfig
+cp utils/calibration/app-calibration.ncl ~/gingaFiles/calibration
+cp utils/calibration/media/img-scent.png ~/gingaFiles/calibration/media
+cp utils/calibration/media/ok.png ~/gingaFiles/calibration/media
+cp utils/sensoryDevices/config.xml ~/gingaFiles/sensoryDevices
+cp utils/simulation/light.png ~/gingaFiles/simulation
+cp utils/simulation/scent.png ~/gingaFiles/simulation
+cp utils/simulation/wind.png ~/gingaFiles/simulation
+
+
+
+
 echo
 
 cd ..
