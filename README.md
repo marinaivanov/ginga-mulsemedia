@@ -6,6 +6,7 @@ Este trabalho é desenvolvido pelos doutores Marina Josué e Fábio Barreto e pe
 ### Para instalação e preparação do ambiente:
 
 1. Faça o download do branch "ncl4". Esse branch contém o middleware Ginga estendido para dar suporte ao NCL 4.0.
+   1.1. Caso tenha feito o download da branch utilizando a opção "Download ZIP", renomeie a pasta do projeto para "ginga-mulsemedia".
 2. Acesse a pasta do projeto, "ginga-mulsemidia" pelo terminal.
 3. Execute o arquivo de instalação e configuração por meio do comando:
 
